@@ -1,0 +1,113 @@
+import json
+import uuid
+from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+
+
+@dataclass
+class InterceptedAction:
+    """One action that an agent tried to perform."""
+
+    id: str = ""
+    timestamp: str = ""
+    tool_name: str = ""
+    arguments: Dict[str, Any] = field(default_factory=dict)
+    agent_id: str = "default"
+    risk_score: float = 0.0
+    decision: str = "pending"
+    mode: str = "shadow"
+    result: Optional[Dict[str, Any]] = None
+    rollback_plan: Optional[Dict[str, Any]] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+class AgentShield:
+    def __init__(self, mode: str = "shadow", policy_path: str = None):
+        self.mode = mode
+        self.audit_log: List[InterceptedAction] = []
+        self.policy_path = policy_path
+        self._policy_engine = None
+        if policy_path:
+            from agentshield.policy.engine import PolicyEngine
+
+            self._policy_engine = PolicyEngine(policy_path)
+
+    async def intercept(
+        self, tool_name: str, arguments: dict, agent_id: str = "default"
+    ) -> InterceptedAction:
+        action = InterceptedAction(
+            id=str(uuid.uuid4()),
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            tool_name=tool_name,
+            arguments=arguments or {},
+            agent_id=agent_id,
+            mode=self.mode,
+        )
+
+        self._score_risk(action)
+        self._decide(action)
+        self._prepare_preview(action)
+        self.audit_log.append(action)
+        return action
+
+    def protect(self, tools: List[Any]) -> List[Any]:
+        """Return tools unchanged for now; interception happens at runtime wrappers."""
+        return tools
+
+    def get_audit_log(self) -> List[Dict[str, Any]]:
+        return [item.to_dict() for item in self.audit_log]
+
+    def save_audit_log(self, output_path: str) -> None:
+        with open(output_path, "w", encoding="utf-8") as handle:
+            json.dump(self.get_audit_log(), handle, indent=2)
+
+    def _score_risk(self, action: InterceptedAction) -> None:
+        """Basic heuristic until policy engine scoring is wired in."""
+        if self._policy_engine and hasattr(self._policy_engine, "score"):
+            action.risk_score = float(
+                self._policy_engine.score(
+                    tool_name=action.tool_name,
+                    arguments=action.arguments,
+                    agent_id=action.agent_id,
+                )
+            )
+            return
+
+        risky_keywords = {"delete", "drop", "remove", "revoke", "terminate", "write"}
+        if any(keyword in action.tool_name.lower() for keyword in risky_keywords):
+            action.risk_score = 0.8
+        else:
+            action.risk_score = 0.2
+
+    def _decide(self, action: InterceptedAction) -> None:
+        if self.mode == "shadow":
+            action.decision = "simulated"
+            return
+        if self.mode in {"dry-run", "dry_run"}:
+            action.decision = "blocked"
+            return
+        if self.mode in {"approval", "approve"}:
+            action.decision = "requires_approval"
+            return
+        if self.mode in {"live", "enforce"}:
+            action.decision = "approved"
+            return
+
+        action.decision = "pending"
+
+    def _prepare_preview(self, action: InterceptedAction) -> None:
+        action.result = {
+            "status": action.decision,
+            "message": f"{action.mode} preview for {action.tool_name}",
+        }
+        action.rollback_plan = {
+            "strategy": "manual",
+            "steps": [
+                "Identify side effects for the action.",
+                "Undo affected resources using tool-specific remediation.",
+                "Verify final state matches expected baseline.",
+            ],
+        }
