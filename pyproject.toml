@@ -6,8 +6,21 @@ build-backend = "setuptools.build_meta"
 name = "agentshield"
 version = "0.1.0"
 description = "Preview deployments for AI agents"
+readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
+dynamic = ["dependencies"]
+keywords = ["ai", "agent", "safety", "langchain", "fastapi", "guardrails"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
 
 [project.scripts]
 agentshield = "agentshield.cli:main"
@@ -15,3 +28,6 @@ agentshield-server = "agentshield.cli:main"
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }

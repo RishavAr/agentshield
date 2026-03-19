@@ -13,8 +13,10 @@ services:
       AGENTSHIELD_MODE: ${AGENTSHIELD_MODE:-shadow}
       AGENTSHIELD_RATE_LIMIT_PER_MINUTE: ${AGENTSHIELD_RATE_LIMIT_PER_MINUTE:-100}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      AGENTSHIELD_HOST: ${AGENTSHIELD_HOST:-0.0.0.0}
+      AGENTSHIELD_PORT: ${AGENTSHIELD_PORT:-8000}
     ports:
-      - "8000:8000"
+      - "${AGENTSHIELD_PORT:-8000}:8000"
     volumes:
       - ./:/app
       - agentshield_data:/app/data

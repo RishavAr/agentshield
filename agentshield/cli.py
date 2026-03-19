@@ -1,35 +1,46 @@
 import argparse
 import asyncio
-import json
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
 
 from agentshield.api.server import run_server
 from agentshield.interceptor.core import AgentShield
 
 
 def _cmd_serve(args: argparse.Namespace) -> None:
+    os.environ["AGENTSHIELD_MODE"] = args.mode
     run_server(host=args.host, port=args.port)
 
 
-def _cmd_shadow(args: argparse.Namespace) -> None:
-    shield = AgentShield(mode="shadow", policy_path=args.policy_path)
-    print(f"AgentShield shadow mode ready. policy={shield.policy_path}")
+def _cmd_demo(_: argparse.Namespace) -> None:
+    from examples.live_demo import run_demo
+
+    asyncio.run(run_demo())
 
 
-def _cmd_test_policy(args: argparse.Namespace) -> None:
-    shield = AgentShield(mode="shadow", policy_path=args.policy_path)
-    action = asyncio.run(
-        shield.intercept(
-            tool_name=args.tool_name,
-            arguments={"to": args.to, "subject": args.subject},
-            agent_id="cli",
-        )
-    )
-    print(json.dumps(action.to_dict(), indent=2))
+def _cmd_test(args: argparse.Namespace) -> None:
+    cmd = [sys.executable, "-m", "pytest"]
+    if args.verbose:
+        cmd.append("-v")
+    if args.path:
+        cmd.append(args.path)
+    else:
+        cmd.append("tests")
+    result = subprocess.run(cmd, check=False)
+    raise SystemExit(result.returncode)
 
 
-def _cmd_audit(_: argparse.Namespace) -> None:
-    shield = AgentShield(mode="shadow")
-    print(json.dumps(shield.get_audit_log()[-10:], indent=2))
+def _cmd_init(args: argparse.Namespace) -> None:
+    source = Path(args.template_policy).resolve()
+    destination = Path.cwd() / args.output
+    if not source.exists():
+        raise SystemExit(f"Template policy not found: {source}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source, destination)
+    print(f"Created policy file at {destination}")
 
 
 def main() -> None:
@@ -39,21 +50,21 @@ def main() -> None:
     serve = sub.add_parser("serve", help="Start API server")
     serve.add_argument("--host", default="0.0.0.0")
     serve.add_argument("--port", type=int, default=8000)
+    serve.add_argument("--mode", default="shadow", choices=["shadow", "live", "approval"])
     serve.set_defaults(func=_cmd_serve)
 
-    shadow = sub.add_parser("shadow", help="Initialize shadow mode")
-    shadow.add_argument("--policy-path", default="policies/default.yaml")
-    shadow.set_defaults(func=_cmd_shadow)
+    demo = sub.add_parser("demo", help="Run the live demo scenarios")
+    demo.set_defaults(func=_cmd_demo)
 
-    test_policy = sub.add_parser("test-policy", help="Test a policy against a sample action")
-    test_policy.add_argument("--policy-path", default="policies/default.yaml")
-    test_policy.add_argument("--tool-name", default="send_email")
-    test_policy.add_argument("--to", default="user@yourcompany.com")
-    test_policy.add_argument("--subject", default="Test message")
-    test_policy.set_defaults(func=_cmd_test_policy)
+    test_cmd = sub.add_parser("test", help="Run test suite")
+    test_cmd.add_argument("--path", default="tests")
+    test_cmd.add_argument("--verbose", action="store_true")
+    test_cmd.set_defaults(func=_cmd_test)
 
-    audit = sub.add_parser("audit", help="Print recent audit log")
-    audit.set_defaults(func=_cmd_audit)
+    init_cmd = sub.add_parser("init", help="Create default policy file in current directory")
+    init_cmd.add_argument("--output", default="policies/default.yaml")
+    init_cmd.add_argument("--template-policy", default="policies/default.yaml")
+    init_cmd.set_defaults(func=_cmd_init)
 
     args = parser.parse_args()
     args.func(args)
