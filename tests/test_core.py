@@ -12,7 +12,7 @@ def test_intercept_records_action() -> None:
     assert action.tool_name == "send_email"
     assert action.agent_id == "agent-1"
     assert action.mode == "shadow"
-    assert action.decision == "simulated"
+    assert action.decision == "shadow"
     assert len(shield.get_audit_log()) == 1
 
 

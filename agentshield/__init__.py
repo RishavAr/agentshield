@@ -5,3 +5,5 @@ and rolls back AI agent actions before they touch production.
 """
 
 __version__ = "0.1.0"
+
+from agentshield.interceptor.core import AgentShield

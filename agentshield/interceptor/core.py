@@ -1,4 +1,5 @@
 import json
+import asyncio
 import uuid
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -53,12 +54,29 @@ class AgentShield:
         self.audit_log.append(action)
         return action
 
+    def intercept_sync(
+        self, tool_name: str, arguments: dict, agent_id: str = "default"
+    ) -> InterceptedAction:
+        return asyncio.run(self.intercept(tool_name, arguments, agent_id=agent_id))
+
     def protect(self, tools: List[Any]) -> List[Any]:
-        """Return tools unchanged for now; interception happens at runtime wrappers."""
-        return tools
+        try:
+            from agentshield.interceptor.langchain_hook import shield_all_tools
+
+            return shield_all_tools(tools, self)
+        except Exception:
+            return tools
 
     def get_audit_log(self) -> List[Dict[str, Any]]:
         return [item.to_dict() for item in self.audit_log]
+
+    def get_shadow_report(self) -> Dict[str, Any]:
+        actions = self.get_audit_log()
+        return {
+            "mode": self.mode,
+            "total_actions": len(actions),
+            "actions": actions,
+        }
 
     def save_audit_log(self, output_path: str) -> None:
         with open(output_path, "w", encoding="utf-8") as handle:
@@ -84,16 +102,16 @@ class AgentShield:
 
     def _decide(self, action: InterceptedAction) -> None:
         if self.mode == "shadow":
-            action.decision = "simulated"
+            action.decision = "shadow"
             return
         if self.mode in {"dry-run", "dry_run"}:
-            action.decision = "blocked"
+            action.decision = "block"
             return
         if self.mode in {"approval", "approve"}:
-            action.decision = "requires_approval"
+            action.decision = "approve"
             return
         if self.mode in {"live", "enforce"}:
-            action.decision = "approved"
+            action.decision = "allow"
             return
 
         action.decision = "pending"
