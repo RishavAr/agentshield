@@ -1,14 +1,17 @@
-import json
 import asyncio
+import json
+import os
 import uuid
+from functools import wraps
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from agentshield.modes.rollback import RollbackEngine
 from agentshield.modes.simulator import ActionSimulator
 from agentshield.modes.negotiator import AgentNegotiator, NegotiationResponse
 from agentshield.policy.smart_scorer import SmartRiskScorer
+from agentshield.registry.agent_registry import AgentRegistry
 
 
 @dataclass
@@ -31,21 +34,25 @@ class InterceptedAction:
 
 
 class AgentShield:
-    def __init__(self, mode: str = "shadow", policy_path: str = None):
+    def __init__(self, mode: str = "shadow", policy_path: str = None, policy: str = None):
         self.mode = mode
         self.audit_log: List[InterceptedAction] = []
+        if policy and not policy_path:
+            template_path = os.path.join("policies", "templates", f"{policy}.yaml")
+            policy_path = template_path if os.path.exists(template_path) else None
         self.policy_path = policy_path
         self._policy_engine = None
         self._simulator = ActionSimulator()
         self.rollback_engine = RollbackEngine()
         self._smart_scorer = SmartRiskScorer()
+        self.agent_registry = AgentRegistry()
         if policy_path:
             from agentshield.policy.engine import PolicyEngine
 
             self._policy_engine = PolicyEngine(policy_path)
         self.negotiator = AgentNegotiator(self._policy_engine, risk_scorer=self._smart_scorer)
 
-    async def intercept(
+    async def _intercept_impl(
         self, tool_name: str, arguments: dict, agent_id: str = "default"
     ) -> InterceptedAction:
         action = InterceptedAction(
@@ -88,11 +95,18 @@ class AgentShield:
         self.audit_log.append(action)
         return action
 
+    def intercept(
+        self, tool_name: str, arguments: Optional[dict] = None, agent_id: str = "default"
+    ):
+        if arguments is None:
+            return self.intercept_custom(tool_name)
+        return self._intercept_impl(tool_name=tool_name, arguments=arguments, agent_id=agent_id)
+
     async def intercept_with_negotiation(
         self, tool_name: str, arguments: dict, agent_id: str = "default"
     ) -> tuple[InterceptedAction, Optional[NegotiationResponse]]:
         """Intercept + if blocked, automatically return negotiation guidance."""
-        action = await self.intercept(tool_name, arguments, agent_id)
+        action = await self._intercept_impl(tool_name, arguments, agent_id)
         if action.decision in ("block", "shadow"):
             negotiation = await self.negotiator.negotiate(action, None)
             return action, negotiation
@@ -106,7 +120,7 @@ class AgentShield:
     def intercept_sync(
         self, tool_name: str, arguments: dict, agent_id: str = "default"
     ) -> InterceptedAction:
-        return asyncio.run(self.intercept(tool_name, arguments, agent_id=agent_id))
+        return asyncio.run(self._intercept_impl(tool_name, arguments, agent_id=agent_id))
 
     def protect(self, tools: List[Any]) -> List[Any]:
         try:
@@ -115,6 +129,37 @@ class AgentShield:
             return shield_all_tools(tools, self)
         except Exception:
             return tools
+
+    def protect_crewai(self, crew: Any) -> Any:
+        from agentshield.interceptor.crewai_hook import shield_crewai_crew
+
+        return shield_crewai_crew(crew, self)
+
+    def protect_openai(self, tools: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        from agentshield.interceptor.openai_hook import shield_openai_tools
+
+        return shield_openai_tools(tools, self)
+
+    def start_mcp_proxy(self, upstream: str = "localhost:3001", port: int = 3002) -> None:
+        from agentshield.interceptor.mcp_proxy import run_proxy
+
+        run_proxy(upstream=upstream, port=port)
+
+    def protect_shell(self):
+        from agentshield.interceptor.code_agent_hook import CodeAgentInterceptor
+
+        return CodeAgentInterceptor()
+
+    def intercept_custom(self, tool_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+        def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
+            @wraps(fn)
+            def wrapped(*args: Any, **kwargs: Any):
+                _ = self.intercept_sync(tool_name=tool_name, arguments={"args": args, "kwargs": kwargs})
+                return fn(*args, **kwargs)
+
+            return wrapped
+
+        return decorator
 
     def get_audit_log(self) -> List[Dict[str, Any]]:
         return [item.to_dict() for item in self.audit_log]

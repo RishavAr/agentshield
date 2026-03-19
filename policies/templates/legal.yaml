@@ -1,0 +1,27 @@
+version: 1
+default_mode: shadow
+rules:
+  - name: block_external_privileged_docs
+    tool: share_document
+    condition:
+      field: arguments.classification
+      operator: contains
+      value: "privileged"
+    action: block
+    risk_score: 0.95
+  - name: approve_contract_modifications
+    tool: modify_contract
+    action: approve
+    risk_score: 0.85
+  - name: shadow_client_data_access
+    tool: access_client_data
+    action: shadow
+    risk_score: 0.4
+  - name: alert_document_deletion
+    tool: delete_document
+    action: block
+    risk_score: 0.9
+  - name: block_nda_info_share
+    tool: share_nda_info
+    action: block
+    risk_score: 0.98

@@ -34,16 +34,23 @@ class PolicyEngine:
         val = self._get(action, cond["field"])
         op = cond["operator"]
         target = cond["value"]
+        if val is None:
+            return False
         if op == "equals":
             return val == target
         if op == "not_equals":
             return val != target
         if op == "contains":
-            return target in str(val or "")
+            return str(target or "") in str(val or "")
         if op == "not_contains":
-            return target not in str(val or "")
+            return str(target or "") not in str(val or "")
         if op == "in":
-            return val in target
+            if target is None:
+                return False
+            try:
+                return val in target
+            except TypeError:
+                return False
         return False
 
     def _get(self, obj, path):

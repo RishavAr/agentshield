@@ -1,0 +1,39 @@
+version: 1
+default_mode: shadow
+rules:
+  - name: block_large_transfer_without_approval
+    tool: transfer_funds
+    condition:
+      field: arguments.amount
+      operator: contains
+      value: "10000"
+    action: approve
+    risk_score: 0.9
+  - name: block_external_account_transfer
+    tool: transfer_funds
+    condition:
+      field: arguments.to_account
+      operator: contains
+      value: "external"
+    action: block
+    risk_score: 0.95
+  - name: dual_approval_monetary_action
+    tool: monetary_action
+    action: approve
+    risk_score: 0.85
+  - name: shadow_account_access
+    tool: account_access
+    action: shadow
+    risk_score: 0.3
+  - name: after_hours_financial_alert
+    tool: financial_operation
+    action: approve
+    risk_score: 0.8
+  - name: block_full_cc_storage
+    tool: store_card_data
+    condition:
+      field: arguments.card_number
+      operator: contains
+      value: "1111"
+    action: block
+    risk_score: 0.99

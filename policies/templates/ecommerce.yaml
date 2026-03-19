@@ -1,0 +1,27 @@
+version: 1
+default_mode: shadow
+rules:
+  - name: shadow_order_modifications
+    tool: modify_order
+    action: shadow
+    risk_score: 0.3
+  - name: block_bulk_refunds
+    tool: bulk_refund
+    action: block
+    risk_score: 0.9
+  - name: approve_large_price_change
+    tool: update_price
+    action: approve
+    risk_score: 0.8
+  - name: alert_inventory_delete
+    tool: delete_inventory
+    action: block
+    risk_score: 0.85
+  - name: block_external_customer_export
+    tool: export_customer_data
+    condition:
+      field: arguments.destination
+      operator: not_contains
+      value: "@yourstore.com"
+    action: block
+    risk_score: 0.95

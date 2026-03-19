@@ -1,0 +1,27 @@
+version: 1
+default_mode: shadow
+rules:
+  - name: require_hipaa_audit_for_patient_data
+    tool: read_patient_data
+    action: approve
+    risk_score: 0.8
+  - name: approve_phi_access
+    tool: access_phi
+    action: approve
+    risk_score: 0.85
+  - name: shadow_prescriptions
+    tool: manage_prescription
+    action: shadow
+    risk_score: 0.4
+  - name: block_external_medical_records
+    tool: share_medical_record
+    condition:
+      field: arguments.destination
+      operator: not_contains
+      value: "@yourhospital.org"
+    action: block
+    risk_score: 0.95
+  - name: alert_bulk_patient_access
+    tool: bulk_patient_export
+    action: block
+    risk_score: 0.9

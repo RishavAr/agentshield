@@ -8,6 +8,7 @@ from pathlib import Path
 
 from agentshield.api.server import run_server
 from agentshield.interceptor.core import AgentShield
+from agentshield.interceptor.mcp_proxy import run_proxy
 
 
 def _cmd_serve(args: argparse.Namespace) -> None:
@@ -43,6 +44,10 @@ def _cmd_init(args: argparse.Namespace) -> None:
     print(f"Created policy file at {destination}")
 
 
+def _cmd_mcp_proxy(args: argparse.Namespace) -> None:
+    run_proxy(upstream=args.upstream, port=args.port)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="agentshield")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -65,6 +70,11 @@ def main() -> None:
     init_cmd.add_argument("--output", default="policies/default.yaml")
     init_cmd.add_argument("--template-policy", default="policies/default.yaml")
     init_cmd.set_defaults(func=_cmd_init)
+
+    mcp_proxy_cmd = sub.add_parser("mcp-proxy", help="Run MCP proxy with interception")
+    mcp_proxy_cmd.add_argument("--upstream", default="localhost:3001")
+    mcp_proxy_cmd.add_argument("--port", type=int, default=3002)
+    mcp_proxy_cmd.set_defaults(func=_cmd_mcp_proxy)
 
     args = parser.parse_args()
     args.func(args)

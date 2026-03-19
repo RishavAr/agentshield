@@ -24,7 +24,12 @@ from agentshield.db.database import (
     log_action,
     touch_agent_registry,
 )
+from agentshield.audit.compliance import ComplianceExporter
+from agentshield.alerts.alerter import AlertManager
+from agentshield.auth.tenancy import TenantManager
 from agentshield.interceptor.core import AgentShield
+from agentshield.policy.anomaly_detector import AnomalyDetector
+from agentshield.registry.agent_registry import AgentRegistry
 
 # Structured logging
 logging.basicConfig(
@@ -154,6 +159,19 @@ _metrics: Dict[str, float] = {
     "total_latency_ms": 0.0,
 }
 _retry_chain: Dict[str, Dict[str, Any]] = {}
+_tenant_manager = TenantManager()
+_registry = AgentRegistry()
+_alerter = AlertManager()
+_anomaly_detector = AnomalyDetector()
+
+
+def _bootstrap_default_tenant() -> None:
+    env_key = os.getenv("AGENTSHIELD_DEFAULT_API_KEY")
+    if env_key and not _tenant_manager.is_enabled():
+        _tenant_manager.register_tenant("default", "Default Tenant", env_key)
+
+
+_bootstrap_default_tenant()
 
 
 def get_shield() -> AgentShield:
@@ -202,6 +220,15 @@ async def request_id_and_logging_middleware(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
     start = time.perf_counter()
     _metrics["total_requests"] += 1
+    if request.url.path.startswith("/api/") and _tenant_manager.is_enabled():
+        api_key = request.headers.get("X-AgentShield-Key")
+        if not api_key:
+            return JSONResponse(status_code=401, content={"error": {"type": "unauthorized", "message": "Missing X-AgentShield-Key"}})
+        try:
+            tenant = _tenant_manager.tenant_from_key(api_key)
+            request.state.tenant_id = tenant.tenant_id
+        except KeyError:
+            return JSONResponse(status_code=403, content={"error": {"type": "forbidden", "message": "Invalid API key"}})
     try:
         response = await call_next(request)
     except Exception as exc:
@@ -263,6 +290,10 @@ async def intercept_action(request: InterceptRequest) -> InterceptResponse:
     if not _rate_limit_allow(request.agent_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded for agent_id")
     try:
+        if request.agent_id in [a["id"] for a in _registry.list_agents()]:
+            profile = _registry.get_agent(request.agent_id)
+            if profile.status in {"suspended", "deactivated"}:
+                raise HTTPException(status_code=403, detail=f"Agent {request.agent_id} is {profile.status}")
         action = await shield.intercept(
             tool_name=request.tool_name,
             arguments=request.arguments,
@@ -282,6 +313,16 @@ async def intercept_action(request: InterceptRequest) -> InterceptResponse:
             }
         )
         await touch_agent_registry(request.agent_id)
+        alerts = _anomaly_detector.analyze(
+            agent_id=request.agent_id,
+            tool_name=request.tool_name,
+            risk_score=action.risk_score,
+            data_volume=len(str(request.arguments)),
+        )
+        if action.decision == "block" or action.risk_score >= 0.8 or alerts:
+            await _alerter.send_alert("policy_event", action, channel="websocket")
+        if any(a["id"] == request.agent_id for a in _registry.list_agents()):
+            _registry.update_reputation(request.agent_id, action.decision)
     except Exception as exc:
         _metrics["total_errors"] += 1
         logger.exception("interception_failed tool=%s", request.tool_name)
@@ -307,6 +348,76 @@ async def intercept_action(request: InterceptRequest) -> InterceptResponse:
         action.agent_id,
     )
     return response
+
+
+@app.get("/api/v1/compliance/soc2")
+async def compliance_soc2(start: str, end: str) -> Dict[str, Any]:
+    shield = get_shield()
+    exporter = ComplianceExporter(shield.audit_log, approvals=_pending_approvals)
+    return exporter.export_soc2_report(start, end)
+
+
+@app.get("/api/v1/compliance/gdpr/{data_subject_id}")
+async def compliance_gdpr(data_subject_id: str) -> Dict[str, Any]:
+    shield = get_shield()
+    exporter = ComplianceExporter(shield.audit_log, approvals=_pending_approvals)
+    return exporter.export_gdpr_data_access_log(data_subject_id)
+
+
+@app.get("/api/v1/compliance/eu-ai-act")
+async def compliance_eu_ai_act() -> Dict[str, Any]:
+    shield = get_shield()
+    exporter = ComplianceExporter(shield.audit_log, approvals=_pending_approvals)
+    return exporter.export_eu_ai_act_transparency()
+
+
+@app.get("/api/v1/export/csv")
+async def export_csv(
+    tool_name: Optional[str] = None,
+    decision: Optional[str] = None,
+) -> str:
+    shield = get_shield()
+    exporter = ComplianceExporter(shield.audit_log, approvals=_pending_approvals)
+    return exporter.export_csv({"tool_name": tool_name, "decision": decision})
+
+
+@app.get("/api/v1/export/siem")
+async def export_siem(format: str = "json", tool_name: Optional[str] = None, decision: Optional[str] = None):
+    _ = format
+    shield = get_shield()
+    exporter = ComplianceExporter(shield.audit_log, approvals=_pending_approvals)
+    return exporter.export_json_siem({"tool_name": tool_name, "decision": decision})
+
+
+class RegisterAgentRequest(BaseModel):
+    agent_id: str
+    name: str
+    owner: str
+    allowed_tools: List[str] = Field(default_factory=list)
+    max_risk_tolerance: float = 0.8
+
+
+@app.post("/api/v1/agents")
+async def register_agent(payload: RegisterAgentRequest) -> Dict[str, Any]:
+    agent = _registry.register_agent(
+        payload.agent_id,
+        payload.name,
+        payload.owner,
+        payload.allowed_tools,
+        payload.max_risk_tolerance,
+    )
+    return agent.to_dict()
+
+
+@app.get("/api/v1/agents")
+async def list_agents() -> List[Dict[str, Any]]:
+    return _registry.list_agents()
+
+
+@app.post("/api/v1/agents/{agent_id}/deactivate")
+async def deactivate_agent(agent_id: str) -> Dict[str, str]:
+    _registry.deactivate_agent(agent_id)
+    return {"status": "ok", "agent_id": agent_id, "new_status": "deactivated"}
 
 
 @app.post("/api/v1/negotiate/{action_id}")

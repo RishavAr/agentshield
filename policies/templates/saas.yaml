@@ -1,0 +1,23 @@
+version: 1
+default_mode: shadow
+rules:
+  - name: block_prod_deploy_without_approval
+    tool: deploy_production
+    action: approve
+    risk_score: 0.9
+  - name: shadow_db_migrations
+    tool: database_migration
+    action: shadow
+    risk_score: 0.4
+  - name: alert_permission_changes
+    tool: change_user_permission
+    action: approve
+    risk_score: 0.8
+  - name: block_bulk_email_sends
+    tool: send_bulk_email
+    action: block
+    risk_score: 0.9
+  - name: approve_api_key_creation
+    tool: create_api_key
+    action: approve
+    risk_score: 0.8
