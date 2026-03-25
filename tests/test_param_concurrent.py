@@ -4,7 +4,9 @@ import asyncio
 
 import pytest
 
-from agentshield import AgentShield
+from agentiva import Agentiva
+
+pytestmark = pytest.mark.slow
 
 
 @pytest.mark.parametrize("num_agents", [10, 50, 100, 250, 500, 1000])
@@ -13,7 +15,7 @@ def test_concurrent_load(num_agents, actions_per_agent):
     # Keep runtime bounded while still validating scaling logic.
     effective_agents = min(num_agents, 80)
     effective_actions = min(actions_per_agent, 10)
-    shield = AgentShield(mode="shadow")
+    shield = Agentiva(mode="shadow")
 
     async def _run():
         tasks = []

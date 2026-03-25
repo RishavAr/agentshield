@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgentShield Dashboard",
+  title: "Agentiva Dashboard",
   description: "Preview deployments for AI agents",
 };
 

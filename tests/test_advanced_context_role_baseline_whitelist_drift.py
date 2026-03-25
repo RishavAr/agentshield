@@ -6,9 +6,9 @@ import textwrap
 from pathlib import Path
 from typing import Any, Dict, List
 
-from agentshield import AgentShield
-from agentshield.api.chat import ShieldChat
-from agentshield.interceptor.core import InterceptedAction
+from agentiva import Agentiva
+from agentiva.api.chat import ShieldChat
+from agentiva.interceptor.core import InterceptedAction
 
 
 def _write_policy(tmp_path: Path, yaml_text: str) -> str:
@@ -77,7 +77,7 @@ def test_role_based_policy_sales_agent_can_email_externally(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = asyncio.run(
         shield.intercept(
             "send_email",
@@ -108,7 +108,7 @@ def test_role_based_policy_support_agent_cannot_read_ssn(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = asyncio.run(
         shield.intercept(
             "read_customer_data",
@@ -135,7 +135,7 @@ def test_context_aware_self_access_lower_risk(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
     args = {"customer_id": "C-1001", "fields": ["name", "email", "medical_history"]}
 
@@ -176,7 +176,7 @@ def test_context_aware_doctor_can_read_medical(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
     args = {"customer_id": "C-1001", "fields": ["medical_history"]}
 
@@ -217,7 +217,7 @@ def test_behavioral_drift_gradual_escalation_detected(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     agent_id = "drift-agent"
     now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
 
@@ -270,7 +270,7 @@ def test_baseline_within_normal_lower_risk(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
     args = {"fields": ["name", "email", "medical_history"]}  # data_volume=3
 
@@ -304,7 +304,7 @@ def test_baseline_within_normal_lower_risk(tmp_path) -> None:
             """
         ),
     )
-    shield_out = AgentShield(mode="shadow", policy_path=policy_outside)
+    shield_out = Agentiva(mode="shadow", policy_path=policy_outside)
     # Prepopulate to exceed baseline.
     for _ in range(4):
         asyncio.run(
@@ -372,12 +372,12 @@ def test_baseline_outside_normal_higher_risk(tmp_path) -> None:
     now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
     args = {"fields": ["name", "email", "medical_history"]}
 
-    within = AgentShield(mode="shadow", policy_path=policy_within)
+    within = Agentiva(mode="shadow", policy_path=policy_within)
     r_within = asyncio.run(
         within.intercept("read_customer_data", args, agent_id="support_agent", timestamp=now)
     )
 
-    outside = AgentShield(mode="shadow", policy_path=policy_outside)
+    outside = Agentiva(mode="shadow", policy_path=policy_outside)
     for _ in range(4):
         asyncio.run(
             outside.intercept(
@@ -413,7 +413,7 @@ def test_whitelist_trusted_domain_lower_risk(tmp_path) -> None:
     )
 
     now_agent = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
 
     trusted = asyncio.run(
         shield.intercept(
@@ -453,7 +453,7 @@ def test_whitelist_unknown_domain_higher_risk(tmp_path) -> None:
         ),
     )
     now_agent = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
 
     trusted = asyncio.run(
         shield.intercept(
@@ -494,7 +494,7 @@ def test_copilot_suggests_role_when_blocks_high(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     shield.audit_log = []
 
     # Make it "high block rate": 10 blocked out of 20 actions.

@@ -1,4 +1,4 @@
-from agentshield.interceptor.multi_agent_hook import MultiAgentInterceptor
+from agentiva.interceptor.multi_agent_hook import MultiAgentInterceptor
 
 
 def test_delegation_interception() -> None:

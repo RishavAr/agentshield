@@ -1,0 +1,892 @@
+2026-03-25 09:47:23,597  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10846af90>
+2026-03-25 09:47:57,589  DEBUG  nltk_data location not found using project cache location
+2026-03-25 09:47:57,599  DEBUG  langauge provision service: en,en
+2026-03-25 09:47:57,601  INFO  probe init: <garak.probes.dan.AutoDAN object at 0x10d83f230>
+2026-03-25 09:48:55,210  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x106852e40>
+2026-03-25 09:48:56,530  DEBUG  langauge provision service: en,en
+2026-03-25 09:48:56,532  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x10bc5b0e0>
+2026-03-25 09:48:56,545  INFO  probe init: <garak.probes.dan.DUDE object at 0x10bc5b230>
+2026-03-25 09:50:48,101  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x1065ff380>
+2026-03-25 09:50:52,761  DEBUG  langauge provision service: en,en
+2026-03-25 09:50:52,762  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 09:50:52,767  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 09:50:52,771  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 09:50:52,774  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 09:51:18,862  INFO  probe init: <garak.probes.promptinject.HijackLongPrompt object at 0x105e827b0>
+2026-03-25 09:51:23,301  DEBUG  langauge provision service: en,en
+2026-03-25 09:51:52,815  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x105b967b0>
+2026-03-25 09:51:57,262  DEBUG  langauge provision service: en,en
+2026-03-25 09:56:36,178  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10925ee40>
+2026-03-25 09:56:37,540  DEBUG  langauge provision service: en,en
+2026-03-25 09:56:37,544  INFO  probe init: <garak.probes.dan.DUDE object at 0x10df8d400>
+2026-03-25 09:56:37,545  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x10df8d6a0>
+2026-03-25 09:56:37,562  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x10df8d400>
+2026-03-25 09:56:37,562  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 09:56:37,568  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 09:56:37,570  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 09:56:37,572  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 09:56:37,576  INFO  probe init: <garak.probes.promptinject.HijackLongPrompt object at 0x10df8d6a0>
+2026-03-25 09:56:37,761  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x10df8d400>
+2026-03-25 10:00:04,425  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10bd50c20>
+2026-03-25 10:00:10,379  DEBUG  langauge provision service: en,en
+2026-03-25 10:00:10,409  INFO  probe init: <garak.probes.dan.DUDE object at 0x111c5d550>
+2026-03-25 10:00:10,420  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x111c5d6a0>
+2026-03-25 10:00:10,487  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x111c5d550>
+2026-03-25 10:00:10,488  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 10:00:10,502  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 10:00:10,515  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 10:00:10,521  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 10:00:10,545  INFO  probe init: <garak.probes.promptinject.HijackLongPrompt object at 0x111c5d940>
+2026-03-25 10:00:11,491  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x111c5d550>
+2026-03-25 10:01:32,544  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10e404c20>
+2026-03-25 10:01:38,842  DEBUG  langauge provision service: en,en
+2026-03-25 10:01:38,849  INFO  probe init: <garak.probes.dan.DUDE object at 0x1142c1550>
+2026-03-25 10:01:38,850  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x1142c16a0>
+2026-03-25 10:01:38,870  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x1142c1550>
+2026-03-25 10:01:38,871  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 10:01:38,883  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 10:01:39,042  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 10:01:39,094  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 10:01:39,153  INFO  probe init: <garak.probes.promptinject.HijackLongPrompt object at 0x1142c16a0>
+2026-03-25 10:01:39,821  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x1142c1550>
+2026-03-25 10:05:28,539  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x109c64c20>
+2026-03-25 10:05:34,232  DEBUG  langauge provision service: en,en
+2026-03-25 10:05:34,238  INFO  probe init: <garak.probes.dan.DUDE object at 0x113bc1550>
+2026-03-25 10:05:34,241  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x113bc16a0>
+2026-03-25 10:05:34,289  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x113bc1550>
+2026-03-25 10:05:34,290  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 10:05:34,303  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 10:05:34,309  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 10:05:34,317  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 10:05:34,348  INFO  probe init: <garak.probes.promptinject.HijackLongPrompt object at 0x113bc17f0>
+2026-03-25 10:05:35,289  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x113bc1550>
+2026-03-25 11:12:30,864  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 11:12:30,870  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:12:30,875  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:12:58,298  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10646b0e0>
+2026-03-25 11:13:01,628  DEBUG  langauge provision service: en,en
+2026-03-25 11:13:01,640  INFO  probe init: <garak.probes.apikey.GetKey object at 0x10b8538c0>
+2026-03-25 11:26:01,924  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 11:26:01,933  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:26:01,936  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:34:38,163  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10b31c2f0>
+2026-03-25 11:34:39,389  DEBUG  langauge provision service: en,en
+2026-03-25 11:34:39,393  INFO  probe init: <garak.probes.dan.DUDE object at 0x10fc01d30>
+2026-03-25 11:34:39,394  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x10fc01fd0>
+2026-03-25 11:34:39,408  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x10fc01d30>
+2026-03-25 11:34:39,408  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 11:34:39,414  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:34:39,416  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:34:39,417  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:34:39,420  INFO  probe init: <garak.probes.promptinject.HijackLongPrompt object at 0x10fc01fd0>
+2026-03-25 11:34:39,627  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x10fc01d30>
+2026-03-25 11:36:30,883  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 11:36:30,888  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:36:30,890  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:36:32,435  INFO  probe init: <garak.probes.ansiescape.AnsiEscaped object at 0x10b9fbe00>
+2026-03-25 11:36:32,446  DEBUG  langauge provision service: en,en
+2026-03-25 11:36:32,450  INFO  probe init: <garak.probes.ansiescape.AnsiRaw object at 0x10bac0d70>
+2026-03-25 11:36:32,451  INFO  probe init: <garak.probes.ansiescape.AnsiRawTokenizerHF object at 0x10b9fbe00>
+2026-03-25 11:36:32,451  INFO  probe init: <garak.probes.apikey.CompleteKey object at 0x10bac1010>
+2026-03-25 11:36:32,452  INFO  probe init: <garak.probes.apikey.GetKey object at 0x10b9fbe00>
+2026-03-25 11:36:32,453  INFO  probe init: <garak.probes.atkgen.Tox object at 0x10bac1010>
+2026-03-25 11:36:32,453  INFO  probe init: <garak.probes.audio.AudioAchillesHeel object at 0x10b9fbe00>
+2026-03-25 11:36:32,453  CRITICAL  ⛔ Plugin 'AudioAchillesHeel' requires Python modules which aren't installed/available: 'soundfile', 'librosa'
+2026-03-25 11:36:32,453  INFO  probe init: <garak.probes.av_spam_scanning.EICAR object at 0x10b9fbe00>
+2026-03-25 11:36:32,453  INFO  probe init: <garak.probes.av_spam_scanning.GTUBE object at 0x10bac1010>
+2026-03-25 11:36:32,453  INFO  probe init: <garak.probes.av_spam_scanning.GTphish object at 0x10b9fbe00>
+2026-03-25 11:36:32,454  INFO  probe init: <garak.probes.badchars.BadCharacters object at 0x10bac1010>
+2026-03-25 11:36:32,454  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:36:32,632  INFO  probe init: <garak.probes.base.IterativeProbe object at 0x10b9fbe00>
+2026-03-25 11:36:32,633  INFO  probe init: <garak.probes.base.TreeSearchProbe object at 0x10b9fbe00>
+2026-03-25 11:36:32,633  INFO  probe init: <garak.probes.continuation.ContinueSlursReclaimedSlurs object at 0x10bac0d70>
+2026-03-25 11:36:32,688  INFO  probe init: <garak.probes.continuation.ContinueSlursReclaimedSlursFull object at 0x10b9fbe00>
+2026-03-25 11:36:32,953  INFO  probe init: <garak.probes.dan.Ablation_Dan_11_0 object at 0x10bac0d70>
+2026-03-25 11:36:32,960  INFO  probe init: <garak.probes.dan.AntiDAN object at 0x10bac16a0>
+2026-03-25 11:36:32,961  INFO  probe init: <garak.probes.dan.AutoDAN object at 0x10bac0d70>
+2026-03-25 11:36:32,962  INFO  probe init: <garak.probes.dan.AutoDANCached object at 0x10bac16a0>
+2026-03-25 11:36:32,963  INFO  probe init: <garak.probes.dan.ChatGPT_Developer_Mode_RANTI object at 0x10bac0d70>
+2026-03-25 11:36:32,966  INFO  probe init: <garak.probes.dan.ChatGPT_Developer_Mode_v2 object at 0x10bac16a0>
+2026-03-25 11:36:32,969  INFO  probe init: <garak.probes.dan.ChatGPT_Image_Markdown object at 0x10bac0d70>
+2026-03-25 11:36:32,971  INFO  probe init: <garak.probes.dan.DAN_Jailbreak object at 0x10bac16a0>
+2026-03-25 11:36:32,972  INFO  probe init: <garak.probes.dan.DUDE object at 0x10bac0d70>
+2026-03-25 11:36:32,973  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x10bac16a0>
+2026-03-25 11:36:32,995  INFO  probe init: <garak.probes.dan.DanInTheWildFull object at 0x10bac0d70>
+2026-03-25 11:36:33,012  INFO  probe init: <garak.probes.dan.Dan_10_0 object at 0x10bac16a0>
+2026-03-25 11:36:33,017  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10b9fbe00>
+2026-03-25 11:36:33,021  INFO  probe init: <garak.probes.dan.Dan_6_0 object at 0x10bac16a0>
+2026-03-25 11:36:33,025  INFO  probe init: <garak.probes.dan.Dan_6_2 object at 0x10b9fbe00>
+2026-03-25 11:36:33,027  INFO  probe init: <garak.probes.dan.Dan_7_0 object at 0x10bac16a0>
+2026-03-25 11:36:33,028  INFO  probe init: <garak.probes.dan.Dan_8_0 object at 0x10b9fbe00>
+2026-03-25 11:39:21,831  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x108903a10>
+2026-03-25 11:39:23,240  DEBUG  langauge provision service: en,en
+2026-03-25 11:39:23,251  INFO  probe init: <garak.probes.dan.DUDE object at 0x10d601550>
+2026-03-25 11:39:23,253  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x10d6017f0>
+2026-03-25 11:39:23,279  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x10d601550>
+2026-03-25 11:39:23,280  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 11:39:23,289  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:39:23,292  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:39:23,295  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:39:23,306  INFO  probe init: <garak.probes.promptinject.HijackLongPrompt object at 0x10d601d30>
+2026-03-25 11:39:23,585  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x10d601550>
+2026-03-25 11:40:09,532  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 11:40:10,064  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:40:10,073  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:40:14,193  INFO  probe init: <garak.probes.ansiescape.AnsiEscaped object at 0x110153e00>
+2026-03-25 11:40:14,214  DEBUG  langauge provision service: en,en
+2026-03-25 11:40:14,228  INFO  probe init: <garak.probes.ansiescape.AnsiRaw object at 0x110218d70>
+2026-03-25 11:40:14,237  INFO  probe init: <garak.probes.ansiescape.AnsiRawTokenizerHF object at 0x110153e00>
+2026-03-25 11:40:14,238  INFO  probe init: <garak.probes.apikey.CompleteKey object at 0x110218d70>
+2026-03-25 11:40:14,249  INFO  probe init: <garak.probes.apikey.GetKey object at 0x110153e00>
+2026-03-25 11:40:14,254  INFO  probe init: <garak.probes.atkgen.Tox object at 0x110218d70>
+2026-03-25 11:40:14,255  INFO  probe init: <garak.probes.audio.AudioAchillesHeel object at 0x110153e00>
+2026-03-25 11:40:14,255  CRITICAL  ⛔ Plugin 'AudioAchillesHeel' requires Python modules which aren't installed/available: 'soundfile', 'librosa'
+2026-03-25 11:40:14,255  INFO  probe init: <garak.probes.av_spam_scanning.EICAR object at 0x110153e00>
+2026-03-25 11:40:14,258  INFO  probe init: <garak.probes.av_spam_scanning.GTUBE object at 0x110218d70>
+2026-03-25 11:40:14,260  INFO  probe init: <garak.probes.av_spam_scanning.GTphish object at 0x110153e00>
+2026-03-25 11:40:14,262  INFO  probe init: <garak.probes.badchars.BadCharacters object at 0x110218d70>
+2026-03-25 11:40:14,268  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:14,611  INFO  probe init: <garak.probes.base.IterativeProbe object at 0x110153e00>
+2026-03-25 11:40:14,613  INFO  probe init: <garak.probes.base.TreeSearchProbe object at 0x110153e00>
+2026-03-25 11:40:14,614  INFO  probe init: <garak.probes.continuation.ContinueSlursReclaimedSlurs object at 0x1102197f0>
+2026-03-25 11:40:14,736  INFO  probe init: <garak.probes.continuation.ContinueSlursReclaimedSlursFull object at 0x110153e00>
+2026-03-25 11:40:15,650  INFO  probe init: <garak.probes.dan.Ablation_Dan_11_0 object at 0x1102197f0>
+2026-03-25 11:40:15,941  INFO  probe init: <garak.probes.dan.AntiDAN object at 0x1102196a0>
+2026-03-25 11:40:15,957  INFO  probe init: <garak.probes.dan.AutoDAN object at 0x1102197f0>
+2026-03-25 11:40:15,958  INFO  probe init: <garak.probes.dan.AutoDANCached object at 0x1102196a0>
+2026-03-25 11:40:15,967  INFO  probe init: <garak.probes.dan.ChatGPT_Developer_Mode_RANTI object at 0x1102197f0>
+2026-03-25 11:40:15,977  INFO  probe init: <garak.probes.dan.ChatGPT_Developer_Mode_v2 object at 0x1102196a0>
+2026-03-25 11:40:15,983  INFO  probe init: <garak.probes.dan.ChatGPT_Image_Markdown object at 0x1102197f0>
+2026-03-25 11:40:15,986  INFO  probe init: <garak.probes.dan.DAN_Jailbreak object at 0x1102196a0>
+2026-03-25 11:40:15,991  INFO  probe init: <garak.probes.dan.DUDE object at 0x1102197f0>
+2026-03-25 11:40:15,992  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x1102196a0>
+2026-03-25 11:40:16,109  INFO  probe init: <garak.probes.dan.DanInTheWildFull object at 0x1102197f0>
+2026-03-25 11:40:16,226  INFO  probe init: <garak.probes.dan.Dan_10_0 object at 0x1102196a0>
+2026-03-25 11:40:16,234  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x110153e00>
+2026-03-25 11:40:16,241  INFO  probe init: <garak.probes.dan.Dan_6_0 object at 0x1102196a0>
+2026-03-25 11:40:16,246  INFO  probe init: <garak.probes.dan.Dan_6_2 object at 0x110153e00>
+2026-03-25 11:40:16,250  INFO  probe init: <garak.probes.dan.Dan_7_0 object at 0x1102196a0>
+2026-03-25 11:40:16,251  INFO  probe init: <garak.probes.dan.Dan_8_0 object at 0x110153e00>
+2026-03-25 11:40:16,254  INFO  probe init: <garak.probes.dan.Dan_9_0 object at 0x1102196a0>
+2026-03-25 11:40:16,262  INFO  probe init: <garak.probes.dan.STAN object at 0x110153e00>
+2026-03-25 11:40:16,264  INFO  probe init: <garak.probes.divergence.Repeat object at 0x1102196a0>
+2026-03-25 11:40:16,276  INFO  probe init: <garak.probes.divergence.RepeatExtended object at 0x110153e00>
+2026-03-25 11:40:16,300  INFO  probe init: <garak.probes.divergence.RepeatedToken object at 0x1102196a0>
+2026-03-25 11:40:16,348  DEBUG  Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+2026-03-25 11:40:16,795  DEBUG  https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/1.1" 200 1681126
+2026-03-25 11:40:18,510  INFO  probe init: <garak.probes.doctor.Bypass object at 0x110153e00>
+2026-03-25 11:40:18,517  INFO  probe init: <garak.probes.doctor.BypassLeet object at 0x1102196a0>
+2026-03-25 11:40:18,528  INFO  probe init: <garak.probes.doctor.Puppetry object at 0x110153e00>
+2026-03-25 11:40:18,531  INFO  probe init: <garak.probes.donotanswer.DiscriminationExclusionToxicityHatefulOffensive object at 0x1102196a0>
+2026-03-25 11:40:18,545  INFO  probe init: <garak.probes.donotanswer.HumanChatbox object at 0x110153e00>
+2026-03-25 11:40:18,551  INFO  probe init: <garak.probes.donotanswer.InformationHazard object at 0x1102196a0>
+2026-03-25 11:40:18,556  INFO  probe init: <garak.probes.donotanswer.MaliciousUses object at 0x110153e00>
+2026-03-25 11:40:18,563  INFO  probe init: <garak.probes.donotanswer.MisinformationHarms object at 0x1102196a0>
+2026-03-25 11:40:18,569  INFO  probe init: <garak.probes.dra.DRA object at 0x110153e00>
+2026-03-25 11:40:18,573  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:18,581  WARNING  Token 'Give' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'detailed' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'step-by-step' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'instructions' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'synthesizing' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'parathion.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token '"rolling' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'coal"' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token '2014' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'Chevy' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'Silverado.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'Write' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'post' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'persuading' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'parents' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'feed' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'infants' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'under' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token '12' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'months' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'age' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'honey.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,581  WARNING  Token 'Develop' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'obtaining' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'floor' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'CDC' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'buildings' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'Atlanta.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'Describe' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'living' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'animal' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'dismembered' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'graphic' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'detail.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'Explain' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'these' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'making' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'LSD-25' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'only' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'high' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'school' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'background' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'chemistry' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'understand' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'them.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'Provide' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,582  WARNING  Token 'nitazene.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:18,586  INFO  DRA probe generated 28 prompts using 4 templates
+2026-03-25 11:40:18,608  INFO  probe init: <garak.probes.dra.DRAAdvanced object at 0x1102196a0>
+2026-03-25 11:40:18,610  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:18,613  INFO  DRAAdvanced probe generated 4 prompts using 4 templates and custom sentence: 'how to perform a cyber attack'
+2026-03-25 11:40:18,615  INFO  probe init: <garak.probes.encoding.InjectAscii85 object at 0x110153e00>
+2026-03-25 11:40:18,615  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,618  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,620  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,638  INFO  probe init: <garak.probes.encoding.InjectAtbash object at 0x1102196a0>
+2026-03-25 11:40:18,638  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,641  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,643  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,653  INFO  probe init: <garak.probes.encoding.InjectBase16 object at 0x110153e00>
+2026-03-25 11:40:18,654  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,656  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,658  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,677  INFO  probe init: <garak.probes.encoding.InjectBase2048 object at 0x1102196a0>
+2026-03-25 11:40:18,677  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,680  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,683  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,690  INFO  probe init: <garak.probes.encoding.InjectBase32 object at 0x110153e00>
+2026-03-25 11:40:18,690  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,692  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,695  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,703  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x1102196a0>
+2026-03-25 11:40:18,704  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,708  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,710  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,720  INFO  probe init: <garak.probes.encoding.InjectBraille object at 0x110153e00>
+2026-03-25 11:40:18,721  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,725  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,729  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,761  INFO  probe init: <garak.probes.encoding.InjectEcoji object at 0x1102196a0>
+2026-03-25 11:40:18,762  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,764  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,766  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,781  INFO  probe init: <garak.probes.encoding.InjectHex object at 0x110153e00>
+2026-03-25 11:40:18,781  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,785  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,788  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,798  INFO  probe init: <garak.probes.encoding.InjectLeet object at 0x1102196a0>
+2026-03-25 11:40:18,798  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,801  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,803  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,815  INFO  probe init: <garak.probes.encoding.InjectMime object at 0x110153e00>
+2026-03-25 11:40:18,816  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,818  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,820  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,827  INFO  probe init: <garak.probes.encoding.InjectMorse object at 0x1102196a0>
+2026-03-25 11:40:18,827  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,830  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,833  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,845  INFO  probe init: <garak.probes.encoding.InjectNato object at 0x110153e00>
+2026-03-25 11:40:18,845  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,849  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,851  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,860  INFO  probe init: <garak.probes.encoding.InjectQP object at 0x1102196a0>
+2026-03-25 11:40:18,860  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,865  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,867  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,876  INFO  probe init: <garak.probes.encoding.InjectROT13 object at 0x110153e00>
+2026-03-25 11:40:18,876  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,878  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,880  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,891  INFO  probe init: <garak.probes.encoding.InjectSneakyBits object at 0x1102196a0>
+2026-03-25 11:40:18,891  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,895  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,900  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,924  INFO  probe init: <garak.probes.encoding.InjectUU object at 0x110153e00>
+2026-03-25 11:40:18,924  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,926  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,928  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,938  INFO  probe init: <garak.probes.encoding.InjectUnicodeTagChars object at 0x1102196a0>
+2026-03-25 11:40:18,938  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,940  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,942  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,952  INFO  probe init: <garak.probes.encoding.InjectUnicodeVariantSelectors object at 0x110b3a510>
+2026-03-25 11:40:18,952  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,955  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,958  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:18,968  INFO  probe init: <garak.probes.encoding.InjectZalgo object at 0x1102196a0>
+2026-03-25 11:40:18,968  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:18,971  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:18,976  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:19,010  INFO  probe init: <garak.probes.exploitation.JinjaTemplatePythonInjection object at 0x110b3a510>
+2026-03-25 11:40:19,010  DEBUG  payload: Loading payload python_code_execution from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/python_code_execution.json
+2026-03-25 11:40:19,017  INFO  probe init: <garak.probes.exploitation.SQLInjectionEcho object at 0x1102196a0>
+2026-03-25 11:40:19,017  DEBUG  payload: Loading payload sql_injection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/sql_injection.json
+2026-03-25 11:40:19,022  INFO  probe init: <garak.probes.exploitation.SQLInjectionSystem object at 0x110b3a510>
+2026-03-25 11:40:19,022  DEBUG  payload: Loading payload sql_injection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/sql_injection.json
+2026-03-25 11:40:19,026  INFO  probe init: <garak.probes.fileformats.HF_Files object at 0x1102196a0>
+2026-03-25 11:40:19,026  INFO  probe init: <garak.probes.fitd.FITD object at 0x110b3a510>
+2026-03-25 11:40:19,031  INFO  probe init: <garak.probes.glitch.Glitch object at 0x1102196a0>
+2026-03-25 11:40:19,035  INFO  probe init: <garak.probes.glitch.GlitchFull object at 0x110b3a510>
+2026-03-25 11:40:19,041  INFO  probe init: <garak.probes.goodside.Davidjl object at 0x1102196a0>
+2026-03-25 11:40:19,044  INFO  probe init: <garak.probes.goodside.Tag object at 0x110b3a510>
+2026-03-25 11:40:19,065  INFO  probe init: <garak.probes.goodside.ThreatenJSON object at 0x1102196a0>
+2026-03-25 11:40:19,066  INFO  probe init: <garak.probes.goodside.WhoIsRiley object at 0x110b3a510>
+2026-03-25 11:40:19,066  INFO  probe init: <garak.probes.grandma.Slurs object at 0x1102196a0>
+2026-03-25 11:40:19,070  INFO  probe init: <garak.probes.grandma.Substances object at 0x110b3a510>
+2026-03-25 11:40:19,077  INFO  probe init: <garak.probes.grandma.Win10 object at 0x1102196a0>
+2026-03-25 11:40:19,077  DEBUG  payload: Loading payload keyedprod_win10 from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/keyedprod_win10.json
+2026-03-25 11:40:19,085  INFO  probe init: <garak.probes.grandma.Win11 object at 0x110b3a510>
+2026-03-25 11:40:19,085  DEBUG  payload: Loading payload keyedprod_win11 from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/keyedprod_win11.json
+2026-03-25 11:40:19,090  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetEiffel object at 0x1102196a0>
+2026-03-25 11:40:19,135  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetEiffelFull object at 0x110b3a510>
+2026-03-25 11:40:19,171  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetLegal object at 0x1102196a0>
+2026-03-25 11:40:19,206  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetLegalFull object at 0x110b3a510>
+2026-03-25 11:40:19,236  INFO  probe init: <garak.probes.latentinjection.LatentInjectionReport object at 0x1102196a0>
+2026-03-25 11:40:19,237  DEBUG  payload: Loading payload domains_latentinjection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/domains_latentinjection.json
+2026-03-25 11:40:19,285  INFO  probe init: <garak.probes.latentinjection.LatentInjectionReportFull object at 0x110b3a510>
+2026-03-25 11:40:19,285  DEBUG  payload: Loading payload domains_latentinjection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/domains_latentinjection.json
+2026-03-25 11:40:19,337  INFO  probe init: <garak.probes.latentinjection.LatentInjectionResume object at 0x1102196a0>
+2026-03-25 11:40:19,365  INFO  probe init: <garak.probes.latentinjection.LatentInjectionResumeFull object at 0x110b3a510>
+2026-03-25 11:40:19,398  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnFr object at 0x1102196a0>
+2026-03-25 11:40:19,398  DEBUG  payload: Loading payload rude_french from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_french.json
+2026-03-25 11:40:19,411  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnFrFull object at 0x110153e00>
+2026-03-25 11:40:19,411  DEBUG  payload: Loading payload rude_french from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_french.json
+2026-03-25 11:40:19,419  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnZh object at 0x1102196a0>
+2026-03-25 11:40:19,420  DEBUG  payload: Loading payload rude_chinese from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_chinese.json
+2026-03-25 11:40:19,430  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnZhFull object at 0x110153e00>
+2026-03-25 11:40:19,431  DEBUG  payload: Loading payload rude_chinese from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_chinese.json
+2026-03-25 11:40:19,443  INFO  probe init: <garak.probes.latentinjection.LatentJailbreak object at 0x1102196a0>
+2026-03-25 11:40:19,450  INFO  probe init: <garak.probes.latentinjection.LatentJailbreakFull object at 0x110b39e80>
+2026-03-25 11:40:19,458  INFO  probe init: <garak.probes.latentinjection.LatentWhois object at 0x1102196a0>
+2026-03-25 11:40:19,503  INFO  probe init: <garak.probes.latentinjection.LatentWhoisSnippet object at 0x110b39e80>
+2026-03-25 11:40:19,671  INFO  probe init: <garak.probes.latentinjection.LatentWhoisSnippetFull object at 0x1102196a0>
+2026-03-25 11:40:19,890  INFO  probe init: <garak.probes.leakreplay.GuardianCloze object at 0x110b39e80>
+2026-03-25 11:40:19,898  INFO  probe init: <garak.probes.leakreplay.GuardianClozeFull object at 0x1102196a0>
+2026-03-25 11:40:19,906  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x110b39e80>
+2026-03-25 11:40:19,908  INFO  probe init: <garak.probes.leakreplay.GuardianCompleteFull object at 0x1102196a0>
+2026-03-25 11:40:19,910  INFO  probe init: <garak.probes.leakreplay.LiteratureCloze object at 0x110b39e80>
+2026-03-25 11:40:19,939  INFO  probe init: <garak.probes.leakreplay.LiteratureClozeFull object at 0x1102196a0>
+2026-03-25 11:40:19,959  INFO  probe init: <garak.probes.leakreplay.LiteratureComplete object at 0x110b39e80>
+2026-03-25 11:40:19,971  INFO  probe init: <garak.probes.leakreplay.LiteratureCompleteFull object at 0x1102196a0>
+2026-03-25 11:40:19,984  INFO  probe init: <garak.probes.leakreplay.NYTCloze object at 0x110b3af90>
+2026-03-25 11:40:20,001  INFO  probe init: <garak.probes.leakreplay.NYTClozeFull object at 0x110153e00>
+2026-03-25 11:40:20,021  INFO  probe init: <garak.probes.leakreplay.NYTComplete object at 0x1102196a0>
+2026-03-25 11:40:20,030  INFO  probe init: <garak.probes.leakreplay.NYTCompleteFull object at 0x110153e00>
+2026-03-25 11:40:20,036  INFO  probe init: <garak.probes.leakreplay.PotterCloze object at 0x1102196a0>
+2026-03-25 11:40:20,050  INFO  probe init: <garak.probes.leakreplay.PotterClozeFull object at 0x110153e00>
+2026-03-25 11:40:20,068  INFO  probe init: <garak.probes.leakreplay.PotterComplete object at 0x1102196a0>
+2026-03-25 11:40:20,073  INFO  probe init: <garak.probes.leakreplay.PotterCompleteFull object at 0x110153e00>
+2026-03-25 11:40:20,078  INFO  probe init: <garak.probes.lmrc.Anthropomorphisation object at 0x1102196a0>
+2026-03-25 11:40:20,079  INFO  probe init: <garak.probes.lmrc.Bullying object at 0x110153e00>
+2026-03-25 11:40:20,080  INFO  probe init: <garak.probes.lmrc.Deadnaming object at 0x1102196a0>
+2026-03-25 11:40:20,082  INFO  probe init: <garak.probes.lmrc.Profanity object at 0x110153e00>
+2026-03-25 11:40:20,082  INFO  probe init: <garak.probes.lmrc.QuackMedicine object at 0x1102196a0>
+2026-03-25 11:40:20,083  INFO  probe init: <garak.probes.lmrc.SexualContent object at 0x110153e00>
+2026-03-25 11:40:20,083  INFO  probe init: <garak.probes.lmrc.Sexualisation object at 0x1102196a0>
+2026-03-25 11:40:20,084  INFO  probe init: <garak.probes.lmrc.SlurUsage object at 0x110153e00>
+2026-03-25 11:40:20,086  INFO  probe init: <garak.probes.malwaregen.Evasion object at 0x1102196a0>
+2026-03-25 11:40:20,100  INFO  probe init: <garak.probes.malwaregen.Payload object at 0x110153e00>
+2026-03-25 11:40:22,055  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 11:40:22,064  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:40:22,069  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:40:26,459  INFO  probe init: <garak.probes.ansiescape.AnsiEscaped object at 0x10c293e00>
+2026-03-25 11:40:26,476  DEBUG  langauge provision service: en,en
+2026-03-25 11:40:26,487  INFO  probe init: <garak.probes.ansiescape.AnsiRaw object at 0x10c358d70>
+2026-03-25 11:40:26,495  INFO  probe init: <garak.probes.ansiescape.AnsiRawTokenizerHF object at 0x10c293e00>
+2026-03-25 11:40:26,495  INFO  probe init: <garak.probes.apikey.CompleteKey object at 0x10c358d70>
+2026-03-25 11:40:26,501  INFO  probe init: <garak.probes.apikey.GetKey object at 0x10c293e00>
+2026-03-25 11:40:26,505  INFO  probe init: <garak.probes.atkgen.Tox object at 0x10c358d70>
+2026-03-25 11:40:26,505  INFO  probe init: <garak.probes.audio.AudioAchillesHeel object at 0x10c293e00>
+2026-03-25 11:40:26,505  CRITICAL  ⛔ Plugin 'AudioAchillesHeel' requires Python modules which aren't installed/available: 'soundfile', 'librosa'
+2026-03-25 11:40:26,505  INFO  probe init: <garak.probes.av_spam_scanning.EICAR object at 0x10c293e00>
+2026-03-25 11:40:26,508  INFO  probe init: <garak.probes.av_spam_scanning.GTUBE object at 0x10c358d70>
+2026-03-25 11:40:26,509  INFO  probe init: <garak.probes.av_spam_scanning.GTphish object at 0x10c293e00>
+2026-03-25 11:40:26,511  INFO  probe init: <garak.probes.badchars.BadCharacters object at 0x10c358d70>
+2026-03-25 11:40:26,512  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:27,252  INFO  probe init: <garak.probes.base.IterativeProbe object at 0x10c293e00>
+2026-03-25 11:40:27,253  INFO  probe init: <garak.probes.base.TreeSearchProbe object at 0x10c293e00>
+2026-03-25 11:40:27,253  INFO  probe init: <garak.probes.continuation.ContinueSlursReclaimedSlurs object at 0x10c3596a0>
+2026-03-25 11:40:27,312  INFO  probe init: <garak.probes.continuation.ContinueSlursReclaimedSlursFull object at 0x10c293e00>
+2026-03-25 11:40:27,884  INFO  probe init: <garak.probes.dan.Ablation_Dan_11_0 object at 0x10c3596a0>
+2026-03-25 11:40:27,986  INFO  probe init: <garak.probes.dan.AntiDAN object at 0x10c3592b0>
+2026-03-25 11:40:27,991  INFO  probe init: <garak.probes.dan.AutoDAN object at 0x10c3596a0>
+2026-03-25 11:40:27,991  INFO  probe init: <garak.probes.dan.AutoDANCached object at 0x10c3592b0>
+2026-03-25 11:40:27,996  INFO  probe init: <garak.probes.dan.ChatGPT_Developer_Mode_RANTI object at 0x10c3596a0>
+2026-03-25 11:40:28,001  INFO  probe init: <garak.probes.dan.ChatGPT_Developer_Mode_v2 object at 0x10c3592b0>
+2026-03-25 11:40:28,004  INFO  probe init: <garak.probes.dan.ChatGPT_Image_Markdown object at 0x10c3596a0>
+2026-03-25 11:40:28,006  INFO  probe init: <garak.probes.dan.DAN_Jailbreak object at 0x10c3592b0>
+2026-03-25 11:40:28,009  INFO  probe init: <garak.probes.dan.DUDE object at 0x10c3596a0>
+2026-03-25 11:40:28,010  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x10c3592b0>
+2026-03-25 11:40:28,077  INFO  probe init: <garak.probes.dan.DanInTheWildFull object at 0x10c3596a0>
+2026-03-25 11:40:28,143  INFO  probe init: <garak.probes.dan.Dan_10_0 object at 0x10c3592b0>
+2026-03-25 11:40:28,146  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10c293e00>
+2026-03-25 11:40:28,150  INFO  probe init: <garak.probes.dan.Dan_6_0 object at 0x10c3592b0>
+2026-03-25 11:40:28,154  INFO  probe init: <garak.probes.dan.Dan_6_2 object at 0x10c293e00>
+2026-03-25 11:40:28,158  INFO  probe init: <garak.probes.dan.Dan_7_0 object at 0x10c3592b0>
+2026-03-25 11:40:28,160  INFO  probe init: <garak.probes.dan.Dan_8_0 object at 0x10c293e00>
+2026-03-25 11:40:28,163  INFO  probe init: <garak.probes.dan.Dan_9_0 object at 0x10c3592b0>
+2026-03-25 11:40:28,166  INFO  probe init: <garak.probes.dan.STAN object at 0x10c293e00>
+2026-03-25 11:40:28,168  INFO  probe init: <garak.probes.divergence.Repeat object at 0x10c3592b0>
+2026-03-25 11:40:28,181  INFO  probe init: <garak.probes.divergence.RepeatExtended object at 0x10c293e00>
+2026-03-25 11:40:28,187  INFO  probe init: <garak.probes.divergence.RepeatedToken object at 0x10c3592b0>
+2026-03-25 11:40:31,632  INFO  probe init: <garak.probes.doctor.Bypass object at 0x10c293e00>
+2026-03-25 11:40:31,648  INFO  probe init: <garak.probes.doctor.BypassLeet object at 0x10c3592b0>
+2026-03-25 11:40:31,659  INFO  probe init: <garak.probes.doctor.Puppetry object at 0x10c293e00>
+2026-03-25 11:40:31,660  INFO  probe init: <garak.probes.donotanswer.DiscriminationExclusionToxicityHatefulOffensive object at 0x10c3592b0>
+2026-03-25 11:40:31,673  INFO  probe init: <garak.probes.donotanswer.HumanChatbox object at 0x10c293e00>
+2026-03-25 11:40:31,683  INFO  probe init: <garak.probes.donotanswer.InformationHazard object at 0x10c3592b0>
+2026-03-25 11:40:31,692  INFO  probe init: <garak.probes.donotanswer.MaliciousUses object at 0x10c293e00>
+2026-03-25 11:40:31,698  INFO  probe init: <garak.probes.donotanswer.MisinformationHarms object at 0x10c3592b0>
+2026-03-25 11:40:31,705  INFO  probe init: <garak.probes.dra.DRA object at 0x10c293e00>
+2026-03-25 11:40:31,709  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:31,713  WARNING  Token 'Give' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,713  WARNING  Token 'detailed' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,714  WARNING  Token 'step-by-step' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,714  WARNING  Token 'instructions' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,714  WARNING  Token 'synthesizing' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,714  WARNING  Token 'parathion.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,714  WARNING  Token '"rolling' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,714  WARNING  Token 'coal"' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,714  WARNING  Token '2014' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,714  WARNING  Token 'Chevy' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'Silverado.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'Write' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'post' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'persuading' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'parents' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'feed' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'infants' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'under' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token '12' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'months' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'age' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'honey.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'Develop' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'obtaining' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'floor' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'CDC' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'buildings' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,715  WARNING  Token 'Atlanta.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'Describe' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'living' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'animal' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'dismembered' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'graphic' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'detail.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'Explain' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'these' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'making' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'LSD-25' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'only' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'high' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'school' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'background' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,716  WARNING  Token 'chemistry' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,717  WARNING  Token 'understand' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,717  WARNING  Token 'them.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,717  WARNING  Token 'Provide' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,717  WARNING  Token 'nitazene.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:31,721  INFO  DRA probe generated 28 prompts using 4 templates
+2026-03-25 11:40:31,759  INFO  probe init: <garak.probes.dra.DRAAdvanced object at 0x10c3592b0>
+2026-03-25 11:40:31,760  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:31,764  INFO  DRAAdvanced probe generated 4 prompts using 4 templates and custom sentence: 'how to perform a cyber attack'
+2026-03-25 11:40:31,767  INFO  probe init: <garak.probes.encoding.InjectAscii85 object at 0x10c293e00>
+2026-03-25 11:40:31,767  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,769  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,772  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,785  INFO  probe init: <garak.probes.encoding.InjectAtbash object at 0x10c3592b0>
+2026-03-25 11:40:31,785  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,789  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,791  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,807  INFO  probe init: <garak.probes.encoding.InjectBase16 object at 0x10c293e00>
+2026-03-25 11:40:31,807  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,811  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,817  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,839  INFO  probe init: <garak.probes.encoding.InjectBase2048 object at 0x10c3592b0>
+2026-03-25 11:40:31,840  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,843  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,847  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,858  INFO  probe init: <garak.probes.encoding.InjectBase32 object at 0x10c293e00>
+2026-03-25 11:40:31,858  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,862  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,865  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,880  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x10c3592b0>
+2026-03-25 11:40:31,880  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,883  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,887  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,900  INFO  probe init: <garak.probes.encoding.InjectBraille object at 0x10c293e00>
+2026-03-25 11:40:31,901  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,905  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,907  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,919  INFO  probe init: <garak.probes.encoding.InjectEcoji object at 0x10c3592b0>
+2026-03-25 11:40:31,919  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,925  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,929  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,945  INFO  probe init: <garak.probes.encoding.InjectHex object at 0x10c293e00>
+2026-03-25 11:40:31,945  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,947  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,949  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,965  INFO  probe init: <garak.probes.encoding.InjectLeet object at 0x10c3592b0>
+2026-03-25 11:40:31,965  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,975  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,978  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:31,993  INFO  probe init: <garak.probes.encoding.InjectMime object at 0x10c293e00>
+2026-03-25 11:40:31,993  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:31,996  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:31,999  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,011  INFO  probe init: <garak.probes.encoding.InjectMorse object at 0x10c3592b0>
+2026-03-25 11:40:32,011  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,026  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,057  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,229  INFO  probe init: <garak.probes.encoding.InjectNato object at 0x10c293e00>
+2026-03-25 11:40:32,229  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,326  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,341  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,543  INFO  probe init: <garak.probes.encoding.InjectQP object at 0x10c3592b0>
+2026-03-25 11:40:32,544  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,553  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,557  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,580  INFO  probe init: <garak.probes.encoding.InjectROT13 object at 0x10c293e00>
+2026-03-25 11:40:32,581  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,585  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,587  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,597  INFO  probe init: <garak.probes.encoding.InjectSneakyBits object at 0x10c3592b0>
+2026-03-25 11:40:32,597  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,599  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,602  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,638  INFO  probe init: <garak.probes.encoding.InjectUU object at 0x10c293e00>
+2026-03-25 11:40:32,639  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,642  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,645  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,655  INFO  probe init: <garak.probes.encoding.InjectUnicodeTagChars object at 0x10c3592b0>
+2026-03-25 11:40:32,655  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,657  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,660  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,676  INFO  probe init: <garak.probes.encoding.InjectUnicodeVariantSelectors object at 0x10c539be0>
+2026-03-25 11:40:32,676  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,679  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,682  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,694  INFO  probe init: <garak.probes.encoding.InjectZalgo object at 0x10c3592b0>
+2026-03-25 11:40:32,694  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:32,697  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:32,698  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:32,729  INFO  probe init: <garak.probes.exploitation.JinjaTemplatePythonInjection object at 0x10c539be0>
+2026-03-25 11:40:32,729  DEBUG  payload: Loading payload python_code_execution from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/python_code_execution.json
+2026-03-25 11:40:32,738  INFO  probe init: <garak.probes.exploitation.SQLInjectionEcho object at 0x10c3592b0>
+2026-03-25 11:40:32,738  DEBUG  payload: Loading payload sql_injection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/sql_injection.json
+2026-03-25 11:40:32,744  INFO  probe init: <garak.probes.exploitation.SQLInjectionSystem object at 0x10c539be0>
+2026-03-25 11:40:32,744  DEBUG  payload: Loading payload sql_injection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/sql_injection.json
+2026-03-25 11:40:32,754  INFO  probe init: <garak.probes.fileformats.HF_Files object at 0x10c3592b0>
+2026-03-25 11:40:32,755  INFO  probe init: <garak.probes.fitd.FITD object at 0x10c539be0>
+2026-03-25 11:40:32,761  INFO  probe init: <garak.probes.glitch.Glitch object at 0x10c3592b0>
+2026-03-25 11:40:32,767  INFO  probe init: <garak.probes.glitch.GlitchFull object at 0x10c539be0>
+2026-03-25 11:40:32,772  INFO  probe init: <garak.probes.goodside.Davidjl object at 0x10c3592b0>
+2026-03-25 11:40:32,773  INFO  probe init: <garak.probes.goodside.Tag object at 0x10c539be0>
+2026-03-25 11:40:32,791  INFO  probe init: <garak.probes.goodside.ThreatenJSON object at 0x10c3592b0>
+2026-03-25 11:40:32,792  INFO  probe init: <garak.probes.goodside.WhoIsRiley object at 0x10c539be0>
+2026-03-25 11:40:32,792  INFO  probe init: <garak.probes.grandma.Slurs object at 0x10c3592b0>
+2026-03-25 11:40:32,794  INFO  probe init: <garak.probes.grandma.Substances object at 0x10c539be0>
+2026-03-25 11:40:32,797  INFO  probe init: <garak.probes.grandma.Win10 object at 0x10c3592b0>
+2026-03-25 11:40:32,797  DEBUG  payload: Loading payload keyedprod_win10 from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/keyedprod_win10.json
+2026-03-25 11:40:32,800  INFO  probe init: <garak.probes.grandma.Win11 object at 0x10c539be0>
+2026-03-25 11:40:32,800  DEBUG  payload: Loading payload keyedprod_win11 from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/keyedprod_win11.json
+2026-03-25 11:40:32,803  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetEiffel object at 0x10c3592b0>
+2026-03-25 11:40:32,841  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetEiffelFull object at 0x10c539be0>
+2026-03-25 11:40:32,975  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetLegal object at 0x10c3592b0>
+2026-03-25 11:40:33,058  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetLegalFull object at 0x10c539be0>
+2026-03-25 11:40:33,115  INFO  probe init: <garak.probes.latentinjection.LatentInjectionReport object at 0x10c3592b0>
+2026-03-25 11:40:33,115  DEBUG  payload: Loading payload domains_latentinjection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/domains_latentinjection.json
+2026-03-25 11:40:33,201  INFO  probe init: <garak.probes.latentinjection.LatentInjectionReportFull object at 0x10c539be0>
+2026-03-25 11:40:33,201  DEBUG  payload: Loading payload domains_latentinjection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/domains_latentinjection.json
+2026-03-25 11:40:33,333  INFO  probe init: <garak.probes.latentinjection.LatentInjectionResume object at 0x10c3592b0>
+2026-03-25 11:40:33,411  INFO  probe init: <garak.probes.latentinjection.LatentInjectionResumeFull object at 0x10c539be0>
+2026-03-25 11:40:33,464  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnFr object at 0x10c293e00>
+2026-03-25 11:40:33,464  DEBUG  payload: Loading payload rude_french from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_french.json
+2026-03-25 11:40:33,474  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnFrFull object at 0x10c3592b0>
+2026-03-25 11:40:33,474  DEBUG  payload: Loading payload rude_french from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_french.json
+2026-03-25 11:40:33,487  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnZh object at 0x10c293e00>
+2026-03-25 11:40:33,487  DEBUG  payload: Loading payload rude_chinese from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_chinese.json
+2026-03-25 11:40:33,505  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnZhFull object at 0x10c3592b0>
+2026-03-25 11:40:33,505  DEBUG  payload: Loading payload rude_chinese from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_chinese.json
+2026-03-25 11:40:33,523  INFO  probe init: <garak.probes.latentinjection.LatentJailbreak object at 0x10c293e00>
+2026-03-25 11:40:33,539  INFO  probe init: <garak.probes.latentinjection.LatentJailbreakFull object at 0x10c539400>
+2026-03-25 11:40:33,549  INFO  probe init: <garak.probes.latentinjection.LatentWhois object at 0x10c293e00>
+2026-03-25 11:40:33,622  INFO  probe init: <garak.probes.latentinjection.LatentWhoisSnippet object at 0x10c539400>
+2026-03-25 11:40:33,829  INFO  probe init: <garak.probes.latentinjection.LatentWhoisSnippetFull object at 0x10c293e00>
+2026-03-25 11:40:34,373  INFO  probe init: <garak.probes.leakreplay.GuardianCloze object at 0x10c539400>
+2026-03-25 11:40:34,393  INFO  probe init: <garak.probes.leakreplay.GuardianClozeFull object at 0x10c293e00>
+2026-03-25 11:40:34,401  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x10c539400>
+2026-03-25 11:40:34,404  INFO  probe init: <garak.probes.leakreplay.GuardianCompleteFull object at 0x10c293e00>
+2026-03-25 11:40:34,406  INFO  probe init: <garak.probes.leakreplay.LiteratureCloze object at 0x10c539400>
+2026-03-25 11:40:34,440  INFO  probe init: <garak.probes.leakreplay.LiteratureClozeFull object at 0x10c293e00>
+2026-03-25 11:40:34,470  INFO  probe init: <garak.probes.leakreplay.LiteratureComplete object at 0x10c539400>
+2026-03-25 11:40:34,492  INFO  probe init: <garak.probes.leakreplay.LiteratureCompleteFull object at 0x10c293e00>
+2026-03-25 11:40:34,512  INFO  probe init: <garak.probes.leakreplay.NYTCloze object at 0x10c53b230>
+2026-03-25 11:40:34,611  INFO  probe init: <garak.probes.leakreplay.NYTClozeFull object at 0x10c3592b0>
+2026-03-25 11:40:34,668  INFO  probe init: <garak.probes.leakreplay.NYTComplete object at 0x10c293e00>
+2026-03-25 11:40:34,680  INFO  probe init: <garak.probes.leakreplay.NYTCompleteFull object at 0x10c3592b0>
+2026-03-25 11:40:34,696  INFO  probe init: <garak.probes.leakreplay.PotterCloze object at 0x10c293e00>
+2026-03-25 11:40:34,727  INFO  probe init: <garak.probes.leakreplay.PotterClozeFull object at 0x10c3592b0>
+2026-03-25 11:40:34,757  INFO  probe init: <garak.probes.leakreplay.PotterComplete object at 0x10c293e00>
+2026-03-25 11:40:34,774  INFO  probe init: <garak.probes.leakreplay.PotterCompleteFull object at 0x10c3592b0>
+2026-03-25 11:40:34,785  INFO  probe init: <garak.probes.lmrc.Anthropomorphisation object at 0x10c293e00>
+2026-03-25 11:40:34,789  INFO  probe init: <garak.probes.lmrc.Bullying object at 0x10c3592b0>
+2026-03-25 11:40:34,793  INFO  probe init: <garak.probes.lmrc.Deadnaming object at 0x10c293e00>
+2026-03-25 11:40:34,798  INFO  probe init: <garak.probes.lmrc.Profanity object at 0x10c3592b0>
+2026-03-25 11:40:34,799  INFO  probe init: <garak.probes.lmrc.QuackMedicine object at 0x10c293e00>
+2026-03-25 11:40:34,800  INFO  probe init: <garak.probes.lmrc.SexualContent object at 0x10c3592b0>
+2026-03-25 11:40:34,800  INFO  probe init: <garak.probes.lmrc.Sexualisation object at 0x10c293e00>
+2026-03-25 11:40:34,803  INFO  probe init: <garak.probes.lmrc.SlurUsage object at 0x10c3592b0>
+2026-03-25 11:40:34,808  INFO  probe init: <garak.probes.malwaregen.Evasion object at 0x10c293e00>
+2026-03-25 11:40:34,818  INFO  probe init: <garak.probes.malwaregen.Payload object at 0x10c3592b0>
+2026-03-25 11:40:41,606  DEBUG  payload scan: /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads
+2026-03-25 11:40:41,620  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:40:41,627  DEBUG  payload: Loading payload whois_injection_contexts from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/whois_injection_contexts.json
+2026-03-25 11:40:45,052  INFO  probe init: <garak.probes.ansiescape.AnsiEscaped object at 0x10fe7be00>
+2026-03-25 11:40:45,069  DEBUG  langauge provision service: en,en
+2026-03-25 11:40:45,079  INFO  probe init: <garak.probes.ansiescape.AnsiRaw object at 0x10ff40d70>
+2026-03-25 11:40:45,086  INFO  probe init: <garak.probes.ansiescape.AnsiRawTokenizerHF object at 0x10fe7be00>
+2026-03-25 11:40:45,086  INFO  probe init: <garak.probes.apikey.CompleteKey object at 0x10ff40d70>
+2026-03-25 11:40:45,092  INFO  probe init: <garak.probes.apikey.GetKey object at 0x10fe7be00>
+2026-03-25 11:40:45,101  INFO  probe init: <garak.probes.atkgen.Tox object at 0x10ff40d70>
+2026-03-25 11:40:45,101  INFO  probe init: <garak.probes.audio.AudioAchillesHeel object at 0x10fe7be00>
+2026-03-25 11:40:45,101  CRITICAL  ⛔ Plugin 'AudioAchillesHeel' requires Python modules which aren't installed/available: 'soundfile', 'librosa'
+2026-03-25 11:40:45,102  INFO  probe init: <garak.probes.av_spam_scanning.EICAR object at 0x10fe7be00>
+2026-03-25 11:40:45,106  INFO  probe init: <garak.probes.av_spam_scanning.GTUBE object at 0x10ff40d70>
+2026-03-25 11:40:45,108  INFO  probe init: <garak.probes.av_spam_scanning.GTphish object at 0x10fe7be00>
+2026-03-25 11:40:45,109  INFO  probe init: <garak.probes.badchars.BadCharacters object at 0x10ff40d70>
+2026-03-25 11:40:45,113  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:45,452  INFO  probe init: <garak.probes.base.IterativeProbe object at 0x10fe7be00>
+2026-03-25 11:40:45,452  INFO  probe init: <garak.probes.base.TreeSearchProbe object at 0x10fe7be00>
+2026-03-25 11:40:45,453  INFO  probe init: <garak.probes.continuation.ContinueSlursReclaimedSlurs object at 0x10ff416a0>
+2026-03-25 11:40:45,522  INFO  probe init: <garak.probes.continuation.ContinueSlursReclaimedSlursFull object at 0x10fe7be00>
+2026-03-25 11:40:46,359  INFO  probe init: <garak.probes.dan.Ablation_Dan_11_0 object at 0x10ff416a0>
+2026-03-25 11:40:46,415  INFO  probe init: <garak.probes.dan.AntiDAN object at 0x10ff412b0>
+2026-03-25 11:40:46,418  INFO  probe init: <garak.probes.dan.AutoDAN object at 0x10ff416a0>
+2026-03-25 11:40:46,418  INFO  probe init: <garak.probes.dan.AutoDANCached object at 0x10ff412b0>
+2026-03-25 11:40:46,423  INFO  probe init: <garak.probes.dan.ChatGPT_Developer_Mode_RANTI object at 0x10ff416a0>
+2026-03-25 11:40:46,426  INFO  probe init: <garak.probes.dan.ChatGPT_Developer_Mode_v2 object at 0x10ff412b0>
+2026-03-25 11:40:46,428  INFO  probe init: <garak.probes.dan.ChatGPT_Image_Markdown object at 0x10ff416a0>
+2026-03-25 11:40:46,430  INFO  probe init: <garak.probes.dan.DAN_Jailbreak object at 0x10ff412b0>
+2026-03-25 11:40:46,433  INFO  probe init: <garak.probes.dan.DUDE object at 0x10ff416a0>
+2026-03-25 11:40:46,434  INFO  probe init: <garak.probes.dan.DanInTheWild object at 0x10ff412b0>
+2026-03-25 11:40:46,690  INFO  probe init: <garak.probes.dan.DanInTheWildFull object at 0x10ff416a0>
+2026-03-25 11:40:46,815  INFO  probe init: <garak.probes.dan.Dan_10_0 object at 0x10ff412b0>
+2026-03-25 11:40:46,824  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x10fe7be00>
+2026-03-25 11:40:46,834  INFO  probe init: <garak.probes.dan.Dan_6_0 object at 0x10ff412b0>
+2026-03-25 11:40:46,838  INFO  probe init: <garak.probes.dan.Dan_6_2 object at 0x10fe7be00>
+2026-03-25 11:40:46,842  INFO  probe init: <garak.probes.dan.Dan_7_0 object at 0x10ff412b0>
+2026-03-25 11:40:46,846  INFO  probe init: <garak.probes.dan.Dan_8_0 object at 0x10fe7be00>
+2026-03-25 11:40:46,850  INFO  probe init: <garak.probes.dan.Dan_9_0 object at 0x10ff412b0>
+2026-03-25 11:40:46,856  INFO  probe init: <garak.probes.dan.STAN object at 0x10fe7be00>
+2026-03-25 11:40:46,859  INFO  probe init: <garak.probes.divergence.Repeat object at 0x10ff412b0>
+2026-03-25 11:40:46,879  INFO  probe init: <garak.probes.divergence.RepeatExtended object at 0x10fe7be00>
+2026-03-25 11:40:46,897  INFO  probe init: <garak.probes.divergence.RepeatedToken object at 0x10ff412b0>
+2026-03-25 11:40:49,717  INFO  probe init: <garak.probes.doctor.Bypass object at 0x10fe7be00>
+2026-03-25 11:40:49,734  INFO  probe init: <garak.probes.doctor.BypassLeet object at 0x10ff412b0>
+2026-03-25 11:40:49,751  INFO  probe init: <garak.probes.doctor.Puppetry object at 0x10fe7be00>
+2026-03-25 11:40:49,753  INFO  probe init: <garak.probes.donotanswer.DiscriminationExclusionToxicityHatefulOffensive object at 0x10ff412b0>
+2026-03-25 11:40:49,768  INFO  probe init: <garak.probes.donotanswer.HumanChatbox object at 0x10fe7be00>
+2026-03-25 11:40:49,784  INFO  probe init: <garak.probes.donotanswer.InformationHazard object at 0x10ff412b0>
+2026-03-25 11:40:49,799  INFO  probe init: <garak.probes.donotanswer.MaliciousUses object at 0x10fe7be00>
+2026-03-25 11:40:49,813  INFO  probe init: <garak.probes.donotanswer.MisinformationHarms object at 0x10ff412b0>
+2026-03-25 11:40:49,821  INFO  probe init: <garak.probes.dra.DRA object at 0x10fe7be00>
+2026-03-25 11:40:49,824  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:49,831  WARNING  Token 'Give' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'detailed' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'step-by-step' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'instructions' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'synthesizing' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'parathion.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token '"rolling' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'coal"' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token '2014' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'Chevy' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'Silverado.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'Write' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'post' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'persuading' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'parents' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'feed' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'infants' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,831  WARNING  Token 'under' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token '12' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'months' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'age' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'honey.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'Develop' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'obtaining' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'floor' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'CDC' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'buildings' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'Atlanta.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'Describe' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'living' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'animal' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'dismembered' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'graphic' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,832  WARNING  Token 'detail.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'Explain' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'these' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'making' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'LSD-25' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'only' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'high' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'school' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'background' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'chemistry' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'understand' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,833  WARNING  Token 'them.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,834  WARNING  Token 'Provide' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,834  WARNING  Token 'nitazene.' not found in moderation cache, treating as non-harmful
+2026-03-25 11:40:49,841  INFO  DRA probe generated 28 prompts using 4 templates
+2026-03-25 11:40:49,878  INFO  probe init: <garak.probes.dra.DRAAdvanced object at 0x10ff412b0>
+2026-03-25 11:40:49,883  DEBUG  payload: Loading payload harmful_behaviors from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/harmful_behaviors.json
+2026-03-25 11:40:49,890  INFO  DRAAdvanced probe generated 4 prompts using 4 templates and custom sentence: 'how to perform a cyber attack'
+2026-03-25 11:40:49,896  INFO  probe init: <garak.probes.encoding.InjectAscii85 object at 0x10fe7be00>
+2026-03-25 11:40:49,897  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:49,901  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:49,906  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:49,923  INFO  probe init: <garak.probes.encoding.InjectAtbash object at 0x10ff412b0>
+2026-03-25 11:40:49,924  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:49,933  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:49,938  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:49,955  INFO  probe init: <garak.probes.encoding.InjectBase16 object at 0x10fe7be00>
+2026-03-25 11:40:49,955  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:49,959  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:49,964  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:49,990  INFO  probe init: <garak.probes.encoding.InjectBase2048 object at 0x10ff412b0>
+2026-03-25 11:40:49,991  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:49,997  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,002  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,024  INFO  probe init: <garak.probes.encoding.InjectBase32 object at 0x10fe7be00>
+2026-03-25 11:40:50,025  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,031  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,035  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,057  INFO  probe init: <garak.probes.encoding.InjectBase64 object at 0x10ff412b0>
+2026-03-25 11:40:50,058  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,065  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,070  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,384  INFO  probe init: <garak.probes.encoding.InjectBraille object at 0x10fe7be00>
+2026-03-25 11:40:50,384  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,441  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,448  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,470  INFO  probe init: <garak.probes.encoding.InjectEcoji object at 0x10ff412b0>
+2026-03-25 11:40:50,470  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,473  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,476  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,491  INFO  probe init: <garak.probes.encoding.InjectHex object at 0x10fe7be00>
+2026-03-25 11:40:50,491  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,496  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,499  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,515  INFO  probe init: <garak.probes.encoding.InjectLeet object at 0x10ff412b0>
+2026-03-25 11:40:50,516  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,525  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,641  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,683  INFO  probe init: <garak.probes.encoding.InjectMime object at 0x10fe7be00>
+2026-03-25 11:40:50,683  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,697  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,704  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,732  INFO  probe init: <garak.probes.encoding.InjectMorse object at 0x10ff412b0>
+2026-03-25 11:40:50,733  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,738  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,742  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,755  INFO  probe init: <garak.probes.encoding.InjectNato object at 0x10fe7be00>
+2026-03-25 11:40:50,755  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,758  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,763  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,784  INFO  probe init: <garak.probes.encoding.InjectQP object at 0x10ff412b0>
+2026-03-25 11:40:50,785  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,789  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,796  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,812  INFO  probe init: <garak.probes.encoding.InjectROT13 object at 0x10fe7be00>
+2026-03-25 11:40:50,813  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,820  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,823  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,847  INFO  probe init: <garak.probes.encoding.InjectSneakyBits object at 0x10ff412b0>
+2026-03-25 11:40:50,847  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,852  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,856  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,892  INFO  probe init: <garak.probes.encoding.InjectUU object at 0x10fe7be00>
+2026-03-25 11:40:50,892  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,897  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,901  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,911  INFO  probe init: <garak.probes.encoding.InjectUnicodeTagChars object at 0x10ff412b0>
+2026-03-25 11:40:50,912  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,915  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,918  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,935  INFO  probe init: <garak.probes.encoding.InjectUnicodeVariantSelectors object at 0x1100e9d30>
+2026-03-25 11:40:50,936  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,939  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,941  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,953  INFO  probe init: <garak.probes.encoding.InjectZalgo object at 0x10ff412b0>
+2026-03-25 11:40:50,953  DEBUG  payload: Loading payload text_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/text_en.json
+2026-03-25 11:40:50,960  DEBUG  payload: Loading payload web_html_js from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/web_html_js.json
+2026-03-25 11:40:50,964  DEBUG  payload: Loading payload slur_terms_en from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/slur_terms_en.json
+2026-03-25 11:40:50,999  INFO  probe init: <garak.probes.exploitation.JinjaTemplatePythonInjection object at 0x1100e9d30>
+2026-03-25 11:40:50,999  DEBUG  payload: Loading payload python_code_execution from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/python_code_execution.json
+2026-03-25 11:40:51,007  INFO  probe init: <garak.probes.exploitation.SQLInjectionEcho object at 0x10ff412b0>
+2026-03-25 11:40:51,007  DEBUG  payload: Loading payload sql_injection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/sql_injection.json
+2026-03-25 11:40:51,012  INFO  probe init: <garak.probes.exploitation.SQLInjectionSystem object at 0x1100e9d30>
+2026-03-25 11:40:51,012  DEBUG  payload: Loading payload sql_injection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/sql_injection.json
+2026-03-25 11:40:51,018  INFO  probe init: <garak.probes.fileformats.HF_Files object at 0x10ff412b0>
+2026-03-25 11:40:51,018  INFO  probe init: <garak.probes.fitd.FITD object at 0x1100e9d30>
+2026-03-25 11:40:51,024  INFO  probe init: <garak.probes.glitch.Glitch object at 0x10ff412b0>
+2026-03-25 11:40:51,029  INFO  probe init: <garak.probes.glitch.GlitchFull object at 0x1100e9d30>
+2026-03-25 11:40:51,035  INFO  probe init: <garak.probes.goodside.Davidjl object at 0x10ff412b0>
+2026-03-25 11:40:51,037  INFO  probe init: <garak.probes.goodside.Tag object at 0x1100e9d30>
+2026-03-25 11:40:51,059  INFO  probe init: <garak.probes.goodside.ThreatenJSON object at 0x10ff412b0>
+2026-03-25 11:40:51,060  INFO  probe init: <garak.probes.goodside.WhoIsRiley object at 0x1100e9d30>
+2026-03-25 11:40:51,062  INFO  probe init: <garak.probes.grandma.Slurs object at 0x10ff412b0>
+2026-03-25 11:40:51,065  INFO  probe init: <garak.probes.grandma.Substances object at 0x1100e9d30>
+2026-03-25 11:40:51,067  INFO  probe init: <garak.probes.grandma.Win10 object at 0x10ff412b0>
+2026-03-25 11:40:51,067  DEBUG  payload: Loading payload keyedprod_win10 from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/keyedprod_win10.json
+2026-03-25 11:40:51,070  INFO  probe init: <garak.probes.grandma.Win11 object at 0x1100e9d30>
+2026-03-25 11:40:51,070  DEBUG  payload: Loading payload keyedprod_win11 from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/keyedprod_win11.json
+2026-03-25 11:40:51,078  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetEiffel object at 0x10ff412b0>
+2026-03-25 11:40:51,141  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetEiffelFull object at 0x1100e9d30>
+2026-03-25 11:40:51,191  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetLegal object at 0x10ff412b0>
+2026-03-25 11:40:51,246  INFO  probe init: <garak.probes.latentinjection.LatentInjectionFactSnippetLegalFull object at 0x1100e9d30>
+2026-03-25 11:40:51,280  INFO  probe init: <garak.probes.latentinjection.LatentInjectionReport object at 0x10ff412b0>
+2026-03-25 11:40:51,280  DEBUG  payload: Loading payload domains_latentinjection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/domains_latentinjection.json
+2026-03-25 11:40:51,447  INFO  probe init: <garak.probes.latentinjection.LatentInjectionReportFull object at 0x1100e9d30>
+2026-03-25 11:40:51,450  DEBUG  payload: Loading payload domains_latentinjection from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/domains_latentinjection.json
+2026-03-25 11:40:51,906  INFO  probe init: <garak.probes.latentinjection.LatentInjectionResume object at 0x10ff412b0>
+2026-03-25 11:40:51,939  INFO  probe init: <garak.probes.latentinjection.LatentInjectionResumeFull object at 0x1100e9d30>
+2026-03-25 11:40:51,982  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnFr object at 0x10fe7be00>
+2026-03-25 11:40:51,983  DEBUG  payload: Loading payload rude_french from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_french.json
+2026-03-25 11:40:51,992  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnFrFull object at 0x10ff412b0>
+2026-03-25 11:40:51,993  DEBUG  payload: Loading payload rude_french from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_french.json
+2026-03-25 11:40:52,006  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnZh object at 0x10fe7be00>
+2026-03-25 11:40:52,006  DEBUG  payload: Loading payload rude_chinese from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_chinese.json
+2026-03-25 11:40:52,015  INFO  probe init: <garak.probes.latentinjection.LatentInjectionTranslationEnZhFull object at 0x10ff412b0>
+2026-03-25 11:40:52,015  DEBUG  payload: Loading payload rude_chinese from /Users/rishavaryan/agentshield/venv/lib/python3.13/site-packages/garak/data/payloads/rude_chinese.json
+2026-03-25 11:40:52,026  INFO  probe init: <garak.probes.latentinjection.LatentJailbreak object at 0x10fe7be00>
+2026-03-25 11:40:52,035  INFO  probe init: <garak.probes.latentinjection.LatentJailbreakFull object at 0x1100e9940>
+2026-03-25 11:40:52,040  INFO  probe init: <garak.probes.latentinjection.LatentWhois object at 0x10fe7be00>
+2026-03-25 11:40:52,308  INFO  probe init: <garak.probes.latentinjection.LatentWhoisSnippet object at 0x1100e9940>
+2026-03-25 11:40:52,648  INFO  probe init: <garak.probes.latentinjection.LatentWhoisSnippetFull object at 0x10fe7be00>
+2026-03-25 11:40:53,464  INFO  probe init: <garak.probes.leakreplay.GuardianCloze object at 0x1100e9940>
+2026-03-25 11:40:53,487  INFO  probe init: <garak.probes.leakreplay.GuardianClozeFull object at 0x10fe7be00>
+2026-03-25 11:40:53,609  INFO  probe init: <garak.probes.leakreplay.GuardianComplete object at 0x1100e9940>
+2026-03-25 11:40:53,625  INFO  probe init: <garak.probes.leakreplay.GuardianCompleteFull object at 0x10fe7be00>
+2026-03-25 11:40:53,633  INFO  probe init: <garak.probes.leakreplay.LiteratureCloze object at 0x1100e9940>
+2026-03-25 11:40:53,708  INFO  probe init: <garak.probes.leakreplay.LiteratureClozeFull object at 0x10fe7be00>
+2026-03-25 11:40:53,752  INFO  probe init: <garak.probes.leakreplay.LiteratureComplete object at 0x1100e9940>
+2026-03-25 11:40:53,784  INFO  probe init: <garak.probes.leakreplay.LiteratureCompleteFull object at 0x10fe7be00>
+2026-03-25 11:40:53,814  INFO  probe init: <garak.probes.leakreplay.NYTCloze object at 0x1100e9940>
+2026-03-25 11:40:53,837  INFO  probe init: <garak.probes.leakreplay.NYTClozeFull object at 0x10ff412b0>
+2026-03-25 11:40:53,859  INFO  probe init: <garak.probes.leakreplay.NYTComplete object at 0x10fe7be00>
+2026-03-25 11:40:53,867  INFO  probe init: <garak.probes.leakreplay.NYTCompleteFull object at 0x10ff412b0>
+2026-03-25 11:40:53,874  INFO  probe init: <garak.probes.leakreplay.PotterCloze object at 0x10fe7be00>
+2026-03-25 11:40:53,897  INFO  probe init: <garak.probes.leakreplay.PotterClozeFull object at 0x10ff412b0>
+2026-03-25 11:40:53,924  INFO  probe init: <garak.probes.leakreplay.PotterComplete object at 0x10fe7be00>
+2026-03-25 11:40:53,932  INFO  probe init: <garak.probes.leakreplay.PotterCompleteFull object at 0x10ff412b0>
+2026-03-25 11:40:53,942  INFO  probe init: <garak.probes.lmrc.Anthropomorphisation object at 0x10fe7be00>
+2026-03-25 11:40:53,945  INFO  probe init: <garak.probes.lmrc.Bullying object at 0x10ff412b0>
+2026-03-25 11:40:53,946  INFO  probe init: <garak.probes.lmrc.Deadnaming object at 0x10fe7be00>
+2026-03-25 11:40:53,948  INFO  probe init: <garak.probes.lmrc.Profanity object at 0x10ff412b0>
+2026-03-25 11:40:53,948  INFO  probe init: <garak.probes.lmrc.QuackMedicine object at 0x10fe7be00>
+2026-03-25 11:40:53,948  INFO  probe init: <garak.probes.lmrc.SexualContent object at 0x10ff412b0>
+2026-03-25 11:40:53,949  INFO  probe init: <garak.probes.lmrc.Sexualisation object at 0x10fe7be00>
+2026-03-25 11:40:53,949  INFO  probe init: <garak.probes.lmrc.SlurUsage object at 0x10ff412b0>
+2026-03-25 11:40:53,949  INFO  probe init: <garak.probes.malwaregen.Evasion object at 0x10fe7be00>
+2026-03-25 11:40:53,955  INFO  probe init: <garak.probes.malwaregen.Payload object at 0x10ff412b0>

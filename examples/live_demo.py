@@ -1,5 +1,5 @@
 """
-AgentShield Live Demo
+Agentiva Live Demo
 =====================
 Runs **102** realistic scenarios (100+) across email, Slack, databases, Jira,
 finance, DevOps, APIs, customer data, and admin — tuned for `policies/default.yaml`.
@@ -25,7 +25,7 @@ PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from agentshield.interceptor.core import AgentShield
+from agentiva.interceptor.core import Agentiva
 
 
 # --- Tools an AI agent might use (names must align with policies/default.yaml) ---
@@ -331,7 +331,7 @@ SCENARIOS: List[Dict[str, Any]] = [
         "tool": "send_email",
         "args": _a(
             to="newuser@signup.com",
-            subject="Welcome to AgentShield",
+            subject="Welcome to Agentiva",
             body="Verify your email to get started.",
             email_type="welcome_automated",
             outcome_tier="allow",
@@ -847,8 +847,8 @@ SCENARIOS: List[Dict[str, Any]] = [
         "description": "git push to feature branch",
         "tool": "git_operation",
         "args": _a(
-            command="push origin feature/agent-shield-demo",
-            branch="feature/agent-shield-demo",
+            command="push origin feature/agentiva-demo",
+            branch="feature/agentiva-demo",
             outcome_tier="allow",
         ),
     },
@@ -956,7 +956,7 @@ SCENARIOS: List[Dict[str, Any]] = [
         "description": "Read application log files",
         "tool": "read_logs",
         "args": _a(
-            path="/var/log/agentshield/app.log",
+            path="/var/log/agentiva/app.log",
             outcome_tier="allow",
         ),
     },
@@ -1327,12 +1327,12 @@ async def run_demo() -> None:
     import httpx
 
     print("=" * 72)
-    print("  AgentShield Live Demo — 100+ realistic agent scenarios")
+    print("  Agentiva Live Demo — 100+ realistic agent scenarios")
     print("  Dashboard live feed: http://localhost:3000/live")
     print("=" * 72)
     print()
 
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     _ = shield.protect(ALL_TOOLS)
 
     scenarios = SCENARIOS

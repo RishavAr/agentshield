@@ -1,8 +1,8 @@
-from agentshield import AgentShield
+from agentiva import Agentiva
 
 
 def test_openai_hook_blocks_external_email() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
 
     def send_email(**kwargs):
         return kwargs
@@ -14,7 +14,7 @@ def test_openai_hook_blocks_external_email() -> None:
 
 
 def test_openai_hook_allows_safe_call() -> None:
-    shield = AgentShield(mode="live")
+    shield = Agentiva(mode="live")
 
     def safe_tool(**kwargs):
         return {"ok": True, "payload": kwargs}
@@ -25,7 +25,7 @@ def test_openai_hook_allows_safe_call() -> None:
 
 
 def test_openai_hook_keeps_schema_fields() -> None:
-    shield = AgentShield(mode="shadow")
+    shield = Agentiva(mode="shadow")
     tool = {"name": "x", "description": "d", "__callable__": lambda **_: "x"}
     wrapped = shield.protect_openai([tool])[0]
     assert wrapped["name"] == "x"
@@ -33,7 +33,7 @@ def test_openai_hook_keeps_schema_fields() -> None:
 
 
 def test_openai_hook_returns_explanation_on_block() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     wrapped = shield.protect_openai([{"name": "send_email", "__callable__": lambda **_: "x"}])[0]
     result = wrapped["__callable__"](to="x@outside.com")
     assert "explanation" in result

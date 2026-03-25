@@ -1,15 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ReactNode } from "react";
-import { MessageCircle, Send, Shield, X } from "lucide-react";
+import type { MouseEvent, ReactNode } from "react";
+import { Menu, MessageCircle, Pencil, Send, Shield, Trash2, X } from "lucide-react";
 
-const API_BASE = "http://localhost:8000";
+import { getHttpApiBase } from "@/lib/api-base";
 
-type ChatPayload = {
-  answer: string;
-  suggestions: string[];
-};
+const API_BASE = getHttpApiBase();
+
+type ChatPayload = { answer: string; suggestions: string[] };
 
 const FENCE_RE = /```[\s\S]*?```/g;
 
@@ -18,7 +17,6 @@ function sanitizeAnswer(text: string): string {
   const lines = clean.split("\n").filter((line) => {
     const t = line.trim();
     if (!t) return true;
-    // Strip any stray JSON blocks/arrays or hint echoes.
     if ((t.startsWith("{") && t.endsWith("}")) || (t.startsWith("[") && t.endsWith("]"))) return false;
     if (t.includes('"hint"') || t.includes("'hint'")) return false;
     return true;
@@ -27,9 +25,9 @@ function sanitizeAnswer(text: string): string {
 }
 
 function riskColor(score: number): string {
-  if (score > 0.7) return "text-[#ef4444]"; // red
-  if (score >= 0.4) return "text-[#f59e0b]"; // amber
-  return "text-[#22c55e]"; // green
+  if (score > 0.7) return "text-[#ef4444]";
+  if (score >= 0.4) return "text-[#f59e0b]";
+  return "text-[#22c55e]";
 }
 
 function renderNumbers(segment: string): ReactNode[] {
@@ -47,28 +45,27 @@ function renderNumbers(segment: string): ReactNode[] {
   return out;
 }
 
-function renderInline(text: string): ReactNode[] {
-  // Tool names in monospace: we rely on backend wrapping tool tokens with backticks: `tool_name`
+/** Backticks + risk highlighting (no ** — caller splits bold first). */
+function renderCodeAndRisk(part: string): ReactNode[] {
   const out: ReactNode[] = [];
-  const parts = text.split("`");
+  const parts = part.split("`");
   for (let i = 0; i < parts.length; i++) {
-    const part = parts[i];
-    if (!part) continue;
+    const segment = parts[i];
+    if (!segment) continue;
     if (i % 2 === 1) {
       out.push(
-        <span key={`code-${i}`} className="font-mono text-[#c9d1d9]">
-          {part}
-        </span>
+        <span key={`code-${i}`} className="rounded bg-[#21262d] px-1 font-mono text-[#c9d1d9]">
+          {segment}
+        </span>,
       );
     } else {
-      // Color risk scores: parse occurrences like "risk: 0.90"
       const riskRe = /\b(risk\s*[:=]?\s*)(0(?:\.\d+)?|1(?:\.0+)?)\b/gi;
       let last = 0;
-      for (const m of part.matchAll(riskRe)) {
+      for (const m of segment.matchAll(riskRe)) {
         const idx = m.index ?? 0;
         const full = m[0];
         const v = parseFloat(m[2]);
-        if (idx > last) out.push(...renderNumbers(part.slice(last, idx)));
+        if (idx > last) out.push(...renderNumbers(segment.slice(last, idx)));
         const prefix = m[1] ?? "risk: ";
         out.push(
           <span key={`risk-${idx}`}>
@@ -76,12 +73,31 @@ function renderInline(text: string): ReactNode[] {
             <span className={riskColor(v)}>
               <strong>{m[2]}</strong>
             </span>
-          </span>
+          </span>,
         );
-        // prefix is not preserved perfectly; we keep the surrounding text as-is by reusing the full match.
         last = idx + full.length;
       }
-      if (last < part.length) out.push(...renderNumbers(part.slice(last)));
+      if (last < segment.length) out.push(...renderNumbers(segment.slice(last)));
+    }
+  }
+  return out;
+}
+
+/** Markdown-style **bold**, inline `code`, and risk/number emphasis. */
+function renderInline(text: string): ReactNode[] {
+  const boldChunks = text.split(/\*\*/);
+  const out: ReactNode[] = [];
+  for (let i = 0; i < boldChunks.length; i++) {
+    const chunk = boldChunks[i];
+    if (chunk === undefined) continue;
+    if (i % 2 === 1) {
+      out.push(
+        <strong key={`md-bold-${i}`} className="font-semibold text-[#f0f6fc]">
+          {renderCodeAndRisk(chunk)}
+        </strong>,
+      );
+    } else {
+      out.push(...renderCodeAndRisk(chunk));
     }
   }
   return out;
@@ -90,13 +106,10 @@ function renderInline(text: string): ReactNode[] {
 function FormattedAnswer({ text }: { text: string }) {
   const clean = sanitizeAnswer(text);
   if (!clean) return null;
-
   const lines = clean.split("\n");
   const nodes: ReactNode[] = [];
-
   const bulletRe = /^\s*[-*•]\s+/;
   const numberedRe = /^\s*\d+\.\s+/;
-
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
@@ -105,37 +118,33 @@ function FormattedAnswer({ text }: { text: string }) {
       i++;
       continue;
     }
-
-      // Render YAML rule snippets as monospaced pre blocks.
-      // We detect by "- name:" which our backend uses for policy additions.
-      if (trimmed.startsWith("- name:")) {
-        const yamlLines: string[] = [];
-        while (i < lines.length) {
-          const raw = lines[i];
-          const t = raw.trim();
-          if (!t) {
-            yamlLines.push(raw);
-            i++;
-            continue;
-          }
-          if (t.startsWith("- name:") || raw.startsWith("  ") || raw.startsWith("\t")) {
-            yamlLines.push(raw);
-            i++;
-            continue;
-          }
-          break;
+    if (trimmed.startsWith("- name:")) {
+      const yamlLines: string[] = [];
+      while (i < lines.length) {
+        const raw = lines[i];
+        const t = raw.trim();
+        if (!t) {
+          yamlLines.push(raw);
+          i++;
+          continue;
         }
-        nodes.push(
-          <pre
-            key={`yaml-${i}`}
-            className="mt-2 whitespace-pre-wrap rounded border border-[#30363d] bg-[#0d1117] p-2 font-mono text-[11px] leading-relaxed text-[#c9d1d9]"
-          >
-            {yamlLines.join("\n")}
-          </pre>,
-        );
-        continue;
+        if (t.startsWith("- name:") || raw.startsWith("  ") || raw.startsWith("\t")) {
+          yamlLines.push(raw);
+          i++;
+          continue;
+        }
+        break;
       }
-
+      nodes.push(
+        <pre
+          key={`yaml-${i}`}
+          className="mt-2 whitespace-pre-wrap rounded border border-[#30363d] bg-[#0d1117] p-2 font-mono text-[11px] leading-relaxed text-[#c9d1d9]"
+        >
+          {yamlLines.join("\n")}
+        </pre>,
+      );
+      continue;
+    }
     if (bulletRe.test(trimmed) || numberedRe.test(trimmed)) {
       const items: string[] = [];
       while (i < lines.length) {
@@ -151,30 +160,43 @@ function FormattedAnswer({ text }: { text: string }) {
               {renderInline(it)}
             </li>
           ))}
-        </ul>
+        </ul>,
       );
       continue;
     }
-
     nodes.push(
       <p key={`p-${i}`} className="whitespace-pre-wrap leading-relaxed">
         {renderInline(trimmed)}
-      </p>
+      </p>,
     );
     i++;
   }
-
   return <>{nodes}</>;
 }
 
 type UserMsg = { id: string; role: "user"; text: string };
-type AssistantMsg = {
-  id: string;
-  role: "assistant";
-  answer: string;
-  suggestions: string[];
-};
+type AssistantMsg = { id: string; role: "assistant"; answer: string; suggestions: string[] };
 type Msg = UserMsg | AssistantMsg;
+
+type SessionRow = {
+  id: string;
+  title: string;
+  updated_at: string;
+  last_message_preview?: string | null;
+};
+
+function relShort(iso: string) {
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return "";
+  const s = Math.floor((Date.now() - t) / 1000);
+  if (s < 60) return "just now";
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return `${d}d ago`;
+}
 
 export function ShieldChatPanel() {
   const [open, setOpen] = useState(false);
@@ -182,12 +204,63 @@ export function ShieldChatPanel() {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [llmEnabled, setLlmEnabled] = useState<boolean | null>(null);
-  const [streaming, setStreaming] = useState<{
-    full: string;
-    pos: number;
-    suggestions: string[];
-  } | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessions, setSessions] = useState<SessionRow[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [renameId, setRenameId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const sessionRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    sessionRef.current = sessionId;
+  }, [sessionId]);
+
+  const loadSessions = useCallback(async () => {
+    try {
+      const r = await fetch(`${API_BASE}/api/v1/chat/sessions`);
+      if (r.ok) {
+        const rows = (await r.json()) as SessionRow[];
+        const empty = rows.filter(
+          (s) =>
+            !(s.last_message_preview || "").trim() &&
+            ["new chat", "new conversation", ""].includes((s.title || "").trim().toLowerCase()),
+        );
+        if (empty.length > 0) {
+          await Promise.all(
+            empty.map((s) =>
+              fetch(`${API_BASE}/api/v1/chat/sessions/${encodeURIComponent(s.id)}`, { method: "DELETE" }),
+            ),
+          );
+        }
+        const kept = rows.filter((s) => !empty.some((e) => e.id === s.id));
+        kept.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+        setSessions(kept);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  async function commitRename(sessionId: string) {
+    const t = renameValue.trim();
+    if (!t) {
+      setRenameId(null);
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/chat/sessions/${encodeURIComponent(sessionId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: t }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setRenameId(null);
+      await loadSessions();
+    } catch {
+      /* ignore */
+    }
+  }
 
   useEffect(() => {
     void fetch(`${API_BASE}/api/v1/chat/capabilities`)
@@ -197,56 +270,125 @@ export function ShieldChatPanel() {
   }, []);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streaming, loading, open]);
+    if (open) void loadSessions();
+  }, [open, loadSessions]);
 
   useEffect(() => {
-    if (!streaming) return;
-    if (streaming.pos >= streaming.full.length) {
-      const id = crypto.randomUUID();
-      setMessages((m) => [
-        ...m,
-        {
-          id,
-          role: "assistant",
-          answer: streaming.full,
-          suggestions: streaming.suggestions,
-        },
-      ]);
-      setStreaming(null);
-      return;
-    }
-    const t = window.setTimeout(() => {
-      setStreaming((s) => (s ? { ...s, pos: s.pos + 2 } : null));
-    }, 12);
-    return () => clearTimeout(t);
-  }, [streaming]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading, open]);
 
-  const busy = loading || !!streaming;
+  async function ensureSession(): Promise<string> {
+    if (sessionRef.current) return sessionRef.current;
+    const r = await fetch(`${API_BASE}/api/v1/chat/sessions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenant_id: "default", title: "New chat" }),
+    });
+    if (!r.ok) {
+      const detail = await r.text();
+      throw new Error(
+        `Could not create chat session (${r.status}): ${detail.slice(0, 400) || r.statusText}. ` +
+          `Run the API on port 8000 (agentiva serve --port 8000). If you use the dashboard proxy, set AGENTIVA_API_URL (default http://127.0.0.1:8000). ` +
+          `Or set NEXT_PUBLIC_API_BASE to the API URL to call it directly.`,
+      );
+    }
+    const j = (await r.json()) as { id: string };
+    sessionRef.current = j.id;
+    setSessionId(j.id);
+    await loadSessions();
+    return j.id;
+  }
+
+  async function selectSession(id: string) {
+    sessionRef.current = id;
+    setSessionId(id);
+    setSidebarOpen(false);
+    try {
+      const r = await fetch(`${API_BASE}/api/v1/chat/sessions/${id}`);
+      if (!r.ok) return;
+      const detail = (await r.json()) as {
+        messages: { role: string; content: string; suggestions?: string[] }[];
+      };
+      const mapped: Msg[] = [];
+      for (const m of detail.messages || []) {
+        const mid = crypto.randomUUID();
+        if (m.role === "user") {
+          mapped.push({ id: mid, role: "user", text: m.content });
+        } else {
+          mapped.push({ id: mid, role: "assistant", answer: m.content, suggestions: m.suggestions ?? [] });
+        }
+      }
+      setMessages(mapped);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function newChat() {
+    sessionRef.current = null;
+    setSessionId(null);
+    setMessages([]);
+    const r = await fetch(`${API_BASE}/api/v1/chat/sessions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenant_id: "default", title: "New chat" }),
+    });
+    if (r.ok) {
+      const j = (await r.json()) as { id: string };
+      sessionRef.current = j.id;
+      setSessionId(j.id);
+      await loadSessions();
+    }
+    setSidebarOpen(false);
+  }
+
+  async function deleteSession(id: string, e: MouseEvent) {
+    e.stopPropagation();
+    await fetch(`${API_BASE}/api/v1/chat/sessions/${id}`, { method: "DELETE" });
+    if (sessionId === id) {
+      sessionRef.current = null;
+      setSessionId(null);
+      setMessages([]);
+    }
+    await loadSessions();
+  }
+
+  async function clearAllSessions() {
+    await fetch(`${API_BASE}/api/v1/chat/sessions/all`, { method: "DELETE" });
+    sessionRef.current = null;
+    setSessionId(null);
+    setMessages([]);
+    await loadSessions();
+  }
 
   const send = useCallback(
     async (text: string) => {
       const trimmed = text.trim();
-      if (!trimmed || busy) return;
+      if (!trimmed || loading) return;
       setInput("");
-      setMessages((m) => [...m, { id: crypto.randomUUID(), role: "user", text: trimmed }]);
+      const uid = crypto.randomUUID();
+      setMessages((m) => [...m, { id: uid, role: "user", text: trimmed }]);
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE}/api/v1/chat`, {
+        const sid = await ensureSession();
+        const res = await fetch(`${API_BASE}/api/v1/chat/sessions/${sid}/messages`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: trimmed }),
         });
-        if (!res.ok) {
-          throw new Error(await res.text());
-        }
+        if (!res.ok) throw new Error(await res.text());
         const payload = (await res.json()) as ChatPayload;
         const clean = sanitizeAnswer(payload.answer);
-        setStreaming({
-          full: clean,
-          pos: 0,
-          suggestions: payload.suggestions ?? [],
-        });
+        setMessages((m) => [
+          ...m,
+          {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            answer: clean,
+            suggestions: payload.suggestions ?? [],
+          },
+        ]);
+        await loadSessions();
       } catch (e) {
         setMessages((m) => [
           ...m,
@@ -254,14 +396,14 @@ export function ShieldChatPanel() {
             id: crypto.randomUUID(),
             role: "assistant",
             answer: `Something went wrong: ${e instanceof Error ? e.message : "request failed"}`,
-            suggestions: ["Give me a session overview"],
+            suggestions: ["Session overview"],
           },
         ]);
       } finally {
         setLoading(false);
       }
     },
-    [busy]
+    [loading, loadSessions],
   );
 
   useEffect(() => {
@@ -270,11 +412,10 @@ export function ShieldChatPanel() {
       const msg = ce.detail?.message;
       if (typeof msg !== "string" || !msg.trim()) return;
       setOpen(true);
-      // Fire-and-forget: send() handles deduping when busy.
       void send(msg.trim());
     };
-    window.addEventListener("agentshield:openChat", handler as EventListener);
-    return () => window.removeEventListener("agentshield:openChat", handler as EventListener);
+    window.addEventListener("agentiva:openChat", handler as EventListener);
+    return () => window.removeEventListener("agentiva:openChat", handler as EventListener);
   }, [send]);
 
   const onSubmit = (e: React.FormEvent) => {
@@ -282,134 +423,226 @@ export function ShieldChatPanel() {
     void send(input);
   };
 
+  const busy = loading;
+
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`fixed bottom-6 right-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-[#3b82f6] text-white shadow-lg transition hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-[#0d1117] ${
+        className={`fixed bottom-6 right-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-white shadow-xl shadow-blue-900/40 transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-[#0d1117] ${open ? "animate-none" : "animate-[pulse_5s_ease-in-out_infinite]"} ${
           open ? "pointer-events-none scale-0 opacity-0" : "scale-100 opacity-100"
         }`}
-        aria-label="Open AgentShield chat"
+        aria-label="Open Agentiva chat"
       >
         <MessageCircle className="h-7 w-7" strokeWidth={2} />
       </button>
 
       <div
-        className={`fixed bottom-0 right-0 z-[70] flex max-h-[min(92vh,720px)] w-full flex-col rounded-t-2xl border border-[#30363d] bg-[#161b22] shadow-2xl transition-transform duration-300 ease-out sm:bottom-6 sm:right-6 sm:max-w-md ${
-          open ? "translate-y-0" : "translate-y-[110%] pointer-events-none"
+        className={`fixed bottom-0 right-0 z-[70] flex h-[min(92vh,600px)] w-full max-w-[450px] flex-col rounded-t-2xl border border-[#30363d] bg-[#0a0e14] shadow-2xl transition-transform duration-300 ease-out sm:bottom-6 sm:right-6 sm:rounded-2xl ${
+          open ? "translate-y-0" : "pointer-events-none translate-y-[110%]"
         }`}
         aria-hidden={!open}
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-[#30363d] px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#238636]/20">
-              <Shield className="h-5 w-5 text-[#3fb950]" />
+        <div className="flex shrink-0 items-center justify-between border-b border-[#30363d] px-3 py-2.5">
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen((s) => !s)}
+              className="rounded-lg p-2 text-[#8b949e] hover:bg-[#161b22] hover:text-white"
+              aria-label="Sessions"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15">
+              <Shield className="h-5 w-5 text-emerald-400" />
             </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-semibold text-[#f0f6fc]">AgentShield</p>
-                {llmEnabled !== null && (
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                      llmEnabled
-                        ? "bg-[#1f6feb]/25 text-[#58a6ff] ring-1 ring-[#1f6feb]/40"
-                        : "bg-[#30363d] text-[#8b949e]"
-                    }`}
-                  >
-                    {llmEnabled ? "AI-powered" : "Basic"}
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-[#8b949e]">Ask about agents &amp; policy</p>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-[#f0f6fc]">Security co-pilot</span>
+              {llmEnabled !== null ? (
+                <span className="text-[10px] uppercase tracking-wide text-[#8b949e]">
+                  {llmEnabled ? "AI-powered" : "Deterministic"}
+                </span>
+              ) : null}
             </div>
           </div>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-md p-2 text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
+            className="rounded-lg p-2 text-[#8b949e] hover:bg-[#161b22] hover:text-white"
             aria-label="Close chat"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-3">
-          {messages.length === 0 && !streaming && !loading && (
-            <p className="text-sm text-[#8b949e]">
-              Ask why actions were blocked, request a session summary, or explore risky behavior.
-            </p>
-          )}
-          {messages.map((m) =>
-            m.role === "user" ? (
-              <div key={m.id} className="flex justify-end">
-                <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#1f6feb] px-3 py-2 text-sm text-white">
-                  {m.text}
-                </div>
+        <div className="relative flex min-h-0 flex-1">
+          {sidebarOpen ? (
+            <aside className="absolute inset-y-0 left-0 z-10 flex w-[min(100%,280px)] flex-col border-r border-[#30363d] bg-[#0d1117] shadow-xl">
+              <div className="flex items-center justify-between border-b border-[#30363d] px-2 py-2">
+                <span className="px-2 text-xs font-semibold uppercase tracking-wide text-[#8b949e]">History</span>
+                <button
+                  type="button"
+                  onClick={() => void newChat()}
+                  className="rounded-md bg-[#1f6feb]/20 px-2 py-1 text-xs font-medium text-[#58a6ff]"
+                >
+                  New chat
+                </button>
               </div>
-            ) : (
-              <div key={m.id} className="flex gap-2">
-                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#21262d]">
-                  <Shield className="h-4 w-4 text-[#3fb950]" />
-                </div>
-                <div className="flex max-w-[90%] flex-col rounded-2xl rounded-bl-md border border-[#30363d] bg-[#0d1117] px-3 py-2 text-sm text-[#c9d1d9]">
-                  <FormattedAnswer text={m.answer} />
-                  {m.suggestions.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {m.suggestions.map((s) => (
-                        <button
-                          key={s}
-                          type="button"
-                          onClick={() => void send(s)}
-                          disabled={busy}
-                          className="rounded-full border border-[#30363d] bg-[#161b22] px-2.5 py-1 text-left text-xs text-[#58a6ff] hover:border-[#1f6feb] hover:bg-[#21262d] disabled:opacity-50"
-                        >
-                          {s}
+              <div className="flex-1 overflow-y-auto p-2">
+                {sessions.map((s) => (
+                  <div
+                    key={s.id}
+                    className={`group relative mb-1 rounded-lg border px-2 py-2 text-left text-xs ${
+                      sessionId === s.id
+                        ? "border-[#1f6feb]/50 bg-[#1f6feb]/10"
+                        : "border-transparent hover:bg-[#161b22]"
+                    }`}
+                  >
+                    {renameId === s.id ? (
+                      <input
+                        autoFocus
+                        value={renameValue}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") void commitRename(s.id);
+                          if (e.key === "Escape") {
+                            setRenameId(null);
+                          }
+                        }}
+                        onBlur={() => void commitRename(s.id)}
+                        className="w-full rounded border border-[#30363d] bg-[#0d1117] px-2 py-1 text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none"
+                      />
+                    ) : (
+                      <>
+                        <button type="button" className="w-full pr-14 text-left" onClick={() => void selectSession(s.id)}>
+                          <p className="truncate font-medium text-[#f0f6fc]">
+                            {(s.title || "Chat").length > 30 ? `${(s.title || "Chat").slice(0, 30)}…` : s.title || "Chat"}
+                          </p>
+                          {s.last_message_preview ? (
+                            <p className="text-[10px] text-[#8b949e] line-clamp-2">{s.last_message_preview}</p>
+                          ) : null}
+                          <p className="text-[10px] text-[#8b949e]">{relShort(s.updated_at)}</p>
                         </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                        <button
+                          type="button"
+                          className="absolute right-8 top-1.5 rounded p-1 opacity-0 transition group-hover:opacity-100 hover:bg-[#21262d]"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRenameId(s.id);
+                            setRenameValue(s.title || "");
+                          }}
+                          aria-label="Rename session"
+                        >
+                          <Pencil className="h-3.5 w-3.5 text-[#8b949e]" />
+                        </button>
+                        <button
+                          type="button"
+                          className="absolute right-1 top-1 rounded p-1 opacity-0 transition group-hover:opacity-100 hover:bg-[#21262d]"
+                          onClick={(e) => void deleteSession(s.id, e)}
+                          aria-label="Delete session"
+                        >
+                          <Trash2 className="h-3.5 w-3.5 text-[#8b949e]" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ))}
               </div>
-            )
-          )}
-          {streaming && (
-            <div className="flex gap-2">
-              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#21262d]">
-                <Shield className="h-4 w-4 text-[#3fb950]" />
+              <div className="border-t border-[#30363d] p-2">
+                <button
+                  type="button"
+                  onClick={() => void clearAllSessions()}
+                  className="w-full rounded-md border border-red-500/40 bg-red-500/10 px-2 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/15"
+                >
+                  Clear all history
+                </button>
               </div>
-              <div className="max-w-[90%] rounded-2xl rounded-bl-md border border-[#30363d] bg-[#0d1117] px-3 py-2 text-sm text-[#c9d1d9]">
-                <FormattedAnswer text={streaming.full.slice(0, streaming.pos)} />
-                {streaming.pos < streaming.full.length ? (
-                  <span className="ml-0.5 inline-block h-4 w-0.5 animate-pulse bg-[#58a6ff]" />
-                ) : null}
-              </div>
-            </div>
-          )}
-          {loading && !streaming && (
-            <p className="text-sm italic text-[#8b949e]">Thinking…</p>
-          )}
-          <div ref={bottomRef} />
-        </div>
+            </aside>
+          ) : null}
 
-        <form onSubmit={onSubmit} className="shrink-0 border-t border-[#30363d] p-3">
-          <div className="flex gap-2">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask AgentShield…"
-              className="min-w-0 flex-1 rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2.5 text-sm text-[#f0f6fc] placeholder:text-[#484f58] focus:border-[#1f6feb] focus:outline-none focus:ring-1 focus:ring-[#1f6feb]"
-            />
-            <button
-              type="submit"
-              disabled={busy || !input.trim()}
-              className="flex shrink-0 items-center justify-center rounded-lg bg-[#238636] px-3 py-2 text-white hover:bg-[#2ea043] disabled:opacity-40"
-              aria-label="Send message"
-            >
-              <Send className="h-5 w-5" />
-            </button>
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-3">
+              {messages.length === 0 && !loading && (
+                <p className="text-sm text-[#8b949e]">
+                  Ask about blocked actions, session summaries, HIPAA/SOC2, or policy tuning. Open the menu for chat
+                  history.
+                </p>
+              )}
+              {messages.map((m) => {
+                const last = messages[messages.length - 1];
+                const isLatestAssistantReply =
+                  m.role === "assistant" && last?.role === "assistant" && last.id === m.id && !loading;
+                return m.role === "user" ? (
+                  <div key={m.id} className="flex justify-end">
+                    <div className="max-w-[88%] rounded-2xl rounded-br-md bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-3 py-2 text-sm text-white shadow-md">
+                      {m.text}
+                    </div>
+                  </div>
+                ) : (
+                  <div key={m.id} className="flex gap-2">
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#21262d] ring-1 ring-[#30363d]">
+                      <Shield className="h-4 w-4 text-emerald-400" />
+                    </div>
+                    <div className="flex max-w-[90%] flex-col rounded-2xl rounded-bl-md border border-[#30363d] bg-[#161b22] px-3 py-2 text-sm text-[#c9d1d9] shadow-inner">
+                      <FormattedAnswer text={m.answer} />
+                      {m.suggestions.length > 0 && isLatestAssistantReply ? (
+                        <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[#30363d] pt-3">
+                          {m.suggestions.map((s) => (
+                            <button
+                              key={s}
+                              type="button"
+                              onClick={() => void send(s)}
+                              disabled={busy}
+                              className="rounded-full border border-[#30363d] bg-[#0d1117] px-2.5 py-1 text-left text-xs text-[#58a6ff] hover:border-[#1f6feb] disabled:opacity-50"
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+              {loading ? (
+                <div className="flex gap-2 pl-1">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#21262d]">
+                    <Shield className="h-4 w-4 text-emerald-400" />
+                  </div>
+                  <div className="flex flex-col gap-2 rounded-2xl border border-[#30363d] bg-[#161b22] px-4 py-3">
+                    <p className="text-xs text-[#8b949e]">Analyzing your data…</p>
+                    <div className="flex items-center gap-1">
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff] [animation-delay:-0.2s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff] [animation-delay:-0.1s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff]" />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+              <div ref={bottomRef} />
+            </div>
+
+            <form onSubmit={onSubmit} className="shrink-0 border-t border-[#30363d] p-3">
+              <div className="flex gap-2">
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask the security co-pilot…"
+                  className="min-w-0 flex-1 rounded-xl border border-[#30363d] bg-[#0d1117] px-3 py-2.5 text-sm text-[#f0f6fc] placeholder:text-[#484f58] focus:border-[#1f6feb] focus:outline-none focus:ring-1 focus:ring-[#1f6feb]"
+                />
+                <button
+                  type="submit"
+                  disabled={busy || !input.trim()}
+                  className="flex shrink-0 items-center justify-center rounded-xl bg-emerald-600 px-3 py-2 text-white shadow-lg transition hover:bg-emerald-500 disabled:opacity-40"
+                  aria-label="Send"
+                >
+                  <Send className="h-5 w-5" />
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </>
   );

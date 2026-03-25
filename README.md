@@ -1,15 +1,15 @@
-# AgentShield 🛡️
+# Agentiva 🛡️
 
 **Preview deployments for AI agents.**
 
 [![Tests](https://img.shields.io/badge/tests-24%2C000%2B%20passing-brightgreen)]()
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)]()
-[![pip](https://img.shields.io/badge/pip%20install-agentshield-orange)]()
+[![pip](https://img.shields.io/badge/pip%20install-agentiva-orange)]()
 
 > 88% of companies had AI agent security incidents in 2025. Amazon's Kiro agent caused a 13-hour AWS outage. A Replit agent deleted 1,206 customer records. Microsoft Copilot was exploited via zero-click exfiltration.
 >
-> **AgentShield stops this.** See what your AI agent would do before it does it.
+> **Agentiva stops this.** See what your AI agent would do before it does it.
 
 🌐 [Website](https://website-delta-black-67.vercel.app) · 📖 [Docs](#quick-start) · 💬 [Discord](#) · 🐦 [Twitter](https://twitter.com/RishavAr)
 
@@ -18,21 +18,21 @@
 ## 4 Lines to Protect Any Agent
 
 ```python
-from agentshield import AgentShield
+from agentiva import Agentiva
 
-shield = AgentShield(mode="shadow")
+shield = Agentiva(mode="shadow")
 tools = shield.protect([your_gmail_tool, your_slack_tool, your_jira_tool])
 
-# Your agent runs normally. AgentShield intercepts every action.
+# Your agent runs normally. Agentiva intercepts every action.
 # Nothing executes in shadow mode. Everything is logged.
 print(shield.get_shadow_report())
 ```
 
 ---
 
-## What AgentShield Catches
+## What Agentiva Catches
 
-We ran 100 real-world scenarios. AgentShield caught every dangerous action:
+We ran 100 real-world scenarios. Agentiva caught every dangerous action:
 
 ```
 🛑 BLOCKED  send_email → investor@externalfund.com (confidential financials)     risk: 0.90
@@ -67,7 +67,7 @@ Summary: 100 actions | 47 blocked | 21 shadowed | 32 allowed | 0 false positives
 
 ## Live Dashboard
 
-AgentShield comes with a real-time dashboard for monitoring, approving, and auditing agent actions.
+Agentiva comes with a real-time dashboard for monitoring, approving, and auditing agent actions.
 
 **Pages:**
 - **Overview** — Total intercepted, blocked, shadowed, allowed with live counters
@@ -75,7 +75,8 @@ AgentShield comes with a real-time dashboard for monitoring, approving, and audi
 - **Audit Log** — Searchable, filterable history with pagination and CSV export
 - **Agents** — Registry of all agents with reputation scores and kill switch
 - **Policies** — YAML policy editor with live testing
-- **AI Chat** — Ask AgentShield questions: "Why was that email blocked?" "Which agent is riskiest?"
+- **AI Chat** — Ask Agentiva questions: "Why was that email blocked?" "Which agent is riskiest?"
+- **Chat history** — Server-backed chat sessions (`/api/v1/chat/sessions`) so conversations persist across reloads and can be exported for review
 
 [Screenshot placeholders - add your dashboard screenshots here]
 
@@ -83,12 +84,12 @@ AgentShield comes with a real-time dashboard for monitoring, approving, and audi
 
 ## AI-Powered Chat Co-pilot
 
-Talk to AgentShield. Ask questions about your agents' behavior.
+Talk to Agentiva. Ask questions about your agents' behavior.
 
 ```
 You: "Why were actions blocked?"
 
-AgentShield: "47 actions were blocked in this session. The top reasons:
+Agentiva: "47 actions were blocked in this session. The top reasons:
 1. External email recipients (12 blocks, avg risk 0.90)
 2. Destructive database operations (8 blocks, avg risk 0.95)
 3. Suspicious API endpoints (6 blocks, avg risk 0.97)
@@ -102,13 +103,19 @@ Follow-up questions:
 - Recommendations to improve security"
 ```
 
-Basic mode works without any API key. Add `OPENROUTER_API_KEY` for Claude-powered deep analysis.
+Basic mode works without any API key. Add `OPENROUTER_API_KEY` for Claude-powered deep analysis. The co-pilot can ground answers in the persisted `action_logs` table and in regulatory text (HIPAA / SOC 2 / PCI-DSS) from the compliance knowledge base.
+
+---
+
+## PHI detection
+
+Agentiva runs **PHI-style pattern detection** on tool arguments (e.g. SSN, credit card, medical record numbers, diagnosis codes in medical context). When detected, risk scoring adds up to **+0.5** via the dedicated **phi_detection** signal, and structured metadata (`types`, `risk_adjustment`, etc.) is attached to the action record for audit and compliance reporting—**independent of other signals**, so unsafe payloads don’t slip through on a low base score.
 
 ---
 
 ## Smart Risk Scoring
 
-AgentShield scores every action using 8 signals:
+Agentiva scores every action using **9** signals:
 
 | Signal | What It Detects |
 |--------|----------------|
@@ -120,6 +127,7 @@ AgentShield scores every action using 8 signals:
 | **Agent Reputation** | new agents get stricter scoring automatically |
 | **Frequency** | abnormal request rates flagged |
 | **Data Sensitivity** | PII (+0.3), financial (+0.4), credentials (+0.5) |
+| **PHI detection** | SSN, card data, MRN, diagnosis/prescription context, etc. (up to +0.5) |
 
 All deterministic. No LLM needed for scoring. Configurable weights via YAML.
 
@@ -127,13 +135,13 @@ All deterministic. No LLM needed for scoring. Configurable weights via YAML.
 
 ## Agent Negotiation Protocol
 
-When AgentShield blocks an action, it doesn't just say "no." It explains why and suggests alternatives:
+When Agentiva blocks an action, it doesn't just say "no." It explains why and suggests alternatives:
 
 ```python
 # Agent tries to email external recipient
 result = await shield.intercept("send_email", {"to": "external@company.com", "body": "Q3 financials"})
 
-# AgentShield responds:
+# Agentiva responds:
 # BLOCKED: External recipient detected (external@company.com)
 # Policy: block_external_email (risk: 0.9)
 # Risk factors: external_recipient (high), sensitive content 'financials' (medium)
@@ -151,8 +159,8 @@ The agent can modify its action and retry. This creates a learning loop where ag
 
 ```python
 # LangChain
-from agentshield import AgentShield
-shield = AgentShield(mode="shadow")
+from agentiva import Agentiva
+shield = Agentiva(mode="shadow")
 tools = shield.protect(langchain_tools)
 
 # CrewAI
@@ -223,18 +231,18 @@ rules:
 ### Option 1: pip install
 
 ```bash
-pip install agentshield
-agentshield serve --port 8000
+pip install agentiva
+agentiva serve --port 8000
 ```
 
 ### Option 2: From source
 
 ```bash
-git clone https://github.com/RishavAr/agentshield.git
-cd agentshield
+git clone https://github.com/RishavAr/agentiva.git
+cd agentiva
 python -m venv venv && source venv/bin/activate
 pip install -e .
-agentshield serve
+agentiva serve
 ```
 
 ### Option 3: Docker
@@ -252,11 +260,46 @@ npm run dev
 # Open http://localhost:3000
 ```
 
-### Run the live demo
+### Real demo: SQLite + `demo/real_agent.py`
+
+The **real demo** uses a generated SQLite database (`demo/demo.db`) with fake customers and transactions, plus tools that read/write that DB and log “email” / “Slack” / shell intent—**no SMTP or Slack API**.
+
+**1. Create the demo database (once):**
+
+```bash
+python demo/setup_demo_environment.py
+# Creates demo/demo.db with 100 customers + 50 transactions
+```
+
+**2. Start Agentiva (other terminal):**
+
+```bash
+agentiva serve --port 8000
+```
+
+**3. Run the agent against the live intercept API:**
+
+```bash
+# Default: POST actions to http://localhost:8000/api/v1/intercept (protected)
+python demo/real_agent.py --mode protected
+
+# Interactive: pause between scenarios
+python demo/real_agent.py --mode protected --api http://localhost:8000
+
+# Unprotected: runs tools directly against SQLite (destructive SQL may alter demo.db) — confirms first
+python demo/real_agent.py --mode unprotected
+
+# LangChain StructuredTool smoke test (local SQL only)
+python demo/real_agent.py --mode langchain-smoke
+```
+
+See `demo/README.md` and the docstring in `demo/real_agent.py` for options.
+
+### Optional: scripted demo
 
 ```bash
 python examples/live_demo.py
-# Watch 100 scenarios run with real-time interception
+# Additional scripted scenarios with real-time interception
 ```
 
 ---
@@ -264,50 +307,72 @@ python examples/live_demo.py
 ## Architecture
 
 ```
-┌───────────────────┐
-│  AI Agent          │  (LangChain, CrewAI, OpenAI, MCP, custom)
-└────────┬──────────┘
-         │ tool_call
-         ▼
-┌──────────────────────────────────────────────┐
-│              AGENTSHIELD RUNTIME              │
-├──────────────────────────────────────────────┤
-│  Interceptor → Policy Engine → Risk Scorer   │
-│       │              │              │         │
-│       ▼              ▼              ▼         │
-│  ┌─────────┐  ┌──────────┐  ┌───────────┐   │
-│  │ Audit   │  │ Decision │  │ Negotiator│   │
-│  │ Logger  │  │ Engine   │  │           │   │
-│  └─────────┘  └──────────┘  └───────────┘   │
-│       │         │       │         │          │
-│  ┌────┴───┐ ┌──┴───┐ ┌─┴────┐ ┌──┴──────┐  │
-│  │Rollback│ │Shadow│ │Approve│ │Simulate │  │
-│  └────────┘ └──────┘ └──────┘ └─────────┘  │
-└──────────────────────┬───────────────────────┘
-                       │
-                       ▼
-         ┌───────────────────────┐
-         │  Actual Tool/API      │  (Gmail, Slack, Jira, DB, etc.)
-         └───────────────────────┘
+┌────────────────────┐
+│  AI Agent          │  LangChain · CrewAI · OpenAI · MCP · custom tools
+└─────────┬──────────┘
+          │ tool_call
+          ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                        AGENTIVA API (FastAPI)                        │
+│  /api/v1/intercept · /api/v1/audit · /api/v1/chat · WebSocket feed   │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │
+          ┌─────────────────────┴─────────────────────┐
+          ▼                                           ▼
+┌──────────────────────┐                 ┌──────────────────────┐
+│  Interceptor         │                 │  Shield Chat          │
+│  PolicyEngine (YAML) │                 │  Sessions + messages  │
+│  SmartRiskScorer     │                 │  (SQLite persistence) │
+│  PHI detector        │                 │  + optional LLM layer │
+│  Behavior / drift    │                 └──────────┬────────────┘
+└──────────┬───────────┘                            │
+           │                                        │
+           ▼                                        ▼
+┌──────────────────────┐                 ┌──────────────────────┐
+│  Modes               │                 │  Compliance KB        │
+│  Shadow · Approve ·  │                 │  HIPAA · SOC 2 ·      │
+│  Live · Negotiation  │                 │  PCI-DSS citations +  │
+│  Simulator · Rollback  │                 │  evidence SQL hooks   │
+└──────────┬───────────┘                 └──────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  Persistence: action_logs (audit) · agent registry · approvals ·     │
+│  chat_sessions / chat_messages                                       │
+└─────────────────────────────────────────────────────────────────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  Tools / APIs        │  Email · DB · Slack · shell · payments…
+└──────────────────────┘
 ```
 
 ---
 
-## Compliance Ready
+## Compliance (HIPAA · SOC 2 · PCI-DSS)
 
-AgentShield generates compliance-ready exports:
+Agentiva ships a **compliance knowledge base** with real citations (e.g. **45 CFR § 164.312**, **SOC 2** CC controls, **PCI-DSS** requirements) and **read-only SQL evidence queries** against the `action_logs` table for audits. PHI detection metadata is stored on actions when present.
 
-- **SOC2** — Full audit trail with evidence of human-in-the-loop controls
-- **GDPR** — Data subject access logs (Article 15)
-- **EU AI Act** — Transparency reports, risk classification, human oversight documentation
-- **CSV/JSON** — Export to any SIEM (Splunk, Datadog, ELK)
+**Frameworks covered in-product:**
+
+| Framework | What you get |
+|-----------|----------------|
+| **HIPAA** | Administrative / technical safeguard summaries tied to audit evidence (e.g. access, audit controls, integrity, authentication, transmission) |
+| **SOC 2** | Trust Services criteria mapping (e.g. CC6–CC8) with aggregate stats from `action_logs` |
+| **PCI-DSS** | Cardholder-data and logging expectations aligned with payment-related tool activity |
+
+**Also available:**
+
+- **GDPR** — Data subject access style exports where implemented
+- **EU AI Act** — Transparency / oversight documentation where exported
+- **CSV/JSON** — SIEM-friendly exports
 
 ```bash
-# Export SOC2 report
-curl http://localhost:8000/api/v1/compliance/soc2?start=2026-01-01&end=2026-03-19
+# SOC 2 style report (date range)
+curl "http://localhost:8000/api/v1/compliance/soc2?start=2026-01-01&end=2026-03-19"
 
-# Export GDPR data access log
-curl http://localhost:8000/api/v1/compliance/gdpr/customer_12345
+# GDPR-oriented export (example path)
+curl "http://localhost:8000/api/v1/compliance/gdpr/customer_12345"
 ```
 
 ---
@@ -320,7 +385,10 @@ curl http://localhost:8000/api/v1/compliance/gdpr/customer_12345
 | `/api/v1/intercept` | POST | Intercept an agent action |
 | `/api/v1/audit` | GET | Query audit log with filters |
 | `/api/v1/report` | GET | Shadow mode summary report |
-| `/api/v1/chat` | POST | Chat with AgentShield AI co-pilot |
+| `/api/v1/chat` | POST | Chat with Agentiva AI co-pilot |
+| `/api/v1/chat/sessions` | GET, POST | List or create persisted chat sessions |
+| `/api/v1/chat/sessions/{id}` | GET, DELETE | Session detail with message history, or delete |
+| `/api/v1/chat/sessions/{id}/messages` | POST | Append message and get co-pilot reply |
 | `/api/v1/mode/{mode}` | POST | Switch operating mode |
 | `/api/v1/approve` | POST | Approve/deny pending action |
 | `/api/v1/negotiate/{id}` | POST | Get negotiation guidance |
@@ -336,14 +404,17 @@ Full OpenAPI docs at `http://localhost:8000/docs`
 ## Testing
 
 ```bash
-# Run all 24,000+ tests
-python -m pytest tests/ -v
+# Default: fast suite (combinatorial `test_param_*` suites are marked @slow and skipped)
+python -m pytest tests/ -q
 
-# Run specific test category
-python -m pytest tests/test_param_attack_vectors.py -v  # Attack vectors
-python -m pytest tests/test_param_real_incidents.py -v   # Real-world incidents
-python -m pytest tests/test_param_industry_compliance.py -v  # Industry compliance
-python -m pytest tests/test_edge_cases.py -v             # Edge cases
+# Full matrix including combinatorial tests (~24k+ collected)
+python -m pytest tests/ -m "slow or not slow" -q
+```
+
+```bash
+# Focused modules
+python -m pytest tests/test_phi_detector.py tests/test_compliance_knowledge_base.py -v
+python -m pytest tests/test_edge_cases.py -v
 ```
 
 Test coverage includes:
@@ -364,7 +435,7 @@ Test coverage includes:
 - [x] OpenAI Agents SDK integration
 - [x] MCP protocol proxy
 - [x] YAML policy engine
-- [x] Smart risk scoring (8 signals)
+- [x] Smart risk scoring (9 signals, including PHI detection)
 - [x] Agent negotiation protocol
 - [x] Simulation engine (dry-run diffs)
 - [x] Rollback engine
@@ -372,7 +443,7 @@ Test coverage includes:
 - [x] AI chat co-pilot
 - [x] Agent registry + reputation
 - [x] Compliance exports (SOC2, GDPR, EU AI Act)
-- [x] 24,000+ tests
+- [x] Large test matrix (24,000+ combinatorial cases) + fast default CI
 - [ ] Slack/Teams approval integration
 - [ ] PagerDuty/Datadog alerting
 - [ ] Kubernetes operator

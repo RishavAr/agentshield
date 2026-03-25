@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "agentshield"
+name = "agentiva"
 version = "0.1.0"
-description = "Preview deployments for AI agents"
+description = "Agentiva — open-source runtime for AI agent safety"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -23,11 +23,18 @@ classifiers = [
 ]
 
 [project.scripts]
-agentshield = "agentshield.cli:main"
-agentshield-server = "agentshield.cli:main"
+agentiva = "agentiva.cli:main"
+agentiva-server = "agentiva.cli:main"
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: combinatorial / large-scale tests (run with: pytest -m slow)",
+]
+# Skip huge combinatorial suites by default so `pytest tests/` finishes quickly.
+addopts = "-m \"not slow\""

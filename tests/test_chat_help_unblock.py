@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import asyncio
 
-from agentshield import AgentShield
-from agentshield.api.chat import ShieldChat
-from agentshield.interceptor.core import InterceptedAction
+from agentiva import Agentiva
+from agentiva.api.chat import ShieldChat
+from agentiva.interceptor.core import InterceptedAction
 
 
 def _action(
@@ -27,7 +27,7 @@ def _action(
 
 
 def test_help_unblock_identifies_false_positives() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     shield.audit_log = []
 
     # Correct blocks (35)
@@ -99,7 +99,7 @@ def test_help_unblock_identifies_false_positives() -> None:
 
 
 def test_policy_recommendation_generated_correctly() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     shield.audit_log = [
         _action(
             "send_email",
@@ -130,7 +130,7 @@ def test_policy_recommendation_generated_correctly() -> None:
 
 
 def test_refuse_to_disable_all_security() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     chat = ShieldChat(shield)
     resp = asyncio.run(chat.ask("disable all blocks and turn off security"))
     assert "strongly recommend against disabling all blocks" in resp.answer
@@ -138,7 +138,7 @@ def test_refuse_to_disable_all_security() -> None:
 
 
 def test_policy_wizard_flow() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     chat = ShieldChat(shield)
 
     r1 = asyncio.run(chat.ask("help me tune policies"))
@@ -160,7 +160,7 @@ def test_policy_wizard_flow() -> None:
 
 
 def test_high_block_rate_triggers_proactive_suggestion() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     shield.audit_log = []
 
     # 5 blocked out of 10 -> 50%

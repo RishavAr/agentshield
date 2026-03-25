@@ -1,4 +1,4 @@
-from agentshield.interceptor.browser_agent_hook import BrowserAgentInterceptor
+from agentiva.interceptor.browser_agent_hook import BrowserAgentInterceptor
 
 
 def test_navigation_unknown_domain_risk() -> None:

@@ -5,8 +5,8 @@ import textwrap
 from datetime import UTC, datetime
 from pathlib import Path
 
-from agentshield import AgentShield
-from agentshield.api.chat import ShieldChat
+from agentiva import Agentiva
+from agentiva.api.chat import ShieldChat
 
 
 def _write_policy(tmp_path: Path, yaml_text: str) -> str:
@@ -41,7 +41,7 @@ def test_hierarchical_approval_auto_approve_small_amount(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = _run(
         shield.intercept(
             "transfer_funds",
@@ -74,7 +74,7 @@ def test_hierarchical_approval_requires_manager_for_medium(tmp_path) -> None:
             """
         ),
     )
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = _run(shield.intercept("transfer_funds", {"amount": 5000}, agent_id="agent-1"))
     assert action.decision == "approve"
     assert action.result.get("approver") == "manager"
@@ -102,7 +102,7 @@ def test_hierarchical_approval_requires_dual_sign_for_large(tmp_path) -> None:
             """
         ),
     )
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = _run(shield.intercept("transfer_funds", {"amount": 2000000}, agent_id="agent-1"))
     assert action.decision == "approve"
     assert action.result.get("approver") == "cfo"
@@ -137,7 +137,7 @@ def test_mandatory_action_never_blocked(tmp_path) -> None:
             """
         ),
     )
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = _run(
         shield.intercept(
             "send_email",
@@ -169,7 +169,7 @@ def test_mandatory_action_still_logged(tmp_path) -> None:
             """
         ),
     )
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = _run(
         shield.intercept(
             "send_slack_message",
@@ -215,7 +215,7 @@ def test_geo_eu_gdpr_blocks_non_eu_transfer(tmp_path) -> None:
         ),
     )
 
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = _run(
         shield.intercept(
             "send_email",
@@ -248,7 +248,7 @@ def test_geo_california_ccpa_shadows_data_access(tmp_path) -> None:
             """
         ),
     )
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     action = _run(
         shield.intercept(
             "read_customer_data",
@@ -284,7 +284,7 @@ def test_copilot_explains_geo_block_reason(tmp_path) -> None:
             """
         ),
     )
-    shield = AgentShield(mode="shadow", policy_path=policy)
+    shield = Agentiva(mode="shadow", policy_path=policy)
     _run(
         shield.intercept(
             "send_email",

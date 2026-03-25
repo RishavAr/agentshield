@@ -7,8 +7,8 @@ from pathlib import Path
 
 def _load_db_module(tmp_path: Path):
     db_path = tmp_path / f"test_{uuid.uuid4().hex}.db"
-    os.environ["AGENTSHIELD_DATABASE_URL"] = f"sqlite+aiosqlite:///{db_path}"
-    import agentshield.db.database as database_module
+    os.environ["AGENTIVA_DATABASE_URL"] = f"sqlite+aiosqlite:///{db_path}"
+    import agentiva.db.database as database_module
 
     return importlib.reload(database_module)
 

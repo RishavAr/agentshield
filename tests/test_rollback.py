@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from agentshield.modes.rollback import RollbackEngine
+from agentiva.modes.rollback import RollbackEngine
 
 
 def _id() -> str:

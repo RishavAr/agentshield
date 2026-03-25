@@ -1,0 +1,133 @@
+# Policy for demo/paybot_demo.py — fintech support agent (PayBot) narrative.
+# Start server:  AGENTIVA_POLICY_PATH=demo/policies/paybot_demo.yaml agentiva serve --port 8000
+version: 1
+default_mode: shadow
+
+rules:
+  # --- Blocks first (attacks) ---
+  - name: paybot_block_large_refund
+    tool: process_payment
+    condition:
+      field: arguments.amount
+      operator: contains
+      value: "5000"
+    action: block
+    risk_score: 0.95
+
+  - name: paybot_block_bulk_customer_id
+    tool: read_customer_data
+    condition:
+      field: arguments.customer_id
+      operator: equals
+      value: "*"
+    action: block
+    risk_score: 0.98
+
+  - name: paybot_block_sensitive_fields_read
+    tool: read_customer_data
+    condition:
+      field: arguments.fields
+      operator: contains
+      value: "credit_card"
+    action: block
+    risk_score: 0.98
+
+  - name: paybot_block_ssn_fields_read
+    tool: read_customer_data
+    condition:
+      field: arguments.fields
+      operator: contains
+      value: "ssn"
+    action: block
+    risk_score: 0.92
+
+  - name: paybot_block_attack_email_domains
+    tool: send_email
+    condition:
+      field: arguments.to
+      operator: contains
+      value: "protonmail.com"
+    action: block
+    risk_score: 0.95
+
+  - name: paybot_block_exfil_email_body
+    tool: send_email
+    condition:
+      field: arguments.body
+      operator: contains
+      value: "credit card"
+    action: block
+    risk_score: 0.95
+
+  - name: paybot_block_split_ssn_email
+    tool: send_email
+    condition:
+      field: arguments.body
+      operator: contains
+      value: "SSN"
+    action: block
+    risk_score: 0.9
+
+  - name: paybot_block_split_cc_email
+    tool: send_email
+    condition:
+      field: arguments.body
+      operator: contains
+      value: "CC ending"
+    action: block
+    risk_score: 0.9
+
+  - name: paybot_block_litellm_exfil
+    tool: call_external_api
+    condition:
+      field: arguments.url
+      operator: contains
+      value: "litellm.cloud/exfil"
+    action: block
+    risk_score: 1.0
+
+  - name: paybot_block_shell_evil_fetch
+    tool: run_shell_command
+    condition:
+      field: arguments.command
+      operator: contains
+      value: "evil.com"
+    action: block
+    risk_score: 0.99
+
+  - name: paybot_block_cf_delete
+    tool: run_shell_command
+    condition:
+      field: arguments.command
+      operator: contains
+      value: "cloudformation delete-stack"
+    action: block
+    risk_score: 0.95
+
+  - name: paybot_block_rds_delete
+    tool: run_shell_command
+    condition:
+      field: arguments.command
+      operator: contains
+      value: "delete-db-instance"
+    action: block
+    risk_score: 0.95
+
+  - name: paybot_block_ec2_terminate
+    tool: run_shell_command
+    condition:
+      field: arguments.command
+      operator: contains
+      value: "terminate-instances"
+    action: block
+    risk_score: 0.95
+
+  # --- Routine PayBot customer replies (must be after blocks) ---
+  - name: paybot_allow_customer_outbound
+    tool: send_email
+    condition:
+      field: arguments.to
+      operator: contains
+      value: "@customer.com"
+    action: allow
+    risk_score: 0.06

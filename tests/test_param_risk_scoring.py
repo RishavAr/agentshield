@@ -4,8 +4,9 @@ from datetime import UTC, datetime
 
 import pytest
 
-from agentshield.policy.smart_scorer import SmartRiskScorer
+from agentiva.policy.smart_scorer import SmartRiskScorer
 
+pytestmark = pytest.mark.slow
 
 TOOLS = [
     "send_email",

@@ -1,190 +1,285 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { CheckCircle2, Eye, MessageSquareText, PlayCircle, Undo2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { Check, Copy, Loader2, Shield } from "lucide-react";
 
-const CODE_SAMPLE = `from agentshield import AgentShield
-shield = AgentShield(mode="shadow")
-tools = shield.protect([your_tools])
-print(shield.get_audit_log())`;
+import { getHttpApiBase } from "@/lib/api-base";
+import { toast } from "@/components/toast-host";
 
-const modeCards = [
-  { title: "Shadow Mode", icon: Eye, description: "Observe without executing" },
-  { title: "Simulation", icon: PlayCircle, description: "Preview impact before acting" },
-  { title: "Approval", icon: CheckCircle2, description: "Human-in-the-loop for risky actions" },
-  { title: "Negotiation", icon: MessageSquareText, description: "Agent gets feedback to self-correct" },
-  { title: "Rollback", icon: Undo2, description: "Undo what the agent did" },
-];
+const API_BASE = getHttpApiBase();
 
-export default function LandingPage() {
-  const [typed, setTyped] = useState("");
+type Bootstrap = { agents_count: number; action_logs_count: number; is_empty: boolean };
 
-  useEffect(() => {
-    let idx = 0;
-    const timer = setInterval(() => {
-      idx += 1;
-      setTyped(CODE_SAMPLE.slice(0, idx));
-      if (idx >= CODE_SAMPLE.length) {
-        clearInterval(timer);
-      }
-    }, 18);
-    return () => clearInterval(timer);
+const FRAMEWORKS = ["LangChain", "CrewAI", "OpenAI Agents", "MCP", "Custom"] as const;
+
+export default function OnboardingPage() {
+  const router = useRouter();
+  const [boot, setBoot] = useState<Bootstrap | null>(null);
+  const [step, setStep] = useState(1);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [framework, setFramework] = useState<string>("LangChain");
+  const [submitting, setSubmitting] = useState(false);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [registeredName, setRegisteredName] = useState("");
+
+  const loadBoot = useCallback(async () => {
+    try {
+      const r = await fetch(`${API_BASE}/api/v1/bootstrap`);
+      if (!r.ok) throw new Error("bootstrap");
+      const j = (await r.json()) as Bootstrap;
+      setBoot(j);
+    } catch {
+      setBoot({ agents_count: 0, action_logs_count: 0, is_empty: true });
+    }
   }, []);
 
+  useEffect(() => {
+    void loadBoot();
+  }, [loadBoot]);
+
+  async function onRegister(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim()) {
+      toast("Agent name is required", "error");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const r = await fetch(`${API_BASE}/api/v1/agents/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          description: description.trim(),
+          framework,
+          allowed_tools: ["send_email", "read_customer_data"],
+          max_risk_tolerance: 0.8,
+        }),
+      });
+      if (!r.ok) throw new Error(await r.text());
+      const j = (await r.json()) as { api_key: string; name: string };
+      setApiKey(j.api_key);
+      setRegisteredName(j.name);
+      setStep(2);
+      toast("Agent registered", "success");
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Registration failed", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function runDemo() {
+    setSubmitting(true);
+    try {
+      const r = await fetch(`${API_BASE}/api/v1/demo/seed`, { method: "POST" });
+      if (!r.ok) throw new Error(await r.text());
+      toast("Demo data loaded! Check your dashboard.", "success");
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Demo failed", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function copyKey() {
+    if (!apiKey) return;
+    void navigator.clipboard.writeText(apiKey);
+    toast("API key copied", "success");
+  }
+
+  if (boot === null) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0f1e] text-[#f8fafc]">
+        <Loader2 className="h-10 w-10 animate-spin text-[#3b82f6]" />
+      </div>
+    );
+  }
+
   return (
-    <div className="scroll-smooth bg-[#0a0a0a] text-[#e5e7eb]">
-      <section className="mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-24">
-        <div className="mb-6 flex flex-wrap gap-2">
-          <span className="rounded-full border border-[#2f2f2f] bg-[#111827] px-3 py-1 text-xs text-[#93c5fd]">
-            10,000+ tests passing
-          </span>
-          <span className="rounded-full border border-[#2f2f2f] bg-[#111827] px-3 py-1 text-xs text-[#a7f3d0]">
-            Apache 2.0
-          </span>
-        </div>
-        <h1 className="text-5xl font-semibold tracking-tight text-white md:text-7xl">AgentShield</h1>
-        <p className="mt-4 text-xl text-[#93c5fd] md:text-2xl">Preview deployments for AI agents</p>
-        <p className="mt-5 max-w-3xl text-lg text-[#9ca3af]">
-          See what your AI agent would do before it does it. Shadow mode. Simulation. Approval.
-          Rollback. Open-source.
-        </p>
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/dashboard"
-            className="rounded-md bg-[#3b82f6] px-5 py-3 font-medium text-white transition hover:bg-[#2563eb]"
-          >
-            Get Started — pip install agentshield
-          </Link>
-          <a
-            href="https://github.com/RishavAr/agentshield"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-md border border-[#374151] bg-[#111827] px-5 py-3 font-medium text-[#d1d5db] transition hover:bg-[#1f2937]"
-          >
-            View on GitHub
-          </a>
-        </div>
-
-        <div className="mt-10 rounded-xl border border-[#2a2a2a] bg-[#0d1117] p-4">
-          <p className="mb-3 text-xs uppercase tracking-widest text-[#6b7280]">Terminal</p>
-          <pre className="min-h-[120px] whitespace-pre-wrap font-mono text-sm text-[#d1d5db]">{typed}</pre>
-        </div>
-      </section>
-
-      <section id="problem" className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="text-3xl font-semibold text-white md:text-4xl">AI agents are breaking things in production</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            ["88%", "of companies had AI agent security incidents"],
-            ["48%", "of security pros rank agentic AI as #1 attack vector"],
-            ["$1M+", "average cost of AI agent failures (EY 2026)"],
-          ].map(([stat, label]) => (
-            <div key={stat} className="rounded-xl border border-[#2a2a2a] bg-[#0d1117] p-5">
-              <p className="text-4xl font-semibold text-[#3b82f6]">{stat}</p>
-              <p className="mt-2 text-sm text-[#9ca3af]">{label}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {[
-            "Amazon Kiro outage (13h production downtime)",
-            "Replit record deletion (1,206 customer records)",
-            "Copilot zero-click exfiltration (SharePoint leak)",
-          ].map((incident) => (
-            <div key={incident} className="rounded-xl border border-[#2a2a2a] bg-[#111827] p-4 text-sm text-[#d1d5db]">
-              {incident}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="how" className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="text-3xl font-semibold text-white md:text-4xl">Four lines to protect any agent</h2>
-        <div className="mt-8 rounded-xl border border-[#2a2a2a] bg-[#0d1117] p-5">
-          <pre className="overflow-x-auto font-mono text-sm text-[#d1d5db]">{CODE_SAMPLE}</pre>
-        </div>
-        <div className="mt-8 rounded-xl border border-[#2a2a2a] bg-[#111827] p-5 font-mono text-xs text-[#d1d5db] md:text-sm">
-          Agent --&gt; AgentShield --&gt; Policy Check --&gt; Decision (Allow/Shadow/Block/Approve) --&gt;
-          Action or Log
-        </div>
-      </section>
-
-      <section id="modes" className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="text-3xl font-semibold text-white md:text-4xl">Five operating modes</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-5">
-          {modeCards.map((mode) => (
-            <div key={mode.title} className="rounded-xl border border-[#2a2a2a] bg-[#0d1117] p-4">
-              <mode.icon className="h-5 w-5 text-[#60a5fa]" />
-              <p className="mt-3 font-medium text-white">{mode.title}</p>
-              <p className="mt-1 text-sm text-[#9ca3af]">{mode.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="demo" className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="text-3xl font-semibold text-white md:text-4xl">Watch AgentShield in action</h2>
-        <div className="mt-8 rounded-xl border border-[#2a2a2a] bg-[#0d1117] p-6">
-          <div className="rounded-lg border border-dashed border-[#334155] bg-[#111827] p-10 text-center text-[#9ca3af]">
-            Dashboard screenshot/iframe placeholder: 12 actions, 5 blocked, 7 shadowed
+    <div className="min-h-screen bg-[#0a0f1e] px-4 py-12 text-[#f8fafc]">
+      <div className="mx-auto max-w-2xl">
+        <div className="mb-8 flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-violet-600">
+            <Shield className="h-7 w-7 text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#64748b]">Welcome to Agentiva</p>
+            <h1 className="text-2xl font-bold tracking-tight">Preview deployments for AI agents</h1>
           </div>
         </div>
-      </section>
 
-      <section id="integrations" className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="text-3xl font-semibold text-white md:text-4xl">Works with every agent framework</h2>
-        <div className="mt-8 grid grid-cols-2 gap-3 text-sm text-[#d1d5db] md:grid-cols-7">
-          {["LangChain", "CrewAI", "OpenAI Agents SDK", "Anthropic", "MCP Protocol", "AutoGen", "MetaGPT"].map(
-            (item) => (
-              <div key={item} className="rounded-lg border border-[#2a2a2a] bg-[#0d1117] p-3 text-center">
-                {item}
-              </div>
-            )
-          )}
-        </div>
-        <div className="mt-6 flex flex-wrap gap-2">
-          {["Healthcare (HIPAA)", "Finance (PCI-DSS)", "E-commerce", "SaaS", "Legal"].map((tag) => (
-            <span key={tag} className="rounded-full border border-[#2a2a2a] bg-[#111827] px-3 py-1 text-xs text-[#93c5fd]">
-              {tag}
+        <div className="mb-8 flex flex-wrap gap-2 text-sm text-[#64748b]">
+          {[1, 2, 3].map((s) => (
+            <span
+              key={s}
+              className={`rounded-full px-3 py-1 ${step >= s ? "bg-[#3b82f6]/20 text-[#93c5fd]" : "bg-[#131b2e]"}`}
+            >
+              Step {s}
             </span>
           ))}
+          <span className="rounded-full bg-[#131b2e] px-3 py-1">Demo</span>
         </div>
-      </section>
 
-      <section id="trust" className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="text-3xl font-semibold text-white md:text-4xl">Built for production</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-4">
-          {[
-            "10,000+ tests",
-            "64 attack vectors covered",
-            "SOC2/GDPR/EU AI Act compliance exports",
-            "Open-source (Apache 2.0)",
-          ].map((item) => (
-            <div key={item} className="rounded-xl border border-[#2a2a2a] bg-[#0d1117] p-4">
-              <p className="text-sm text-[#d1d5db]">{item}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <footer className="border-t border-[#1f2937] px-6 py-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 text-sm text-[#9ca3af] md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap gap-4">
-            <a href="https://github.com/RishavAr/agentshield" target="_blank" rel="noopener noreferrer">
-              GitHub
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-              Twitter
-            </a>
-            <span className="font-mono text-[#93c5fd]">pip install agentshield</span>
+        {!boot.is_empty ? (
+          <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-[#3b82f6]/30 bg-[#3b82f6]/10 px-4 py-3">
+            <p className="text-sm text-[#bfdbfe]">
+              You already have data in Agentiva ({boot.action_logs_count} actions, {boot.agents_count} agents).
+            </p>
+            <button
+              type="button"
+              onClick={() => router.push("/dashboard")}
+              className="shrink-0 rounded-lg bg-[#3b82f6] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#2563eb]"
+            >
+              Go to Dashboard
+            </button>
           </div>
-          <a href="https://rishavaryan.dev" target="_blank" rel="noopener noreferrer" className="text-[#d1d5db]">
-            Built by Rishav Aryan
-          </a>
+        ) : null}
+
+        {step === 1 && (
+          <section className="rounded-2xl border border-white/10 bg-[#131b2e]/80 p-6 backdrop-blur">
+            <h2 className="text-lg font-semibold">Register your first agent</h2>
+            <p className="mt-1 text-sm text-[#64748b]">You’ll get an API key to use in your code.</p>
+            <form onSubmit={onRegister} className="mt-6 space-y-4">
+              <div>
+                <label className="text-sm font-medium text-[#94a3b8]">Agent name *</label>
+                <input
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#0a0f1e] px-3 py-2.5 text-[#f8fafc] outline-none ring-[#3b82f6] focus:ring-2"
+                  placeholder="e.g. Support copilot"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-[#94a3b8]">Description</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={2}
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#0a0f1e] px-3 py-2.5 text-[#f8fafc] outline-none focus:ring-2 focus:ring-[#3b82f6]"
+                  placeholder="What does this agent do?"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-[#94a3b8]">Framework</label>
+                <select
+                  value={framework}
+                  onChange={(e) => setFramework(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#0a0f1e] px-3 py-2.5 text-[#f8fafc] outline-none focus:ring-2 focus:ring-[#3b82f6]"
+                >
+                  {FRAMEWORKS.map((f) => (
+                    <option key={f} value={f}>
+                      {f}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full rounded-xl bg-[#3b82f6] py-3 font-semibold text-white transition hover:bg-[#2563eb] disabled:opacity-50"
+              >
+                {submitting ? "Creating…" : "Create agent & generate API key"}
+              </button>
+            </form>
+          </section>
+        )}
+
+        {step === 2 && apiKey && (
+          <section className="space-y-6">
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5">
+              <h2 className="font-semibold text-amber-100">Your API key</h2>
+              <p className="mt-1 text-sm text-amber-200/80">Save this key — you won’t see it again.</p>
+              <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl bg-[#0a0f1e] px-4 py-3 font-mono text-sm text-[#f8fafc]">
+                <span className="break-all">{apiKey}</span>
+                <button
+                  type="button"
+                  onClick={copyKey}
+                  className="ml-auto flex shrink-0 items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium hover:bg-white/20"
+                >
+                  <Copy className="h-3.5 w-3.5" /> Copy
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-[#131b2e]/80 p-6">
+              <h3 className="font-semibold">Add Agentiva to your code</h3>
+              <p className="mt-1 text-sm text-[#64748b]">With your API key:</p>
+              <pre className="mt-3 overflow-x-auto rounded-xl bg-[#0a0f1e] p-4 text-left text-xs leading-relaxed text-[#94a3b8]">
+                {`from agentiva import Agentiva
+
+shield = Agentiva(api_key="${apiKey}", mode="shadow")
+tools = shield.protect([your_existing_tools])`}
+              </pre>
+              <p className="mt-4 text-sm text-[#64748b]">Or use without an API key for local development:</p>
+              <pre className="mt-3 overflow-x-auto rounded-xl bg-[#0a0f1e] p-4 text-left text-xs leading-relaxed text-[#94a3b8]">
+                {`from agentiva import Agentiva
+
+shield = Agentiva(mode="shadow")
+tools = shield.protect([your_existing_tools])`}
+              </pre>
+              <button
+                type="button"
+                onClick={() => setStep(3)}
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3b82f6] py-3 font-semibold text-white hover:bg-[#2563eb]"
+              >
+                Next <Check className="h-4 w-4" />
+              </button>
+            </div>
+          </section>
+        )}
+
+        {step === 3 && (
+          <section className="rounded-2xl border border-white/10 bg-[#131b2e]/80 p-8 text-center">
+            <h2 className="text-xl font-semibold">Start your agent</h2>
+            <p className="mt-2 text-sm text-[#64748b]">
+              When <span className="font-medium text-[#94a3b8]">{registeredName || name}</span> sends its first action,
+              you’ll see it on the Overview.
+            </p>
+            <button
+              type="button"
+              onClick={() => router.push("/dashboard")}
+              className="mt-8 w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-500"
+            >
+              I’ve added the code — show me the dashboard
+            </button>
+          </section>
+        )}
+
+        <div className="mt-10 rounded-2xl border border-dashed border-white/15 bg-[#131b2e]/40 p-6 text-center">
+          <p className="text-sm font-medium text-[#94a3b8]">Or try the demo first</p>
+          <p className="mt-1 text-xs text-[#64748b]">Loads sample intercepts so you can explore the product.</p>
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={() => void runDemo()}
+            className="mt-4 rounded-xl border border-[#3b82f6]/50 bg-[#3b82f6]/15 px-6 py-2.5 text-sm font-semibold text-[#93c5fd] transition hover:bg-[#3b82f6]/25 disabled:opacity-50"
+          >
+            Run demo with sample data
+          </button>
         </div>
-      </footer>
+
+        <p className="mt-10 text-center text-sm text-[#64748b]">
+          <Link href="/marketing" className="text-[#3b82f6] hover:underline">
+            Marketing site
+          </Link>
+          {" · "}
+          <a
+            href="https://github.com/RishavAr/agentiva/blob/main/README.md"
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#3b82f6] hover:underline"
+          >
+            Read the docs
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from agentshield import AgentShield
+from agentiva import Agentiva
 
 
 TEMPLATES = ["healthcare", "finance", "ecommerce", "saas", "legal"]
@@ -18,7 +18,7 @@ def test_templates_exist_and_parse() -> None:
 
 def test_templates_load_via_sdk_policy_argument() -> None:
     for name in TEMPLATES:
-        shield = AgentShield(mode="shadow", policy=name)
+        shield = Agentiva(mode="shadow", policy=name)
         assert shield.policy_path is None or name in shield.policy_path
 
 

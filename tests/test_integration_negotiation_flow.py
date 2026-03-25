@@ -2,7 +2,7 @@ import asyncio
 
 from fastapi.testclient import TestClient
 
-from agentshield.api import server
+from agentiva.api import server
 
 
 def test_full_flow_intercept_negotiate_retry_approve() -> None:

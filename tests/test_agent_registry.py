@@ -1,6 +1,6 @@
 import pytest
 
-from agentshield.registry.agent_registry import AgentRegistry
+from agentiva.registry.agent_registry import AgentRegistry
 
 
 def test_register_agent() -> None:

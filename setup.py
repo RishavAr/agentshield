@@ -10,19 +10,28 @@ def _read_requirements() -> list[str]:
 
 
 setup(
-    name="agentshield",
+    name="agentiva",
     version="0.1.0",
-    description="Preview deployments for AI agents",
+    description="Agentiva — open-source runtime for AI agent safety (intercept, policy, audit)",
     license="Apache-2.0",
     python_requires=">=3.10",
     packages=find_packages(),
     include_package_data=True,
     install_requires=_read_requirements(),
+    extras_require={
+        # Recognized third-party benchmark frameworks (optional).
+        # Note: `pyrit` is intentionally excluded here because it can conflict with strict pins
+        # in this repo depending on versions. Our benchmark runner will still skip gracefully.
+        "benchmarks": [
+            "deepteam",
+            "garak",
+        ],
+    },
     data_files=[("policies", ["policies/default.yaml"])],
     entry_points={
         "console_scripts": [
-            "agentshield=agentshield.cli:main",
-            "agentshield-server=agentshield.cli:main",
+            "agentiva=agentiva.cli:main",
+            "agentiva-server=agentiva.cli:main",
         ]
     },
 )

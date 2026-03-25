@@ -1,4 +1,4 @@
-from agentshield.interceptor.code_agent_hook import CodeAgentInterceptor
+from agentiva.interceptor.code_agent_hook import CodeAgentInterceptor
 
 
 def test_shell_command_rm_rf_critical() -> None:

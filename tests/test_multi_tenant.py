@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
-from agentshield.api import server
-from agentshield.auth.tenancy import TenantManager
+from agentiva.api import server
+from agentiva.auth.tenancy import TenantManager
 
 
 def test_tenant_manager_register_and_lookup() -> None:
@@ -28,7 +28,7 @@ def test_api_key_auth_enforced_when_tenancy_enabled() -> None:
         with TestClient(server.app) as client:
             no_key = client.get("/api/v1/metrics")
             assert no_key.status_code == 401
-            with_key = client.get("/api/v1/metrics", headers={"X-AgentShield-Key": "tenant-key"})
+            with_key = client.get("/api/v1/metrics", headers={"X-Agentiva-Key": "tenant-key"})
             assert with_key.status_code == 200
     finally:
         server._tenant_manager._tenants_by_key.clear()

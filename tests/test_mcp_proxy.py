@@ -1,11 +1,11 @@
 from fastapi.testclient import TestClient
 
-from agentshield import AgentShield
-from agentshield.interceptor.mcp_proxy import create_mcp_proxy_app
+from agentiva import Agentiva
+from agentiva.interceptor.mcp_proxy import create_mcp_proxy_app
 
 
 def test_mcp_proxy_blocks_when_policy_blocks() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     app = create_mcp_proxy_app("localhost:3001", shield)
     with TestClient(app) as client:
         response = client.post(
@@ -17,7 +17,7 @@ def test_mcp_proxy_blocks_when_policy_blocks() -> None:
 
 
 def test_mcp_proxy_forwards_on_non_block(monkeypatch) -> None:
-    shield = AgentShield(mode="live")
+    shield = Agentiva(mode="live")
     app = create_mcp_proxy_app("localhost:3001", shield)
 
     class DummyResp:
@@ -40,7 +40,7 @@ def test_mcp_proxy_forwards_on_non_block(monkeypatch) -> None:
         async def post(self, *args, **kwargs):
             return DummyResp()
 
-    monkeypatch.setattr("agentshield.interceptor.mcp_proxy.httpx.AsyncClient", DummyClient)
+    monkeypatch.setattr("agentiva.interceptor.mcp_proxy.httpx.AsyncClient", DummyClient)
 
     with TestClient(app) as client:
         response = client.post("/mcp/call", json={"tool_name": "safe_tool", "arguments": {}})
@@ -49,7 +49,7 @@ def test_mcp_proxy_forwards_on_non_block(monkeypatch) -> None:
 
 
 def test_mcp_proxy_validation() -> None:
-    shield = AgentShield(mode="shadow")
+    shield = Agentiva(mode="shadow")
     app = create_mcp_proxy_app("localhost:3001", shield)
     with TestClient(app) as client:
         response = client.post("/mcp/call", json={"arguments": {}})
@@ -57,7 +57,7 @@ def test_mcp_proxy_validation() -> None:
 
 
 def test_mcp_proxy_includes_negotiation_on_block() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     app = create_mcp_proxy_app("localhost:3001", shield)
     with TestClient(app) as client:
         response = client.post("/mcp/call", json={"tool_name": "send_email", "arguments": {"to": "x@outside.com"}})

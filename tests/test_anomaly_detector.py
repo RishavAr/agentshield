@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from agentshield.policy.anomaly_detector import AnomalyDetector
+from agentiva.policy.anomaly_detector import AnomalyDetector
 
 
 def test_velocity_anomaly() -> None:

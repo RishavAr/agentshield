@@ -1,6 +1,6 @@
 import uuid
 
-from agentshield.modes.simulator import ActionSimulator, SimulationResult
+from agentiva.modes.simulator import ActionSimulator, SimulationResult
 
 
 def _id() -> str:

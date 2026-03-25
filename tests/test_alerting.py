@@ -1,7 +1,7 @@
 import asyncio
 
-from agentshield.alerts.alerter import AlertManager
-from agentshield.interceptor.core import InterceptedAction
+from agentiva.alerts.alerter import AlertManager
+from agentiva.interceptor.core import InterceptedAction
 
 
 def _action() -> InterceptedAction:
@@ -50,7 +50,7 @@ def test_alert_manager_slack_webhook(monkeypatch) -> None:
         async def post(self, url, json):
             calls.append((url, json))
 
-    monkeypatch.setattr("agentshield.alerts.alerter.httpx.AsyncClient", DummyClient)
+    monkeypatch.setattr("agentiva.alerts.alerter.httpx.AsyncClient", DummyClient)
     manager = AlertManager(slack_webhook_url="https://slack.example")
     asyncio.run(manager.send_alert("blocked", _action(), channel="slack"))
     assert calls
@@ -72,7 +72,7 @@ def test_alert_manager_generic_webhook(monkeypatch) -> None:
         async def post(self, url, json):
             calls.append((url, json))
 
-    monkeypatch.setattr("agentshield.alerts.alerter.httpx.AsyncClient", DummyClient)
+    monkeypatch.setattr("agentiva.alerts.alerter.httpx.AsyncClient", DummyClient)
     manager = AlertManager(webhook_url="https://hook.example")
     asyncio.run(manager.send_alert("blocked", _action(), channel="webhook"))
     assert calls[0][0] == "https://hook.example"

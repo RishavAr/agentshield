@@ -4,10 +4,11 @@ from datetime import UTC, datetime
 
 import pytest
 
-from agentshield import AgentShield
-from agentshield.interceptor.core import InterceptedAction
-from agentshield.policy.engine import PolicyEngine
+from agentiva import Agentiva
+from agentiva.interceptor.core import InterceptedAction
+from agentiva.policy.engine import PolicyEngine
 
+pytestmark = pytest.mark.slow
 
 TOOLS = [
     "send_email",
@@ -109,6 +110,6 @@ def test_policy_rule_evaluation(tool_name, risk_level, action, operator, scenari
     ],
 )
 def test_risk_scoring_by_tool_and_args(tool_name, argument_pattern):
-    shield = AgentShield(mode="shadow")
+    shield = Agentiva(mode="shadow")
     action = shield.intercept_sync(tool_name, argument_pattern, agent_id="risk-test")
     assert 0.0 <= action.risk_score <= 1.0

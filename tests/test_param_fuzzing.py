@@ -5,7 +5,9 @@ import string
 
 import pytest
 
-from agentshield import AgentShield
+from agentiva import Agentiva
+
+pytestmark = pytest.mark.slow
 
 
 def generate_fuzz_inputs(count=500):
@@ -45,8 +47,8 @@ FUZZ_INPUTS = generate_fuzz_inputs(500)
 
 @pytest.mark.parametrize("fuzz_input", FUZZ_INPUTS)
 def test_fuzz_interceptor_never_crashes(fuzz_input):
-    """AgentShield must NEVER crash regardless of input."""
-    shield = AgentShield(mode="shadow")
+    """Agentiva must NEVER crash regardless of input."""
+    shield = Agentiva(mode="shadow")
     try:
         action = shield.intercept_sync(
             tool_name=(fuzz_input["tool_name"] or "empty_tool"),

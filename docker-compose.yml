@@ -8,18 +8,18 @@ services:
     env_file:
       - .env
     environment:
-      AGENTSHIELD_DATABASE_URL: ${AGENTSHIELD_DATABASE_URL:-sqlite+aiosqlite:///./agentshield.db}
-      AGENTSHIELD_POLICY_PATH: ${AGENTSHIELD_POLICY_PATH:-policies/default.yaml}
-      AGENTSHIELD_MODE: ${AGENTSHIELD_MODE:-shadow}
-      AGENTSHIELD_RATE_LIMIT_PER_MINUTE: ${AGENTSHIELD_RATE_LIMIT_PER_MINUTE:-100}
+      AGENTIVA_DATABASE_URL: ${AGENTIVA_DATABASE_URL:-sqlite+aiosqlite:///./agentiva.db}
+      AGENTIVA_POLICY_PATH: ${AGENTIVA_POLICY_PATH:-policies/default.yaml}
+      AGENTIVA_MODE: ${AGENTIVA_MODE:-shadow}
+      AGENTIVA_RATE_LIMIT_PER_MINUTE: ${AGENTIVA_RATE_LIMIT_PER_MINUTE:-100}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      AGENTSHIELD_HOST: ${AGENTSHIELD_HOST:-0.0.0.0}
-      AGENTSHIELD_PORT: ${AGENTSHIELD_PORT:-8000}
+      AGENTIVA_HOST: ${AGENTIVA_HOST:-0.0.0.0}
+      AGENTIVA_PORT: ${AGENTIVA_PORT:-8000}
     ports:
-      - "${AGENTSHIELD_PORT:-8000}:8000"
+      - "${AGENTIVA_PORT:-8000}:8000"
     volumes:
       - ./:/app
-      - agentshield_data:/app/data
+      - agentiva_data:/app/data
     depends_on:
       redis:
         condition: service_healthy
@@ -66,20 +66,20 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-agentshield}
-      POSTGRES_USER: ${POSTGRES_USER:-agentshield}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agentshield}
+      POSTGRES_DB: ${POSTGRES_DB:-agentiva}
+      POSTGRES_USER: ${POSTGRES_USER:-agentiva}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agentiva}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agentshield} -d ${POSTGRES_DB:-agentshield}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agentiva} -d ${POSTGRES_DB:-agentiva}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  agentshield_data:
+  agentiva_data:
   redis_data:
   postgres_data:

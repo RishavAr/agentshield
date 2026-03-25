@@ -1,10 +1,10 @@
 import asyncio
 
-from agentshield.interceptor.core import AgentShield
+from agentiva.interceptor.core import Agentiva
 
 
 def test_intercept_records_action() -> None:
-    shield = AgentShield(mode="shadow")
+    shield = Agentiva(mode="shadow")
     action = asyncio.run(
         shield.intercept("send_email", {"to": "user@example.com"}, agent_id="agent-1")
     )

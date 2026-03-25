@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from agentshield.policy.smart_scorer import SmartRiskScorer
+from agentiva.policy.smart_scorer import SmartRiskScorer
 
 
 def test_tool_sensitivity_email_higher_than_jira() -> None:
@@ -77,3 +77,14 @@ def test_custom_weights_change_score() -> None:
     a = baseline.score_action("gmail_send", {"to": "dev@yourcompany.com"})
     b = weighted.score_action("gmail_send", {"to": "dev@yourcompany.com"})
     assert a.score != b.score
+
+
+def test_phi_detection_signal_raises_risk_and_payload() -> None:
+    scorer = SmartRiskScorer()
+    clean = scorer.score_action("generic_api", {"note": "hello"})
+    phi_args = {"patient_note": "SSN 123-45-6789 for verification"}
+    risky = scorer.score_action("generic_api", phi_args)
+    assert risky.score > clean.score
+    assert risky.phi_detection is not None
+    assert risky.phi_detection.get("has_phi") is True
+    assert "SSN" in (risky.phi_detection.get("types") or [])

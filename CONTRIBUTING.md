@@ -1,12 +1,12 @@
-# Contributing to AgentShield
+# Contributing to Agentiva
 
-Thanks for contributing. AgentShield is building safety infrastructure for AI agents, so quality and reproducibility matter.
+Thanks for contributing. Agentiva is building safety infrastructure for AI agents, so quality and reproducibility matter.
 
 ## Development Setup
 
 ```bash
-git clone https://github.com/your-org/agentshield.git
-cd agentshield
+git clone https://github.com/your-org/agentiva.git
+cd agentiva
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt

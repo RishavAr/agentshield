@@ -13,6 +13,7 @@ certifi==2026.2.25
 charset-normalizer==3.4.6
 click==8.3.1
 dataclasses-json==0.6.7
+Faker==37.0.0
 fastapi==0.135.1
 frozenlist==1.8.0
 greenlet==3.3.2
@@ -48,6 +49,7 @@ pydantic-settings==2.13.1
 pydantic_core==2.41.5
 Pygments==2.19.2
 pytest==9.0.2
+reportlab==4.4.2
 python-dotenv==1.2.2
 PyYAML==6.0.3
 redis==7.3.0
@@ -66,3 +68,8 @@ websockets==16.0
 xxhash==3.6.0
 yarl==1.23.0
 zstandard==0.25.0
+
+# Optional benchmark dependencies (install with: `pip install -e .[benchmarks]`)
+# deepteam
+# garak
+# pyrit  # optional; may conflict with strict pins in this repo depending on versions

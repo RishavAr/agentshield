@@ -2,8 +2,8 @@ import asyncio
 
 from fastapi.testclient import TestClient
 
-from agentshield.api import server
-from agentshield.audit.compliance import ComplianceExporter
+from agentiva.api import server
+from agentiva.audit.compliance import ComplianceExporter
 
 
 def _seed_actions():

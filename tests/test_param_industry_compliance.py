@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from agentshield import AgentShield
+from agentiva import Agentiva
+
+pytestmark = pytest.mark.slow
 
 
 def _generate_scenarios(industry: str):
@@ -49,7 +51,7 @@ LEGAL_SCENARIOS = _generate_scenarios("legal")
 
 
 def _run_scenario(template: str, scenario: dict):
-    shield = AgentShield(mode="shadow", policy=template)
+    shield = Agentiva(mode="shadow", policy=template)
     action = shield.intercept_sync(scenario["tool"], scenario["args"], "industry-agent")
     assert action.risk_score >= 0.0
     if scenario.get("expected"):

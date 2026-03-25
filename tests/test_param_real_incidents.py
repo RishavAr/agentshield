@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from agentshield import AgentShield
+from agentiva import Agentiva
 
+pytestmark = pytest.mark.slow
 
 REAL_INCIDENTS = [
     {
@@ -72,7 +73,7 @@ REAL_INCIDENTS = [
 @pytest.mark.parametrize("incident", REAL_INCIDENTS)
 @pytest.mark.parametrize("mode", ["shadow", "live", "approval"])
 def test_real_incident_always_caught(incident, mode):
-    shield = AgentShield(mode=mode, policy_path="policies/default.yaml")
+    shield = Agentiva(mode=mode, policy_path="policies/default.yaml")
     action = shield.intercept_sync(incident["tool"], incident["args"], agent_id="incident-agent")
     if mode != "live":
         assert action.decision in {"block", "shadow", "approve"}
@@ -82,7 +83,7 @@ def test_real_incident_always_caught(incident, mode):
 
 @pytest.mark.parametrize("incident", REAL_INCIDENTS)
 def test_real_incident_negotiation_response(incident):
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     action, negotiation = shield.intercept_with_negotiation_sync(
         incident["tool"], incident["args"], agent_id="incident-agent"
     )

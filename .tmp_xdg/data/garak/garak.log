@@ -1,0 +1,3 @@
+2026-03-25 09:40:12,789  INFO  probe init: <garak.probes.dan.Dan_11_0 object at 0x1078c2e40>
+2026-03-25 09:40:14,332  DEBUG  nltk_data location not found using project cache location
+2026-03-25 09:40:14,344  DEBUG  langauge provision service: en,en

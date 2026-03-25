@@ -1,4 +1,4 @@
-from agentshield import AgentShield
+from agentiva import Agentiva
 
 
 class DummyCrewTool:
@@ -15,7 +15,7 @@ class DummyCrew:
 
 
 def test_crewai_tool_blocked_message() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     tool = DummyCrewTool("send_email")
     wrapped = shield.protect_crewai(DummyCrew([tool])).tools[0]
     output = wrapped.run(to="evil@outside.com", subject="x")
@@ -23,7 +23,7 @@ def test_crewai_tool_blocked_message() -> None:
 
 
 def test_crewai_tool_allows_passthrough_for_allow_mode() -> None:
-    shield = AgentShield(mode="live", policy_path=None)
+    shield = Agentiva(mode="live", policy_path=None)
     tool = DummyCrewTool("safe_tool")
     wrapped = shield.protect_crewai(DummyCrew([tool])).tools[0]
     output = wrapped.run(input="x")
@@ -31,15 +31,15 @@ def test_crewai_tool_allows_passthrough_for_allow_mode() -> None:
 
 
 def test_crewai_crew_wraps_all_tools() -> None:
-    shield = AgentShield(mode="shadow")
+    shield = Agentiva(mode="shadow")
     crew = DummyCrew([DummyCrewTool("a"), DummyCrewTool("b")])
     wrapped = shield.protect_crewai(crew)
     assert len(wrapped.tools) == 2
 
 
-def test_crewai_block_contains_agentshield_marker() -> None:
-    shield = AgentShield(mode="shadow")
+def test_crewai_block_contains_agentiva_marker() -> None:
+    shield = Agentiva(mode="shadow")
     tool = DummyCrewTool("send_email")
     wrapped = shield.protect_crewai(DummyCrew([tool])).tools[0]
     output = wrapped.run(to="anyone@outside.com")
-    assert "[AgentShield CrewAI]" in output
+    assert "[Agentiva CrewAI]" in output

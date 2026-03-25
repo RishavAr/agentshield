@@ -3,12 +3,12 @@ import asyncio
 from fastapi.testclient import TestClient
 from langchain_core.tools import tool
 
-from agentshield import AgentShield
-from agentshield.api import server
+from agentiva import Agentiva
+from agentiva.api import server
 
 
 def test_negotiation_explains_block_reason() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     action, negotiation = asyncio.run(
         shield.intercept_with_negotiation(
             "send_email",
@@ -24,7 +24,7 @@ def test_negotiation_explains_block_reason() -> None:
 
 
 def test_negotiation_suggests_alternatives() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     _, negotiation = asyncio.run(
         shield.intercept_with_negotiation(
             "send_email",
@@ -39,7 +39,7 @@ def test_negotiation_suggests_alternatives() -> None:
 
 
 def test_agent_retry_after_modification() -> None:
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     blocked_action, blocked_negotiation = asyncio.run(
         shield.intercept_with_negotiation(
             "send_email",
@@ -98,11 +98,11 @@ def test_langchain_blocked_message_includes_explanation() -> None:
         """Send an email."""
         return f"sent to {to}: {subject}"
 
-    shield = AgentShield(mode="shadow", policy_path="policies/default.yaml")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     protected = shield.protect([send_email])
     message = protected[0].invoke({"to": "hacker@evil.com", "subject": "Confidential"})
 
-    assert "[AgentShield BLOCKED]" in message, "Blocked LangChain message must use BLOCKED format."
+    assert "[Agentiva BLOCKED]" in message, "Blocked LangChain message must use BLOCKED format."
     assert "External recipient detected" in message, "Blocked message should include clear reason."
     assert "Suggestions:" in message, "Blocked message should include actionable suggestions."
     assert "Risk:" in message, "Blocked message should include risk score."
