@@ -1,6 +1,6 @@
 /**
  * HTTP API base for the dashboard.
- * - Default: same-origin `/api/...` → proxied by `app/api/[...path]/route.ts` to Agentiva (see `AGENTIVA_API_URL`).
+ * - Default: same-origin `/api/v1/...` → proxied by `app/api/v1/[...path]/route.ts` to Agentiva (see `AGENTIVA_API_URL`).
  * - Override: set `NEXT_PUBLIC_API_BASE` to call the API directly (e.g. `http://127.0.0.1:8000`).
  */
 export function getHttpApiBase(): string {

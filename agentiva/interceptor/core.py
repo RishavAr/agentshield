@@ -25,7 +25,9 @@ class InterceptedAction:
     arguments: Dict[str, Any] = field(default_factory=dict)
     agent_id: str = "default"
     risk_score: float = 0.0
-    decision: str = "pending"
+    # External decision label for dashboards/tests. Internal queueing uses
+    # ApprovalQueue.status="pending" instead (see agentiva.db.models).
+    decision: str = "shadow"
     mode: str = "shadow"
     result: Optional[Dict[str, Any]] = None
     rollback_plan: Optional[Dict[str, Any]] = None
@@ -36,8 +38,16 @@ class InterceptedAction:
 
 
 class Agentiva:
-    def __init__(self, mode: str = "shadow", policy_path: str = None, policy: str = None):
+    def __init__(
+        self,
+        mode: str = "shadow",
+        policy_path: str = None,
+        policy: str = None,
+        *,
+        risk_threshold: float = 0.7,
+    ):
         self.mode = mode
+        self.risk_threshold = float(risk_threshold)
         self.audit_log: List[InterceptedAction] = []
         if policy and not policy_path:
             template_path = os.path.join("policies", "templates", f"{policy}.yaml")
@@ -147,6 +157,9 @@ class Agentiva:
                 and policy_result.decision in ("block", "shadow")
             ):
                 action.risk_score = max(action.risk_score, policy_risk_floor)
+            if policy_result is not None:
+                self._apply_runtime_policy_overlay(action, policy_result.decision)
+        self._finalize_decision_from_risk_threshold(action)
         action.result = {
             **(action.result or {}),
             "simulation": asdict(simulation),
@@ -341,6 +354,121 @@ class Agentiva:
             return
         action.risk_score = final_score
 
+    def _apply_runtime_policy_overlay(self, action: InterceptedAction, policy_decision: str) -> None:
+        """Apply dashboard/runtime mode and risk threshold on top of policy decisions."""
+        rs = float(action.risk_score or 0.0)
+        t = float(getattr(self, "risk_threshold", 0.7))
+        high = rs >= t
+        pd = policy_decision
+
+        base = action.result if isinstance(action.result, dict) else {}
+        ro = dict(base.get("runtime_overlay") or {})
+        ro.update({"policy_decision": pd, "risk_threshold": t, "high_risk": high})
+        base = {**base, "runtime_overlay": ro}
+        action.result = base
+
+        if self.mode == "shadow":
+            # Shadow mode is non-enforcing, but the policy decision should remain
+            # visible for compliance, debugging, and co-pilot explanations.
+            # Exception: if the policy has no matching rule and the default_mode is "block",
+            # keep shadow observe-only semantics.
+            policy_rule = ""
+            if isinstance(action.result, dict):
+                policy_rule = str(action.result.get("policy_rule") or "")
+            if pd == "block" and not policy_rule:
+                action.decision = "shadow"
+            else:
+                action.decision = pd
+            return
+
+        if self.mode in {"live", "enforce"}:
+            if pd == "allow" and high:
+                action.decision = "block"
+            return
+
+        if self.mode in {"approval", "approve"}:
+            # Approval mode signals "needs human approval" via decision="approve".
+            # Queueing status is handled via /api/v1/request-approval (ApprovalQueue.status="pending").
+            if pd == "block" or high:
+                action.decision = "approve"
+            return
+
+    def _finalize_decision_from_risk_threshold(self, action: InterceptedAction) -> None:
+        """
+        Map final risk score to an external decision label.
+
+        Default bands (tunable via `risk_threshold` on Agentiva):
+        - risk >= risk_threshold (default 0.7) -> block
+        - risk >= 0.3 -> shadow
+        - else -> allow
+
+        In approval mode, high risk maps to `approve` (human gate) instead of `block`.
+        Mandatory policy allows are not overridden.
+        """
+        res = action.result if isinstance(action.result, dict) else {}
+        if res.get("mandatory") is True or (res.get("metadata") or {}).get("mandatory") is True:
+            return
+
+        ro = res.get("runtime_overlay") or {}
+        pd_ro = str(ro.get("policy_decision") or "")
+        policy_rule = str(res.get("policy_rule") or "")
+
+        # Approval chains can emit approve even when Agentiva runtime mode is shadow (human gate).
+        if policy_rule and pd_ro == "approve":
+            action.decision = "approve"
+            return
+
+        # Policy block: shadow mode + default policy (no named rule) stays observe-only.
+        if pd_ro == "block":
+            if self.mode == "shadow" and not policy_rule:
+                action.decision = "shadow"
+                return
+            if self.mode in {"approval", "approve"}:
+                action.decision = "approve"
+                return
+            action.decision = "block"
+            return
+
+        if policy_rule and pd_ro == "shadow":
+            action.decision = "shadow"
+            return
+        if policy_rule and pd_ro == "allow":
+            action.decision = "allow"
+            return
+
+        # No named rule matched: engine fell back to default_mode (often shadow). Map by risk bands.
+        if not policy_rule and pd_ro == "shadow":
+            rs = float(action.risk_score or 0.0)
+            t = float(getattr(self, "risk_threshold", 0.7))
+            low = 0.3
+            if rs >= t:
+                action.decision = "block"
+            elif rs >= low:
+                action.decision = "shadow"
+            else:
+                action.decision = "allow"
+            return
+
+        rs = float(action.risk_score or 0.0)
+        t = float(getattr(self, "risk_threshold", 0.7))
+        low = 0.3
+
+        if self.mode in {"approval", "approve"}:
+            if rs >= t:
+                action.decision = "approve"
+            elif rs >= low:
+                action.decision = "shadow"
+            else:
+                action.decision = "allow"
+            return
+
+        if rs >= t:
+            action.decision = "block"
+        elif rs >= low:
+            action.decision = "shadow"
+        else:
+            action.decision = "allow"
+
     def _decide(self, action: InterceptedAction) -> None:
         if self.mode == "shadow":
             action.decision = "shadow"
@@ -355,7 +483,9 @@ class Agentiva:
             action.decision = "allow"
             return
 
-        action.decision = "pending"
+        # Unknown mode: stay safe and non-enforcing, but never emit "pending"
+        # as an external decision label.
+        action.decision = "shadow"
 
     def _prepare_preview(self, action: InterceptedAction) -> None:
         # Preserve any policy evaluation details already stored in `action.result`

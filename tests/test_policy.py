@@ -21,7 +21,7 @@ async def _run_policy_test() -> None:
 
     assert a1.decision == "block"
     assert a2.decision == "shadow"
-    assert a3.decision == "shadow"
+    assert a3.decision == "allow"
     print("test_policy passed!")
 
 

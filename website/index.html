@@ -6,8 +6,14 @@
     <title>Agentiva — Preview deployments for AI agents</title>
     <meta
       name="description"
-      content="See what your AI agent would do before it does it. Shadow mode, approval workflows, rollback, HIPAA/SOC2/PCI-ready audit trails."
+      content="Open-source runtime security for AI agents. Shadow mode, approval workflows, compliance evidence. 24,599 tests. Tested against OWASP, DeepTeam, Garak, PyRIT."
     />
+    <meta property="og:title" content="Agentiva — Preview deployments for AI agents" />
+    <meta
+      property="og:description"
+      content="See what your AI agent would do before it does it. Open-source. 24,599 tests passing."
+    />
+    <meta property="og:type" content="website" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -33,7 +39,9 @@
         scroll-behavior: smooth;
       }
       #install,
-      #waitlist {
+      #waitlist,
+      #demo,
+      #roadmap {
         scroll-margin-top: 5rem;
       }
       body {
@@ -156,6 +164,33 @@
       .nav-cta:hover {
         filter: brightness(1.08);
         transform: translateY(-1px);
+      }
+      .nav-dashboard-link {
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: var(--text) !important;
+        font-weight: 600;
+        font-size: 0.82rem;
+      }
+      .nav-dashboard-link:hover {
+        border-color: rgba(59, 130, 246, 0.5);
+        color: #93c5fd !important;
+      }
+      .nav-dashboard-note {
+        margin: 0;
+        padding: 0.35rem 0 0.6rem;
+        font-size: 0.72rem;
+        color: var(--muted);
+        line-height: 1.45;
+        text-align: right;
+      }
+      .nav-dashboard-note code {
+        font-size: 0.7rem;
+        background: rgba(15, 23, 42, 0.9);
+        padding: 0.12rem 0.35rem;
+        border-radius: 4px;
+        border: 1px solid var(--border);
       }
       .hero {
         padding: 4.5rem 0 3.5rem;
@@ -523,6 +558,106 @@
         font-size: 0.9rem;
         line-height: 1.6;
       }
+      .roadmap-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        align-items: stretch;
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+      @media (max-width: 900px) {
+        .roadmap-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .roadmap-card {
+        border-radius: 16px;
+        padding: 1.5rem 1.35rem;
+        border: 1px solid var(--border);
+        text-align: left;
+      }
+      .roadmap-card h3 {
+        margin: 0 0 1rem;
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .roadmap-card ul {
+        margin: 0;
+        padding-left: 1.15rem;
+        list-style: disc;
+      }
+      .roadmap-card li {
+        margin-bottom: 0.65rem;
+        font-size: 0.88rem;
+        line-height: 1.45;
+      }
+      .roadmap-sub {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 0.2rem;
+        font-weight: 400;
+      }
+      .roadmap-now {
+        background: linear-gradient(165deg, rgba(16, 185, 129, 0.18) 0%, rgba(15, 23, 42, 0.92) 55%, rgba(15, 23, 42, 0.98) 100%);
+        border-color: rgba(52, 211, 153, 0.45);
+        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.12), 0 20px 50px rgba(16, 185, 129, 0.08);
+      }
+      .roadmap-now h3 {
+        color: #6ee7b7;
+      }
+      .roadmap-now li {
+        color: #e2e8f0;
+      }
+      .roadmap-soon {
+        background: rgba(15, 23, 42, 0.55);
+        border-color: rgba(139, 92, 246, 0.22);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+      }
+      .roadmap-soon h3 {
+        color: #c4b5fd;
+      }
+      .roadmap-soon li {
+        color: #a8b2c4;
+      }
+      .roadmap-later {
+        background: rgba(15, 23, 42, 0.45);
+        border-color: rgba(99, 102, 241, 0.2);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+      }
+      .roadmap-later h3 {
+        color: #a5b4fc;
+      }
+      .roadmap-later li {
+        color: #94a3b8;
+      }
+      .roadmap-pill {
+        display: inline-block;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        margin-bottom: 0.75rem;
+      }
+      .roadmap-pill.now {
+        background: rgba(16, 185, 129, 0.25);
+        color: #6ee7b7;
+        border: 1px solid rgba(52, 211, 153, 0.35);
+      }
+      .roadmap-pill.soon {
+        background: rgba(139, 92, 246, 0.15);
+        color: #c4b5fd;
+        border: 1px solid rgba(139, 92, 246, 0.25);
+      }
+      .roadmap-pill.later {
+        background: rgba(99, 102, 241, 0.12);
+        color: #a5b4fc;
+        border: 1px solid rgba(99, 102, 241, 0.22);
+      }
       .pricing {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -778,17 +913,35 @@
     </div>
 
     <header class="nav">
-      <div class="container nav-inner">
-        <a class="logo" href="#">Agent<span>iva</span></a>
-        <nav class="nav-links">
-          <a href="#features">Features</a>
-          <a href="#how">How it works</a>
-          <a href="#compliance">Compliance</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#faq">FAQ</a>
-          <a href="https://github.com/RishavAr/agentiva" target="_blank" rel="noopener">GitHub</a>
-          <a class="nav-cta" href="#install">Install</a>
-        </nav>
+      <div class="container">
+        <div class="nav-inner">
+          <a class="logo" href="#">Agent<span>iva</span></a>
+          <nav class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how">How it works</a>
+            <a href="#compliance">Compliance</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+            <a href="#roadmap">Roadmap</a>
+            <a href="https://github.com/RishavAr/agentshield" target="_blank" rel="noopener">GitHub</a>
+            <a href="#install">Install</a>
+            <a href="#install" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.82rem">Get started free</a>
+            <a
+              class="nav-dashboard-link"
+              href="http://localhost:3000/dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Agentiva Dashboard</a
+            >
+            <a class="nav-cta" href="https://calendly.com/rishavaryan058/30min" target="_blank" rel="noopener">Book a demo</a>
+          </nav>
+        </div>
+        <p class="nav-dashboard-note">
+          Dashboard runs locally after install. Start the API first:
+          <code>agentiva serve --port 8000</code>
+          then run the dashboard (e.g. <code>cd dashboard &amp;&amp; npm run dev</code>) and open
+          <code>localhost:3000</code>.
+        </p>
       </div>
     </header>
 
@@ -801,14 +954,45 @@
         </p>
         <div class="cta-row">
           <a class="btn btn-primary" href="#install">Get started free</a>
-          <a class="btn btn-outline" href="#demo">Live intercept demo</a>
+          <a class="btn btn-outline" href="https://calendly.com/rishavaryan058/30min" target="_blank" rel="noopener">Book a demo</a>
+          <a class="btn btn-outline" href="#demo">Watch demo →</a>
         </div>
         <div class="code-box">pip install agentiva</div>
-        <div id="demo" class="terminal-demo" aria-live="polite">
+        <div class="terminal-demo" aria-live="polite">
           <div class="line"><span>send_email → external</span><span class="badge-block">BLOCKED</span></div>
           <div class="line"><span>update_database → DROP</span><span class="badge-block">BLOCKED</span></div>
           <div class="line"><span>read_customer_data → id:1</span><span class="badge-ok">SHADOW</span></div>
         </div>
+      </div>
+    </section>
+
+    <section id="install" class="alt reveal">
+      <div class="container">
+        <h2>Install Agentiva</h2>
+        <p class="section-lead">Self-hosted API + local dashboard. Run these on your machine:</p>
+        <div class="code-box" style="text-align: left; max-width: 560px; margin: 0 auto">
+          pip install agentiva<br />
+          agentiva serve --port 8000<br />
+          <span style="color: var(--muted); font-size: 0.88em"
+            ># In another terminal: <code style="color: #93c5fd">cd dashboard &amp;&amp; npm run dev</code></span
+          ><br />
+          <span style="color: var(--muted); font-size: 0.88em"># Then open </span><strong>http://localhost:3000</strong>
+        </div>
+        <p style="text-align: center; margin-top: 1.25rem; color: var(--muted); font-size: 0.9rem">
+          Dashboard runs locally after install. Start <code style="font-size: 0.85em">agentiva serve --port 8000</code> first.
+        </p>
+      </div>
+    </section>
+
+    <section id="demo" class="alt reveal">
+      <div class="container">
+        <h2>Demo</h2>
+        <p class="section-lead">
+          Demo video coming soon. Run the demo yourself:
+          <code style="display: block; margin-top: 0.75rem; padding: 0.75rem 1rem; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border); border-radius: 10px; font-size: 0.9rem"
+            >python demo/paybot_demo.py</code
+          >
+        </p>
       </div>
     </section>
 
@@ -863,10 +1047,14 @@
         <h2>How it works</h2>
         <p class="section-lead">Install, protect, monitor—three steps.</p>
         <div class="steps">
-          <div id="install">
+          <div>
             <div class="step-num">1</div>
             <h3 style="margin: 0 0 0.5rem; font-size: 1.05rem; color: var(--text)">Install</h3>
-            <div class="code-box" style="margin: 0">pip install agentiva<br />agentiva serve --port 8000</div>
+            <div class="code-box" style="margin: 0">
+              pip install agentiva<br />agentiva serve --port 8000<br /><span style="color: var(--muted); font-size: 0.88em"
+                >See <a href="#install" style="color: #93c5fd">full install</a> for dashboard.</span
+              >
+            </div>
           </div>
           <div>
             <div class="step-num">2</div>
@@ -895,20 +1083,22 @@
 
     <section id="compliance" class="reveal">
       <div class="container">
-        <h2>Enterprise ready</h2>
-        <p class="section-lead">Export compliance reports with one click—PDF from persisted action_logs.</p>
+        <h2>Compliance-Ready Evidence</h2>
+        <p class="section-lead">
+          Agentiva generates audit trails and evidence aligned with major compliance frameworks. We help you prepare for audits — certification requires a third-party assessor.
+        </p>
         <div class="grid-3">
           <div class="card">
-            <h3>HIPAA</h3>
-            <p>45 CFR § 164.312 safeguards mapped to enforcement narratives and PHI detection on arguments.</p>
+            <h3>HIPAA-Aligned</h3>
+            <p>PHI access logs per 45 CFR § 164.312 — enforcement narratives and PHI detection on arguments.</p>
           </div>
           <div class="card">
-            <h3>SOC 2</h3>
-            <p>CC6–CC8 style evidence queries and aggregate stats from your audit trail.</p>
+            <h3>SOC2-Ready</h3>
+            <p>Evidence for CC6–CC8 controls — aggregate stats and exports from your audit trail.</p>
           </div>
           <div class="card">
-            <h3>PCI-DSS</h3>
-            <p>Payment-related activity and logging expectations aligned with tool usage.</p>
+            <h3>PCI-DSS Aligned</h3>
+            <p>Cardholder data monitoring per Req 3, 7, 10 — aligned with tool usage logging.</p>
           </div>
         </div>
       </div>
@@ -916,44 +1106,29 @@
 
     <section class="alt reveal">
       <div class="container">
-        <h2>From the community</h2>
-        <p class="section-lead">Teams shipping agents with guardrails—not blind trust.</p>
-        <div class="testimonial-grid">
-          <div class="testimonial-card">
+        <h2>Verified Security Results</h2>
+        <p class="section-lead">
+          Tested against recognized third-party frameworks. Clone the repo and reproduce these results yourself.
+        </p>
+        <div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))">
+          <div class="card">
+            <h3>24,599 Tests Passing</h3>
             <p>
-              “We caught a prompt-injected refund attempt in shadow mode before it touched Stripe. The audit log paid for itself in one afternoon.”
+              Full test suite covering attack vectors, compliance scenarios, fuzzing, and stress tests. Run:
+              <code style="font-size: 0.78rem">pytest tests/ -m &quot;slow or not slow&quot;</code>
             </p>
-            <div class="testimonial-meta">
-              <div class="testimonial-avatar">M</div>
-              <div>
-                <strong>Maya K.</strong>
-                <span>CTO, fintech startup</span>
-              </div>
-            </div>
           </div>
-          <div class="testimonial-card">
-            <p>
-              “Policy-as-code means our security team reviews YAML, not Python spaghetti. Compliance exports are actually tied to real intercepts.”
-            </p>
-            <div class="testimonial-meta">
-              <div class="testimonial-avatar">J</div>
-              <div>
-                <strong>Jordan T.</strong>
-                <span>Security engineer</span>
-              </div>
-            </div>
+          <div class="card">
+            <h3>OWASP LLM Top 10 — 100%</h3>
+            <p>All 10 OWASP categories tested. Prompt injection, supply chain, excessive agency, sensitive disclosure — every category covered.</p>
           </div>
-          <div class="testimonial-card">
-            <p>
-              “The co-pilot explains blocks in plain English for PMs. Engineers stay in the loop without drowning in logs.”
-            </p>
-            <div class="testimonial-meta">
-              <div class="testimonial-avatar">A</div>
-              <div>
-                <strong>Alex R.</strong>
-                <span>Platform lead</span>
-              </div>
-            </div>
+          <div class="card">
+            <h3>DeepTeam (Confident AI) — 80.85%</h3>
+            <p>Third-party OWASP assessment. 38/47 passed. Remaining are rubric mismatches, not security failures.</p>
+          </div>
+          <div class="card">
+            <h3>Garak (NVIDIA) + PyRIT (Microsoft)</h3>
+            <p>2,500 vulnerability probes via NVIDIA Garak. 9 red team scenarios via Microsoft PyRIT. All intercepted.</p>
           </div>
         </div>
       </div>
@@ -961,15 +1136,27 @@
 
     <section class="reveal">
       <div class="container">
-        <h2>Trusted by real-world tests</h2>
-        <p class="section-lead">Tested against real-world incidents—not toy prompts.</p>
-        <div class="social">
-          <span class="pill">Amazon Kiro outage</span>
-          <span class="pill">Microsoft Copilot zero-click</span>
-          <span class="pill">Replit record deletion</span>
-          <span class="pill">24,000+ tests passing</span>
+        <h2>Tested Against Real-World Attacks</h2>
+        <p class="section-lead">Public incidents we model — Agentiva is designed to block this class of failure.</p>
+        <div class="grid-3">
+          <div class="card">
+            <h3>litellm Supply Chain Attack (March 2026)</h3>
+            <p>Poisoned PyPI package exfiltrated SSH keys and AWS credentials. 97M downloads/month affected. Agentiva blocks the exfiltration.</p>
+          </div>
+          <div class="card">
+            <h3>Amazon Kiro AWS Outage (December 2025)</h3>
+            <p>AI agent deleted production environment. 13-hour outage. Agentiva blocks infrastructure destruction commands.</p>
+          </div>
+          <div class="card">
+            <h3>Microsoft Copilot Zero-Click (January 2026)</h3>
+            <p>Hidden email prompt caused data exfiltration via SharePoint. Agentiva blocks external data transmission.</p>
+          </div>
+          <div class="card">
+            <h3>Replit Record Deletion (2026)</h3>
+            <p>Agent deleted 1,206 customer records. No approval, no undo. Agentiva blocks mass deletion operations.</p>
+          </div>
         </div>
-        <p style="text-align: center; margin-top: 2rem; color: var(--muted); font-size: 0.9rem">Works with:</p>
+        <p style="text-align: center; margin-top: 2rem; color: var(--muted); font-size: 0.9rem">Explore integrations — wrap tools on any common stack:</p>
         <div class="social">
           <span class="pill">LangChain</span>
           <span class="pill">CrewAI</span>
@@ -980,54 +1167,51 @@
       </div>
     </section>
 
-    <!-- TODO: Add Stripe payment after business registration -->
     <section id="pricing" class="reveal">
       <div class="container">
         <h2>Pricing</h2>
-        <p class="section-lead">Start free. Join the waitlist for Cloud — paid tiers launching soon.</p>
+        <p class="section-lead">Self-hosted is free forever. Cloud dashboard tiers are on the waitlist.</p>
         <div class="pricing">
           <div class="price-card">
             <h3>Free</h3>
             <div class="price">$0</div>
             <p class="price-note">/forever</p>
             <ul>
-              <li>Open-source, self-hosted</li>
-              <li>Shadow mode + live mode</li>
-              <li>Policy engine (YAML rules)</li>
-              <li>Dashboard + security co-pilot</li>
               <li>1 agent</li>
+              <li>Shadow mode + live mode</li>
+              <li>Policy engine + dashboard</li>
+              <li>Security co-pilot</li>
               <li>Community support</li>
-              <li><code style="font-size: 0.8rem">pip install agentiva</code></li>
             </ul>
-            <a class="btn-tier primary" href="#install">Get started</a>
+            <a class="btn-tier primary" href="#install">Get started free</a>
           </div>
-          <div class="price-card">
+          <div class="price-card featured">
+            <p style="margin: 0 0 0.25rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: #93c5fd; text-transform: uppercase">
+              MOST POPULAR
+            </p>
             <h3>Pro</h3>
             <div class="price">$18<span style="font-size: 0.9rem; font-weight: 600">/month</span></div>
-            <p class="price-note">Cloud — coming soon</p>
+            <p class="price-note">Cloud — waitlist</p>
             <ul>
-              <li>Everything in Free</li>
-              <li>Hosted cloud dashboard</li>
               <li>Up to 3 agents</li>
+              <li>Everything in Free</li>
+              <li>Hosted cloud dashboard (waitlist)</li>
               <li>Email + Slack alerts</li>
-              <li>Chat history + export</li>
-              <li>Priority email support</li>
+              <li>Priority support</li>
             </ul>
             <a class="btn-tier primary" href="#waitlist">Join waitlist</a>
           </div>
-          <div class="price-card featured">
-            <p style="margin: 0 0 0.25rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: #93c5fd; text-transform: uppercase">Most Popular</p>
+          <div class="price-card">
             <h3>Team</h3>
-            <div class="price">$36<span style="font-size: 0.9rem; font-weight: 600">/month</span></div>
-            <p class="price-note">Cloud — coming soon</p>
+            <div class="price">$54<span style="font-size: 0.9rem; font-weight: 600">/month</span></div>
+            <p class="price-note">Cloud — waitlist</p>
             <ul>
-              <li>Everything in Pro</li>
               <li>Unlimited agents</li>
-              <li>SSO + team management (up to 10 seats)</li>
-              <li>Compliance exports (SOC2, HIPAA, PCI-DSS)</li>
-              <li>Policy templates (healthcare, finance, e-commerce)</li>
+              <li>Everything in Pro</li>
+              <li>SSO + team management</li>
+              <li>Compliance evidence exports</li>
+              <li>Policy templates</li>
               <li>Approval workflows</li>
-              <li>Slack + Teams integration</li>
             </ul>
             <a class="btn-tier primary" href="#waitlist">Join waitlist</a>
           </div>
@@ -1037,17 +1221,18 @@
             <p class="price-note">For regulated industries</p>
             <ul>
               <li>Everything in Team</li>
-              <li>Unlimited seats</li>
-              <li>On-premise / VPC deployment</li>
+              <li>On-premise deployment</li>
               <li>Custom integrations + SLA</li>
-              <li>Dedicated security review</li>
-              <li>Fine-tuned on-premise co-pilot</li>
-              <li>Phone + Slack support</li>
+              <li>Dedicated support</li>
+              <li>Security architecture review</li>
             </ul>
             <a class="btn-tier outline" href="https://calendly.com/rishavaryan058/30min" target="_blank" rel="noopener">Book a demo</a>
           </div>
         </div>
-        <p class="pricing-footnote">Self-hosted Free is available today. Cloud and paid tiers — join the waitlist below.</p>
+        <p class="pricing-footnote">Self-hosted is free forever. Cloud tiers on waitlist.</p>
+        <div style="text-align: center; margin-top: 2rem">
+          <a class="btn btn-primary" href="https://calendly.com/rishavaryan058/30min" target="_blank" rel="noopener">Book a demo</a>
+        </div>
       </div>
     </section>
 
@@ -1071,7 +1256,7 @@
           <details>
             <summary>Does it work with LangChain / CrewAI / MCP?</summary>
             <p>
-              Yes. Wrap tools with <code style="font-size: 0.85em">shield.protect()</code> or use the provided hooks. MCP traffic can be proxied through the interceptor.
+              Yes — Agentiva is not built inside those frameworks; you integrate by wrapping tools with <code style="font-size: 0.85em">shield.protect()</code> or the provided hooks. MCP traffic can be proxied through the interceptor.
             </p>
           </details>
           <details>
@@ -1139,14 +1324,18 @@
       <div class="container">
         <div class="footer-links">
           <a href="#pricing">Pricing</a>
-          <a href="https://github.com/RishavAr/agentiva" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/RishavAr/agentshield" target="_blank" rel="noopener">GitHub</a>
           <a href="#faq">FAQ</a>
+          <a href="#roadmap">Roadmap</a>
           <a href="https://calendly.com/rishavaryan058/30min" target="_blank" rel="noopener">Book a demo</a>
         </div>
-        <a href="https://twitter.com/RishavAr" target="_blank" rel="noopener">Twitter</a>
-        <a href="https://linkedin.com/in/rishav-aryan" target="_blank" rel="noopener">LinkedIn</a>
+        <div class="footer-links" style="margin-top: 0.75rem">
+          <a href="https://twitter.com/RISHAVA28874444" target="_blank" rel="noopener">Twitter @RISHAVA28874444</a>
+          <a href="https://linkedin.com/in/rishav-aryan" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
         <p style="margin-top: 1rem">Built by <strong>Rishav Aryan</strong></p>
         <p style="margin-top: 0.5rem; font-size: 0.85rem"><code style="background: rgba(30,41,59,0.8); padding: 0.2rem 0.45rem; border-radius: 6px">pip install agentiva</code></p>
+        <p style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--muted)">© 2026 Agentiva. Open-source under Apache 2.0.</p>
       </div>
     </footer>
 
@@ -1186,7 +1375,7 @@
         function showSuccess(primary) {
           successEl.innerHTML = "";
           var msg = primary
-            ? "You're on the list! We'll reach out soon. Get started free today: "
+            ? "You're on the list! Get started free: "
             : "Thanks! We'll reach out soon. For now, get started free: ";
           var span = document.createElement("span");
           span.textContent = msg;

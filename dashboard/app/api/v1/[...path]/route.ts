@@ -1,12 +1,17 @@
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 const BACKEND = process.env.AGENTIVA_API_URL ?? "http://127.0.0.1:8000";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Proxies `/api/v1/*` to Agentiva only.
+ * `/api/auth/*` is NOT under this path — Auth.js handles it (fixes ClientFetchError).
+ */
 async function proxy(request: NextRequest, pathSegments: string[]) {
   const sub = pathSegments.length ? pathSegments.join("/") : "";
-  const target = `${BACKEND}/api/${sub}${request.nextUrl.search}`;
+  const target = `${BACKEND}/api/v1/${sub}${request.nextUrl.search}`;
 
   const headers = new Headers();
   request.headers.forEach((value, key) => {
@@ -14,6 +19,18 @@ async function proxy(request: NextRequest, pathSegments: string[]) {
     if (k === "host" || k === "connection") return;
     headers.set(key, value);
   });
+
+  const secret = process.env.AUTH_SECRET;
+  if (secret && process.env.NEXT_PUBLIC_AUTH_DISABLED !== "true") {
+    try {
+      const raw = await getToken({ req: request, secret, raw: true });
+      if (typeof raw === "string" && raw.length > 0) {
+        headers.set("Authorization", `Bearer ${raw}`);
+      }
+    } catch {
+      /* ignore */
+    }
+  }
 
   const init: RequestInit = {
     method: request.method,

@@ -48,6 +48,7 @@ pydantic==2.12.5
 pydantic-settings==2.13.1
 pydantic_core==2.41.5
 Pygments==2.19.2
+PyJWT==2.10.1
 pytest==9.0.2
 reportlab==4.4.2
 python-dotenv==1.2.2

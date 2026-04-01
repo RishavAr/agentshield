@@ -15,6 +15,36 @@ from typing import Any, Dict, List, Optional
 
 from agentiva.interceptor.core import Agentiva
 
+# Phrases that trigger the one-off allow (shadow/block → narrow allow) flow.
+ALLOW_ONE_PHRASES: tuple[str, ...] = (
+    "allow just this",
+    "allow this one",
+    "allow this specific",
+    "shadow to allow",
+    "convert shadow to allow",
+    "make this allowed",
+    "let this through",
+    "allow for shadow",
+    "allow shadow",
+    "shadow allow",
+    "one off allow",
+    "one-off allow",
+    "exception for shadow",
+    "unblock last",
+    "unblock this",
+)
+
+
+def is_allow_one_user_message(q: str) -> bool:
+    m = (q or "").lower()
+    if any(p in m for p in ALLOW_ONE_PHRASES):
+        return True
+    # Also treat "allow <tool>" as an allow-one request, since the UI often lists tool
+    # names (e.g. "allow read_customer_data") and users naturally type that.
+    if re.match(r"^\s*allow\b", m) and "allowlist" not in m and "allow list" not in m:
+        return True
+    return False
+
 
 @dataclass
 class ChatResponse:
@@ -60,6 +90,8 @@ class ShieldChat:
         # Pick an intent, then (optionally) prepend proactive high-block guidance.
         if self._is_disable_all_security(q):
             resp = self._refuse_disable_all_security()
+        elif self._is_allow_one_request(q):
+            resp = await self._allow_one_flow_async(question)
         elif self._is_policy_wizard_request(q) or self._is_policy_wizard_active():
             resp = self._policy_wizard(question)
         elif self._is_policy_apply_request(q):
@@ -220,19 +252,29 @@ class ShieldChat:
         )
 
     def _is_policy_wizard_request(self, q: str) -> bool:
+        q_lower = q.lower()
         return any(
-            phrase in q
+            phrase in q_lower
             for phrase in [
                 "help me tune policies",
                 "policy wizard",
                 "policy tuning assistant",
                 "help me tune policy",
+                "copilot update policy",
+                "co-pilot update policy",
+                "change policy for me",
+                "edit my policy",
+                "add a policy exception",
+                "add an allow rule",
+                "selective allow",
+                "selective shadow",
             ]
         )
 
     def _is_help_unblock_request(self, q: str) -> bool:
+        q_lower = q.lower()
         return any(
-            phrase in q
+            phrase in q_lower
             for phrase in [
                 "help me unblock",
                 "keeps getting blocked",
@@ -243,7 +285,206 @@ class ShieldChat:
                 "too restrictive",
                 "stuck and blocked",
                 "blocked nonstop",
+                "blocking continuously",
+                "always blocked",
+                "false positive",
+                "allow this action",
+                "stop blocking",
             ]
+        )
+
+    def _is_allow_one_request(self, q: str) -> bool:
+        return is_allow_one_user_message(q)
+
+    async def _allow_one_flow_async(self, question: str) -> ChatResponse:
+        """
+        Generate a narrow allow exception for the *most recent* shadow/block action.
+
+        This is the "shadow -> allow for a specific case" co-pilot path. It works by
+        proposing a highly specific policy rule and (on confirm) returning apply_now=True
+        so the HTTP layer applies it via /api/v1/policies.
+        """
+        q = (question or "").strip().lower()
+        # Optional: user can specify which tool they want to allow.
+        # Examples: "allow read_customer_data", "allow update_database", "allow `send_email`".
+        tool_hints = {
+            "send_email": ("send_email", "send email", "email"),
+            "read_customer_data": ("read_customer_data", "read customer data", "read customer"),
+            "update_database": ("update_database", "update database", "database", "sql"),
+            "create_ticket": ("create_ticket", "create ticket", "ticket", "jira"),
+            "call_external_api": ("call_external_api", "external api", "call api"),
+            "run_shell_command": ("run_shell_command", "shell", "run shell", "command"),
+            "send_slack_message": ("send_slack_message", "slack", "send slack"),
+        }
+        requested_tool: str | None = None
+        for tool_name, hints in tool_hints.items():
+            if any(h in q for h in hints):
+                requested_tool = tool_name
+                break
+
+        log = getattr(self.shield, "audit_log", []) or []
+        target = next(
+            (
+                a
+                for a in reversed(log)
+                if getattr(a, "decision", "") in {"shadow", "block"}
+                and (requested_tool is None or str(getattr(a, "tool_name", "") or "") == requested_tool)
+            ),
+            None,
+        )
+        if target is None:
+            try:
+                from agentiva.db.database import list_actions
+
+                rows = await list_actions(limit=200)
+                for row in rows:
+                    if getattr(row, "decision", "") in ("shadow", "block"):
+                        if requested_tool is not None and str(getattr(row, "tool_name", "") or "") != requested_tool:
+                            continue
+                        target = row
+                        break
+            except Exception:
+                target = None
+        if target is None:
+            return ChatResponse(
+                answer=(
+                    "I don't see any recent shadowed or blocked actions in memory or the audit database. "
+                    "Run the agent action once (so it is logged), then ask again — e.g. **allow read_customer_data** — and reply **Confirm**."
+                ),
+                data={},
+                follow_up_suggestions=["Show blocked actions", "Session overview"],
+            )
+
+        tool = str(getattr(target, "tool_name", "") or "")
+        args = getattr(target, "arguments", {}) or {}
+
+        if not isinstance(args, dict):
+            return ChatResponse(
+                answer=(
+                    f"I can do one-off allow exceptions for specific tools when I can extract a stable argument value. "
+                    f"The most recent flagged action was `{tool}`, but its arguments weren't a dict. "
+                    "Ask me to create a broader policy exception instead: 'add a policy exception'."
+                ),
+                data={},
+                follow_up_suggestions=["Add a policy exception", "Help me unblock", "Show blocked actions"],
+            )
+
+        additions: List[Dict[str, Any]] = []
+        short_desc = ""
+
+        if tool == "send_email":
+            to_addr = str(args.get("to") or "").strip()
+            if not to_addr:
+                return ChatResponse(
+                    answer="I couldn't extract the `to` address from the last `send_email` action.",
+                    data={},
+                    follow_up_suggestions=["Show blocked actions", "Help me unblock"],
+                )
+            short_desc = f"recipient `{to_addr}`"
+            additions = [
+                {
+                    "name": "allow_exception_specific_email_recipient",
+                    "tool": "send_email",
+                    "condition": {"field": "arguments.to", "operator": "equals", "value": to_addr},
+                    "action": "allow",
+                    "risk_score": 0.15,
+                    "insert_before": ["block_external_email", "block_personal_email_domains"],
+                }
+            ]
+
+        elif tool == "read_customer_data":
+            fields = str(args.get("fields") or "").strip()
+            if not fields:
+                return ChatResponse(
+                    answer="I couldn't extract `arguments.fields` from the last `read_customer_data` action.",
+                    data={},
+                    follow_up_suggestions=["Show shadowed actions", "Help me unblock"],
+                )
+            short_desc = f"fields `{fields}`"
+            additions = [
+                {
+                    "name": "allow_exception_specific_customer_fields",
+                    "tool": "read_customer_data",
+                    "condition": {"field": "arguments.fields", "operator": "equals", "value": fields},
+                    "action": "allow",
+                    "risk_score": 0.25,
+                }
+            ]
+
+        elif tool == "update_database":
+            query = str(args.get("query") or "").strip()
+            if not query:
+                return ChatResponse(
+                    answer="I couldn't extract `arguments.query` from the last `update_database` action.",
+                    data={},
+                    follow_up_suggestions=["Show shadowed actions", "Help me unblock"],
+                )
+            # Keep it narrow: allow *only* this exact query string.
+            short_desc = "this exact SQL query"
+            additions = [
+                {
+                    "name": "allow_exception_specific_sql_query",
+                    "tool": "update_database",
+                    "condition": {"field": "arguments.query", "operator": "equals", "value": query},
+                    "action": "allow",
+                    "risk_score": 0.25,
+                    "insert_before": ["block_destructive_sql_drop", "block_destructive_sql_delete"],
+                }
+            ]
+
+        elif tool == "create_ticket":
+            title = str(args.get("title") or "").strip()
+            if not title:
+                return ChatResponse(
+                    answer="I couldn't extract `arguments.title` from the last `create_ticket` action.",
+                    data={},
+                    follow_up_suggestions=["Show shadowed actions", "Help me unblock"],
+                )
+            short_desc = f"title `{title}`"
+            additions = [
+                {
+                    "name": "allow_exception_specific_ticket_title",
+                    "tool": "create_ticket",
+                    "condition": {"field": "arguments.title", "operator": "equals", "value": title},
+                    "action": "allow",
+                    "risk_score": 0.25,
+                }
+            ]
+
+        if not additions:
+            return ChatResponse(
+                answer=(
+                    f"I can do one-off allow exceptions for `send_email`, `read_customer_data`, `update_database`, and `create_ticket` right now. "
+                    f"The most recent flagged action was `{tool}`. "
+                    "Ask me to create a broader policy exception instead: 'add a policy exception'."
+                ),
+                data={},
+                follow_up_suggestions=["Add a policy exception", "Help me unblock", "Show blocked actions"],
+            )
+
+        snippet = self._format_policy_additions_snippet(additions)
+
+        is_confirm = "confirm" in q or q.strip() in {"yes", "yes confirm", "yes, confirm"}
+        if not is_confirm:
+            return ChatResponse(
+                answer=(
+                    f"I can allow **just this exact case** for `{tool}` ({short_desc}).\n\n"
+                    "This is a narrow policy exception (not a global allow). Confirm?\n\n"
+                    "Add this rule to your policy.yaml:\n\n"
+                    f"{snippet}"
+                ),
+                data={"apply_now": False, "policy_yaml": None},
+                follow_up_suggestions=["Confirm", "Cancel"],
+            )
+
+        policy_yaml = self._build_policy_yaml_with_additions(additions)
+        return ChatResponse(
+            answer=(
+                f"Done — I added a narrow allow exception for `{tool}` ({short_desc}). "
+                "Try the action again; it should now return `allow`."
+            ),
+            data={"apply_now": True, "policy_yaml": policy_yaml},
+            follow_up_suggestions=["Show blocked actions", "Show the timeline", "Session overview"],
         )
 
     def _is_policy_apply_request(self, q: str) -> bool:
@@ -1371,13 +1612,13 @@ class ShieldChat:
             answer=(
                 "I can help with session overviews, security analysis, and compliance checks — no external API key needed. "
                 f'For "{question[:80]}...", try: '
-                "“session overview”, “what was blocked?”, or “is this HIPAA compliant?”"
+                "“session overview”, “what was blocked?”, or “HIPAA-aligned check”"
             ),
             data={},
             follow_up_suggestions=[
                 "Session overview",
                 "What was blocked?",
-                "Is this HIPAA compliant?",
+                "HIPAA-aligned check",
             ],
             grounding_data=self._last_grounding,
         )

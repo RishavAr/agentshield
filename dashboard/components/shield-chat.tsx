@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { Menu, MessageCircle, Pencil, Send, Shield, Trash2, X } from "lucide-react";
+import { Menu, MessageCircle, Pencil, Send, Shield, X } from "lucide-react";
 
 import { getHttpApiBase } from "@/lib/api-base";
 
@@ -469,10 +469,11 @@ export function ShieldChatPanel() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-lg p-2 text-[#8b949e] hover:bg-[#161b22] hover:text-white"
+            className="flex shrink-0 items-center gap-1 rounded-lg border border-[#30363d] px-2 py-1.5 text-xs font-medium text-[#c9d1d9] hover:border-[#8b949e] hover:bg-[#161b22] hover:text-white"
             aria-label="Close chat"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" strokeWidth={2.5} />
+            <span>Close</span>
           </button>
         </div>
 
@@ -542,7 +543,7 @@ export function ShieldChatPanel() {
                           onClick={(e) => void deleteSession(s.id, e)}
                           aria-label="Delete session"
                         >
-                          <Trash2 className="h-3.5 w-3.5 text-[#8b949e]" />
+                          <X className="h-3.5 w-3.5 text-[#8b949e]" />
                         </button>
                       </>
                     )}

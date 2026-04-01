@@ -167,11 +167,15 @@ export default function OnboardingPage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-[#94a3b8]">Framework</label>
+                <label className="text-sm font-medium text-[#94a3b8]">Your stack</label>
+                <p id="stack-hint" className="mt-0.5 text-xs text-[#64748b]">
+                  Optional label for docs and examples — Agentiva wraps tools the same way regardless.
+                </p>
                 <select
                   value={framework}
                   onChange={(e) => setFramework(e.target.value)}
                   className="mt-1 w-full rounded-xl border border-white/10 bg-[#0a0f1e] px-3 py-2.5 text-[#f8fafc] outline-none focus:ring-2 focus:ring-[#3b82f6]"
+                  aria-describedby="stack-hint"
                 >
                   {FRAMEWORKS.map((f) => (
                     <option key={f} value={f}>

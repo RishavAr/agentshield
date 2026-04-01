@@ -98,6 +98,12 @@ export default function AgentsPage() {
     void fetchAgentAudit(agentId);
   }, []);
 
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("register") === "1") {
+      setRegisterOpen(true);
+    }
+  }, []);
+
   function toggleTool(tool: string) {
     setFormTools((prev) => (prev.includes(tool) ? prev.filter((t) => t !== tool) : [...prev, tool]));
   }
@@ -461,10 +467,14 @@ export default function AgentsPage() {
                   </div>
                   <div>
                     <label htmlFor="agent-framework" className="block text-sm font-medium text-[#c9d1d9]">
-                      Framework
+                      Your stack
                     </label>
+                    <p id="agent-framework-hint" className="mt-0.5 text-xs text-[#8b949e]">
+                      Optional — pick what you use so we can surface the right integration examples. Not tied to how Agentiva runs.
+                    </p>
                     <select
                       id="agent-framework"
+                      aria-describedby="agent-framework-hint"
                       value={formFramework}
                       onChange={(e) => setFormFramework(e.target.value)}
                       className="mt-1 w-full rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2 text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none focus:ring-1 focus:ring-[#58a6ff]"

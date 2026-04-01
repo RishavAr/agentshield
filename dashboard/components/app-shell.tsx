@@ -1,10 +1,16 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 
 import { Sidebar } from "@/components/sidebar";
-import { ShieldChatPanel } from "@/components/shield-chat";
 import { ToastHost } from "@/components/toast-host";
+
+/** Client-only: avoids hydration mismatches (API-backed state, floating UI, dev HMR skew). */
+const ShieldChatPanel = dynamic(
+  () => import("@/components/shield-chat").then((m) => m.ShieldChatPanel),
+  { ssr: false },
+);
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

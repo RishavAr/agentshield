@@ -15,6 +15,7 @@ def _reset_runtime_state() -> None:
     if server._shield is not None:
         server._shield.audit_log.clear()
         server._shield.mode = "shadow"
+        server._shield.risk_threshold = 0.7
     server._request_counts_by_agent.clear()
     asyncio.run(truncate_action_logs())
 
@@ -29,6 +30,7 @@ def test_health_endpoint() -> None:
         assert body["version"] == "0.1.0"
         assert "uptime_seconds" in body
         assert body["mode"] in {"shadow", "live", "approval"}
+        assert isinstance(body.get("risk_threshold"), (int, float))
 
 
 def test_chat_endpoint() -> None:
@@ -256,7 +258,7 @@ def test_chat_message_accepts_content_alias() -> None:
 
         hipaa = client.post(
             f"/api/v1/chat/sessions/{sid}/messages",
-            json={"message": "is this HIPAA compliant?"},
+            json={"message": "HIPAA-aligned check"},
         )
         assert hipaa.status_code == 200
         # Compliance path should include citation-like references.

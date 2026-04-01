@@ -24,6 +24,31 @@ rules:
 
 type RuleCard = { id: string; name: string; raw: string };
 
+type ParsedRuleFields = {
+  name: string;
+  tool: string;
+  condition: string;
+  action: string;
+  risk?: string;
+};
+
+function parseRuleFields(raw: string): ParsedRuleFields {
+  const name = raw.match(/name:\s*([^\n]+)/)?.[1]?.trim() ?? "—";
+  const tool = raw.match(/^\s*tool:\s*(.+)$/m)?.[1]?.trim() ?? "—";
+  const action = raw.match(/^\s*action:\s*(.+)$/m)?.[1]?.trim() ?? "—";
+  const risk = raw.match(/^\s*risk_score:\s*(.+)$/m)?.[1]?.trim();
+  const field = raw.match(/field:\s*([^\n]+)/)?.[1]?.trim();
+  const operator = raw.match(/operator:\s*([^\n]+)/)?.[1]?.trim();
+  const value = raw.match(/value:\s*([^\n]+)/)?.[1]?.trim();
+  let condition = "—";
+  if (field && operator && value !== undefined) {
+    condition = `${field} · ${operator} · ${value}`;
+  } else if (field) {
+    condition = `${field} (see YAML for full condition)`;
+  }
+  return { name, tool, condition, action, risk };
+}
+
 function parseRulesFromYaml(yaml: string): RuleCard[] {
   const idx = yaml.indexOf("rules:");
   if (idx < 0) return [];
@@ -145,6 +170,17 @@ export default function PoliciesPage() {
     <div className="page-enter space-y-8 pb-12">
       <PageHeader title="Policies" subtitle="YAML rules & simulation" breadcrumbs={[{ label: "Policies" }]} />
 
+      <div className="rounded-xl border border-[#30363d] bg-[#0d1117] px-4 py-3 text-sm text-[#8b949e]">
+        <p className="text-[#c9d1d9]">
+          <span className="font-medium text-[#f0f6fc]">Two ways to fix blocks / allow exceptions:</span> edit YAML here and
+          save, or open the <span className="text-[#58a6ff]">Security co-pilot</span> and say e.g.{" "}
+          <span className="font-mono text-xs text-[#79c0ff]">&quot;help me tune policies&quot;</span>,{" "}
+          <span className="font-mono text-xs text-[#79c0ff]">&quot;help me unblock&quot;</span>, or{" "}
+          <span className="font-mono text-xs text-[#79c0ff]">&quot;add an allow rule for …&quot;</span>
+          — then confirm with <span className="font-mono text-xs">apply policy</span> when it offers a fix.
+        </p>
+      </div>
+
       {loading ? (
         <div className="h-40 animate-pulse rounded-2xl bg-[#161b22]" />
       ) : (
@@ -152,13 +188,15 @@ export default function PoliciesPage() {
           {rules.length === 0 ? (
             <p className="text-sm text-[#8b949e]">No rules parsed — check YAML structure.</p>
           ) : (
-            rules.map((rule) => (
+            rules.map((rule) => {
+              const f = parseRuleFields(rule.raw);
+              return (
               <article
                 key={rule.id}
                 className="glass-card glass-card-hover p-4"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-[#f0f6fc]">{rule.name}</h3>
+                  <h3 className="font-semibold text-[#f0f6fc]">{f.name}</h3>
                   <div className="flex gap-1">
                     <button
                       type="button"
@@ -178,11 +216,37 @@ export default function PoliciesPage() {
                     </button>
                   </div>
                 </div>
-                <pre className="mt-3 max-h-48 overflow-auto rounded-lg border border-[#30363d] bg-[#0d1117] p-3 font-mono text-[11px] leading-relaxed text-[#c9d1d9]">
-                  {highlightYaml(rule.raw)}
-                </pre>
+                <dl className="mt-3 space-y-2 text-sm">
+                  <div>
+                    <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#8b949e]">Tool pattern</dt>
+                    <dd className="font-mono text-[#79c0ff]">{f.tool}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#8b949e]">Condition</dt>
+                    <dd className="text-[#c9d1d9]">{f.condition}</dd>
+                  </div>
+                  <div className="flex flex-wrap gap-4">
+                    <div>
+                      <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#8b949e]">Action</dt>
+                      <dd className="capitalize text-[#f0f6fc]">{f.action}</dd>
+                    </div>
+                    {f.risk ? (
+                      <div>
+                        <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#8b949e]">Risk</dt>
+                        <dd className="font-mono text-[#c9d1d9]">{f.risk}</dd>
+                      </div>
+                    ) : null}
+                  </div>
+                </dl>
+                <details className="mt-3">
+                  <summary className="cursor-pointer text-xs text-[#8b949e] hover:text-[#58a6ff]">Raw YAML</summary>
+                  <pre className="mt-2 max-h-48 overflow-auto rounded-lg border border-[#30363d] bg-[#0d1117] p-3 font-mono text-[11px] leading-relaxed text-[#c9d1d9]">
+                    {highlightYaml(rule.raw)}
+                  </pre>
+                </details>
               </article>
-            ))
+              );
+            })
           )}
         </section>
       )}

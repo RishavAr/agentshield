@@ -18,7 +18,8 @@ import {
   LineChart,
 } from "recharts";
 import { PageHeader } from "@/components/page-header";
-import { getHttpApiBase } from "@/lib/api-base";
+import { toast } from "@/components/toast-host";
+import { getHttpApiBase, getWsBase } from "@/lib/api-base";
 
 type AuditEntry = {
   action_id: string;
@@ -50,6 +51,43 @@ type AgentRow = {
 };
 
 const API_BASE = getHttpApiBase();
+const WS_BASE = getWsBase();
+
+function mergeReportWithAction(prev: ShadowReport | null, row: AuditEntry): ShadowReport {
+  const base: ShadowReport = prev ?? {
+    total_actions: 0,
+    by_tool: {},
+    by_decision: {},
+    avg_risk_score: 0,
+  };
+  const dec = row.decision;
+  const tool = row.tool_name;
+  const by_decision = { ...base.by_decision, [dec]: (base.by_decision[dec] ?? 0) + 1 };
+  const by_tool = { ...base.by_tool, [tool]: (base.by_tool[tool] ?? 0) + 1 };
+  const total = base.total_actions + 1;
+  const sum = base.avg_risk_score * base.total_actions + row.risk_score;
+  return {
+    total_actions: total,
+    by_tool,
+    by_decision,
+    avg_risk_score: total ? sum / total : 0,
+  };
+}
+
+function wsPayloadToAuditEntry(raw: Record<string, unknown>): AuditEntry | null {
+  const actionId = (raw.action_id ?? raw.id) as string | undefined;
+  if (!actionId || typeof raw.tool_name !== "string") return null;
+  return {
+    action_id: actionId,
+    tool_name: raw.tool_name,
+    arguments: (raw.arguments as Record<string, unknown>) ?? {},
+    agent_id: typeof raw.agent_id === "string" ? raw.agent_id : "default",
+    decision: typeof raw.decision === "string" ? raw.decision : "shadow",
+    risk_score: typeof raw.risk_score === "number" ? raw.risk_score : 0,
+    mode: typeof raw.mode === "string" ? raw.mode : "shadow",
+    timestamp: typeof raw.timestamp === "string" ? raw.timestamp : new Date().toISOString(),
+  };
+}
 
 const DONUT_COLORS: Record<string, string> = {
   block: "#ef4444",
@@ -115,6 +153,7 @@ export default function DashboardOverviewPage() {
   const [riskThreshold, setRiskThreshold] = useState(0.7);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [relTick, setRelTick] = useState(0);
 
   const loadData = useCallback(async () => {
     try {
@@ -134,13 +173,16 @@ export default function DashboardOverviewPage() {
       const reportJson = (await reportRes.json()) as ShadowReport;
       const auditJson = (await auditRes.json()) as AuditEntry[];
       const seriesJson = (await seriesRes.json()) as AuditEntry[];
-      const healthJson = (await healthRes.json()) as { mode: string };
+      const healthJson = (await healthRes.json()) as { mode: string; risk_threshold?: number };
 
       setReport(reportJson);
       setRecentActions(auditJson);
       setSeriesSource(seriesJson);
       setMode(healthJson.mode);
       setModeSetting(healthJson.mode);
+      if (typeof healthJson.risk_threshold === "number") {
+        setRiskThreshold(healthJson.risk_threshold);
+      }
       if (agentsRes.ok) {
         setAgents((await agentsRes.json()) as AgentRow[]);
       }
@@ -155,6 +197,31 @@ export default function DashboardOverviewPage() {
   useEffect(() => {
     void loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    const id = setInterval(() => setRelTick((t) => t + 1), 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const ws = new WebSocket(`${WS_BASE}/ws/actions`);
+    ws.onmessage = (event) => {
+      try {
+        const raw = JSON.parse(event.data) as Record<string, unknown>;
+        const row = wsPayloadToAuditEntry(raw);
+        if (!row) return;
+        setReport((prev) => mergeReportWithAction(prev, row));
+        setRecentActions((prev) => {
+          const next = [row, ...prev.filter((a) => a.action_id !== row.action_id)];
+          return next.slice(0, 50);
+        });
+        setSeriesSource((prev) => [row, ...prev].slice(0, 800));
+      } catch {
+        /* ignore */
+      }
+    };
+    return () => ws.close();
+  }, []);
 
   const decisions = report?.by_decision ?? {};
   const total = report?.total_actions ?? 0;
@@ -191,7 +258,11 @@ export default function DashboardOverviewPage() {
 
   async function toggleMode() {
     const response = await fetch(`${API_BASE}/api/v1/mode/${nextMode}`, { method: "POST" });
-    if (response.ok) setMode(nextMode);
+    if (response.ok) {
+      setMode(nextMode);
+      setModeSetting(nextMode);
+      await loadData();
+    }
   }
 
   async function applySecuritySettings() {
@@ -204,13 +275,15 @@ export default function DashboardOverviewPage() {
       if (!r.ok) throw new Error(await r.text());
       setMode(modeSetting);
       await loadData();
+      toast("Security settings applied — new intercepts use this mode and threshold.", "success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not apply settings");
     }
   }
 
   const blockRate = total ? blocked / total : 0;
-  const isEmptyDashboard = !loading && report !== null && total === 0;
+  const isEmptyDashboard =
+    !loading && report !== null && total === 0 && agents.length === 0;
   const showTuningBanner = !loading && report && !isEmptyDashboard && blockRate > 0.4;
 
   async function runDemoSeed() {
@@ -218,15 +291,17 @@ export default function DashboardOverviewPage() {
       const r = await fetch(`${API_BASE}/api/v1/demo/seed`, { method: "POST" });
       if (!r.ok) throw new Error((await r.text()) || "Demo seed failed");
       await loadData();
+      toast("Demo data loaded", "success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Demo failed");
+      toast(err instanceof Error ? err.message : "Demo failed", "error");
     }
   }
 
   if (loading && !report) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Overview" subtitle="Agentiva" />
+        <PageHeader title="Overview" subtitle="Agentiva" breadcrumbs={[{ label: "Overview" }]} />
         <div className="grid animate-pulse gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="skeleton h-32 rounded-2xl" />
@@ -288,20 +363,26 @@ export default function DashboardOverviewPage() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <Link
-              href="/agents"
+              href="/agents?register=1"
               className="glass-card-hover rounded-2xl border border-white/10 bg-[#131b2e]/60 p-5 transition hover:border-[#3b82f6]/40"
             >
               <p className="font-semibold text-[#f8fafc]">Register your first agent</p>
-              <p className="mt-1 text-xs text-[#64748b]">Open the Agents page and create a registry entry.</p>
+              <p className="mt-1 text-xs text-[#64748b]">Opens agent registration on the Agents page.</p>
             </Link>
-            <button
-              type="button"
-              onClick={() => void runDemoSeed()}
-              className="glass-card-hover rounded-2xl border border-white/10 bg-[#131b2e]/60 p-5 text-left transition hover:border-emerald-500/40"
-            >
+            <div className="glass-card-hover rounded-2xl border border-white/10 bg-[#131b2e]/60 p-5 transition hover:border-emerald-500/40">
               <p className="font-semibold text-[#f8fafc]">Run the demo</p>
-              <p className="mt-1 text-xs text-[#64748b]">Load sample intercepts to explore charts and audit log.</p>
-            </button>
+              <p className="mt-1 text-xs text-[#64748b]">From the repo root (with venv active):</p>
+              <code className="mt-2 block rounded-lg border border-white/10 bg-[#0a0f1e] px-3 py-2 font-mono text-xs text-[#93c5fd]">
+                python demo/paybot_demo.py
+              </code>
+              <button
+                type="button"
+                onClick={() => void runDemoSeed()}
+                className="mt-3 w-full rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/20"
+              >
+                Or load sample data in one click
+              </button>
+            </div>
             <a
               href="https://github.com/RishavAr/agentiva/blob/main/README.md"
               target="_blank"
@@ -423,8 +504,8 @@ export default function DashboardOverviewPage() {
           {recentActions.length === 0 ? (
             <p className="text-sm text-[#8b949e]">No actions yet.</p>
           ) : (
-            <ul className="max-h-[420px] space-y-3 overflow-y-auto pr-1">
-              {recentActions.slice(0, 8).map((action, idx) => (
+            <ul key={relTick} className="max-h-[420px] space-y-3 overflow-y-auto pr-1">
+              {recentActions.slice(0, 10).map((action, idx) => (
                 <li
                   key={action.action_id}
                   className="glass-card glass-card-hover flex items-start justify-between gap-3 border-l-4 border-l-[#64748b] px-3 py-2"
@@ -492,7 +573,9 @@ export default function DashboardOverviewPage() {
               className="w-full accent-[#58a6ff]"
             />
             <p className="mt-1 text-xs text-[#8b949e]">
-              Actions with risk above {riskThreshold.toFixed(2)} will be blocked.
+              In <span className="text-[#c9d1d9]">live</span> mode, policy allows with risk at or above this level are
+              treated as blocks. In <span className="text-[#c9d1d9]">shadow</span>, policy blocks and high-risk allows
+              are logged as shadow (observe). Existing audit rows do not change until new actions run.
             </p>
           </div>
           <div>

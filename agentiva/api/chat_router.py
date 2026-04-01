@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import random
 import re
 from datetime import datetime, timezone
@@ -9,6 +10,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Body, HTTPException
 from pydantic import AliasChoices, BaseModel, Field
 
+from agentiva.api.chat import ALLOW_ONE_PHRASES
 from agentiva.db.database import (
     add_chat_message,
     count_action_logs_by_decision,
@@ -163,6 +165,7 @@ async def fetch_audit_data(db: Any = None) -> Dict[str, Any]:
     shadowed = await count_action_logs_by_decision("shadow")
     allowed = await count_action_logs_by_decision("allow") + await count_action_logs_by_decision("approve")
     block_rows = await list_actions(decision="block", limit=5)
+    shadow_rows = await list_actions(decision="shadow", limit=5)
     top_blocked = [
         {
             "tool": r.tool_name,
@@ -172,6 +175,16 @@ async def fetch_audit_data(db: Any = None) -> Dict[str, Any]:
             "time": r.timestamp.isoformat() if hasattr(r, "timestamp") else "",
         }
         for r in block_rows
+    ]
+    top_shadowed = [
+        {
+            "tool": r.tool_name,
+            "risk": float(r.risk_score),
+            "args": r.arguments,
+            "agent": r.agent_id,
+            "time": r.timestamp.isoformat() if hasattr(r, "timestamp") else "",
+        }
+        for r in shadow_rows
     ]
     agents_map: Dict[str, int] = {}
     for r in await list_actions(limit=500):
@@ -184,6 +197,7 @@ async def fetch_audit_data(db: Any = None) -> Dict[str, Any]:
         "allowed": allowed,
         "block_rate": round((blocked / total * 100) if total > 0 else 0, 1),
         "top_blocked": top_blocked,
+        "top_shadowed": top_shadowed,
         "agents": agents,
         "has_data": total > 0,
     }
@@ -194,6 +208,25 @@ def classify_intent(msg: str, ctx: Dict[str, Any]) -> str:
     m = s.rstrip("?!.,;")
     words = set(s.replace("?", " ").replace(".", " ").split())
     last = ctx.get("last_topic") or "general"
+
+    # --- One-off allow (shadow -> allow) ---
+    if any(p in m for p in ALLOW_ONE_PHRASES) or re.match(r"^\s*allow\b", m):
+        return "allow_one"
+
+    # --- Shadowed actions ---
+    if any(
+        k in m
+        for k in (
+            "view shadowed actions",
+            "shadowed actions",
+            "show shadowed",
+            "show shadowed actions",
+            "review shadowed",
+            "review shadowed actions",
+            "shadowed",
+        )
+    ):
+        return "shadowed"
 
     # --- Redirect / rejection (before short greetings like "no") ---
     if m in {"no", "nah", "nope", "not really", "never mind", "nevermind", "cancel"} or m.startswith("no thanks"):
@@ -499,15 +532,14 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
         return {
             "role": "assistant",
             "content": (
-                "I can help you generate compliance reports:\n\n"
-                "📋 **SOC2 Type II** — access controls, threat detection, incident response evidence\n"
-                "🏥 **HIPAA** — PHI access log, breach attempts, audit trail\n"
-                "💳 **PCI-DSS** — payment data protection, transaction monitoring\n\n"
-                "Go to **Audit Log** page and click the export button for whichever report you need. "
-                "The reports are generated from your real audit data.\n\n"
-                "Which report do you need?"
+                "Export from the dashboard (real audit data):\n\n"
+                "1. Open **Audit log** in the sidebar.\n"
+                "2. Optionally set a **date range** for PDFs.\n"
+                "3. Use **Export SOC2 / HIPAA / PCI** for PDFs, or **Download JSON evidence** for structured SOC2/HIPAA/PCI bundles.\n\n"
+                "API paths (same data): `/api/v1/compliance/soc2/evidence.json`, `/api/v1/compliance/hipaa/evidence.json`, "
+                "`/api/v1/compliance/pci/evidence.json` (optional `?start=` and `end=` ISO dates)."
             ),
-            "suggestions": ["Go to Audit Log", "SOC2 details", "HIPAA details"],
+            "suggestions": ["What was blocked?", "HIPAA check", "Session overview"],
         }
     if intent in {"export_soc2", "export_hipaa", "export_pci", "export_all"}:
         label = {
@@ -519,12 +551,11 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
         return {
             "role": "assistant",
             "content": (
-                f"Your {label} report is ready. Click the download button below or go to "
-                "Audit Log → Export report to download the PDF.\n\n"
-                f"The report covers {data['total']} actions and {data['blocked']} security incidents detected "
-                "and blocked, with full audit trail evidence for each control."
+                f"To download **{label}** evidence: open **Dashboard → Audit log**, set your date range if needed, "
+                "then use **Export … (PDF)** or **Export … evidence** (JSON). "
+                f"Your current log has **{data['total']}** actions and **{data['blocked']}** blocks — exports use that data."
             ),
-            "suggestions": ["Open Audit Log", "Generate another report"],
+            "suggestions": ["Open Audit Log", "Session overview"],
         }
 
     _no_data_ok = {
@@ -595,7 +626,7 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
             "content": (
                 "Let me help! I'm Agentiva's security co-pilot. Here's what I can do:\n\n"
                 "**Ask me about your agents:** 'what happened today?' or 'show me blocked actions'\n"
-                "**Check compliance:** 'is this HIPAA compliant?' or 'SOC2 gap analysis'\n"
+                "**Check compliance:** 'HIPAA-aligned check' or 'SOC2 gap analysis'\n"
                 "**Get specific:** 'why was send_email blocked?' or 'what's wrong with the database calls?'\n"
                 "**Tune policies:** 'too many blocks' or 'suggest policy changes'\n\n"
                 "If something was unclear, say **'explain in plain English'** right after I answer — I'll simplify.\n\n"
@@ -667,7 +698,50 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
             ),
             "suggestions": ["Show me the blocked actions", "Which agent needs attention?", "Export compliance report"],
         }
-    if intent in {"blocked", "followup_overview"}:
+    _detail_kw = (
+        "show full details",
+        "full details",
+        "show details",
+        "more details",
+        "all details",
+        "elaborate",
+        "tell me more",
+        "dig deeper",
+    )
+    if intent == "followup_overview":
+        mlow = msg.lower()
+        if any(k in mlow for k in _detail_kw):
+            agents = data.get("agents", [])
+            ag_lines = ", ".join(f"{a['id']} ({a['count']})" for a in agents[:12]) or "none recorded"
+            return {
+                "role": "assistant",
+                "content": (
+                    "**Expanded session summary**\n\n"
+                    f"- Total actions: **{data['total']}**\n"
+                    f"- Blocked: **{data['blocked']}** · Shadowed: **{data['shadowed']}** · Allowed: **{data['allowed']}**\n"
+                    f"- Block rate: **{data['block_rate']}%**\n\n"
+                    f"Agents by activity: {ag_lines}\n\n"
+                    "Say **what was blocked?** for the ranked list, then **show full details** again for full argument payloads."
+                ),
+                "suggestions": ["What was blocked?", "Export compliance report", "HIPAA check"],
+            }
+        rate_note = (
+            "That's a high block rate — likely either noisy agent behavior or strict policy rules."
+            if data["block_rate"] > 40
+            else "That block rate looks healthy."
+        )
+        top = data["top_blocked"][0] if data["top_blocked"] else None
+        top_note = f" Top blocked action: `{top['tool']}` from `{top['agent']}` at risk {top['risk']:.2f}." if top else ""
+        return {
+            "role": "assistant",
+            "content": (
+                f"Here's the picture again: {data['total']} actions total — {data['blocked']} blocked, "
+                f"{data['shadowed']} shadowed, and {data['allowed']} allowed ({data['block_rate']}% block rate). "
+                f"{rate_note}{top_note} Say **show full details** for a fuller breakdown."
+            ),
+            "suggestions": ["Show full details", "What was blocked?", "Export compliance report"],
+        }
+    if intent == "blocked":
         top = data["top_blocked"]
         if not top:
             return {"role": "assistant", "content": "Good news — no blocked actions in the current data. Want me to review shadowed actions instead?", "suggestions": ["View shadowed actions", "Session overview"]}
@@ -678,9 +752,33 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
         return {
             "role": "assistant",
             "content": "I found blocked actions worth reviewing:\n\n" + "\n".join(lines) + "\n\nAll were intercepted before execution. Want me to explain the top one?",
-            "suggestions": ["Why was #1 blocked?", "How to fix false positives?", "Export audit report"],
+            "suggestions": ["Why was #1 blocked?", "Show full details", "Export audit report"],
         }
     if intent == "followup_blocked":
+        mlow = msg.lower()
+        if any(k in mlow for k in _detail_kw):
+            focus = ctx.get("last_data", {}).get("focus_blocked") or data.get("top_blocked") or []
+            if focus:
+                lines2: List[str] = []
+                for i, b in enumerate(focus[:10], 1):
+                    args = b.get("args")
+                    if isinstance(args, dict):
+                        args_str = json.dumps(args, default=str)[:800]
+                    else:
+                        args_str = str(args)[:800]
+                    lines2.append(
+                        f"**{i}. `{b['tool']}`** — agent `{b['agent']}`, risk **{float(b['risk']):.2f}**\n"
+                        f"Arguments: `{args_str}`"
+                    )
+                return {
+                    "role": "assistant",
+                    "content": (
+                        "Here is the full detail for each blocked action in context:\n\n"
+                        + "\n\n".join(lines2)
+                        + "\n\nFor PDF exports, open **Dashboard → Audit log** and use **Export SOC2 / HIPAA / PCI** (or JSON evidence downloads)."
+                    ),
+                    "suggestions": ["Suggest policy fix", "Session overview", "Export compliance report"],
+                }
         focus = ctx.get("last_data", {}).get("focus_blocked") or data["top_blocked"]
         if not focus:
             return {"role": "assistant", "content": "I can explain it, but I need a blocked action in context first. Ask 'what was blocked?' and I'll drill in.", "suggestions": ["Show blocked actions", "Session overview"]}
@@ -692,16 +790,60 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
                 f"That top item was `{top['tool']}` from `{top['agent']}` with risk {top['risk']:.2f}. "
                 "It likely combined tool sensitivity with content/target risk signals. "
                 f"I can see `{hint}` in the request payload, which helps explain why it was treated as high-risk. "
-                "Want me to suggest a safer version?"
+                "Say **show full details** to see every blocked row with full arguments."
             ),
-            "suggestions": ["How to allow this safely?", "Show similar blocks", "Adjust policy"],
+            "suggestions": ["Show full details", "How to allow this safely?", "Adjust policy"],
+        }
+    if intent == "shadowed":
+        top = data.get("top_shadowed") or []
+        if not top:
+            return {
+                "role": "assistant",
+                "content": "I don't see any shadowed actions in the current data.",
+                "suggestions": ["Session overview", "Compliance check"],
+            }
+        lines = []
+        for i, b in enumerate(top[:5], start=1):
+            lines.append(f"{i}. `{b['tool']}` by `{b['agent']}` at risk {b['risk']:.2f}")
+        ctx.setdefault("last_data", {})["focus_shadowed"] = top
+        return {
+            "role": "assistant",
+            "content": "Here are the most recent shadowed actions (observed, not executed):\n\n" + "\n".join(lines) + "\n\nWant full arguments for each one?",
+            "suggestions": ["Show full details", "Allow this one", "Session overview"],
+        }
+    if intent == "followup_shadowed":
+        mlow = msg.lower()
+        if any(k in mlow for k in _detail_kw):
+            focus = ctx.get("last_data", {}).get("focus_shadowed") or data.get("top_shadowed") or []
+            if focus:
+                lines2: List[str] = []
+                for i, b in enumerate(focus[:10], 1):
+                    args = b.get("args")
+                    if isinstance(args, dict):
+                        args_str = json.dumps(args, default=str)[:800]
+                    else:
+                        args_str = str(args)[:800]
+                    lines2.append(
+                        f"**{i}. `{b['tool']}`** — agent `{b['agent']}`, risk **{float(b['risk']):.2f}**\n"
+                        f"Arguments: `{args_str}`"
+                    )
+                return {
+                    "role": "assistant",
+                    "content": "Full details for recent shadowed actions:\n\n" + "\n\n".join(lines2),
+                    "suggestions": ["Allow this one", "Session overview", "Compliance check"],
+                }
+        return {
+            "role": "assistant",
+            "content": "Say **show full details** to see the full argument payloads for the shadowed actions.",
+            "suggestions": ["Show full details", "Allow this one", "Session overview"],
         }
     if intent in {"hipaa", "followup_hipaa"}:
         return {
             "role": "assistant",
             "content": (
-                f"HIPAA-wise, you're in decent shape from what I can see: {data['total']} actions logged and {data['blocked']} high-risk attempts blocked. "
-                "That supports 45 CFR § 164.312(a)(1) access controls, § 164.312(b) audit controls, and § 164.312(e)(1) transmission safeguards."
+                f"From an **HIPAA-aligned** perspective: {data['total']} actions logged and {data['blocked']} high-risk attempts blocked. "
+                "That supports evidence for 45 CFR § 164.312(a)(1) access controls, § 164.312(b) audit controls, and § 164.312(e)(1) transmission safeguards. "
+                "Formal HIPAA certification still requires a qualified assessor."
             ),
             "suggestions": ["Export HIPAA report", "Show PHI access attempts", "SOC2 check"],
         }
@@ -709,8 +851,8 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
         return {
             "role": "assistant",
             "content": (
-                f"SOC2 perspective: controls look active — {data['total']} actions evaluated with {data['blocked']} blocked before execution, "
-                "plus full audit traceability. That's the right evidence shape for CC6/CC7 discussions."
+                f"**SOC2-ready** evidence: {data['total']} actions evaluated with {data['blocked']} blocked before execution, "
+                "plus full audit traceability — a solid shape for CC6/CC7 discussions with your auditor."
             ),
             "suggestions": ["Export SOC2 report", "HIPAA check", "Show evidence for CC7.1"],
         }
@@ -718,8 +860,9 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
         return {
             "role": "assistant",
             "content": (
-                f"PCI-wise, you've got preventive + detective controls in place: {data['blocked']} risky actions blocked and "
-                f"{data['total']} actions logged for review. That's a solid operational baseline."
+                f"**PCI-DSS aligned** view: {data['blocked']} risky actions blocked and "
+                f"{data['total']} actions logged for review — a solid baseline for Req 7/10-style evidence. "
+                "PCI formal certification is still vendor/assessor-specific."
             ),
             "suggestions": ["Export PCI report", "Show financial actions", "HIPAA check"],
         }
@@ -758,7 +901,8 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
                     "Based on the blocked actions, here's what triggered:\n\n"
                     f"1. **{detail}** — likely triggered by **{likely}**.\n\n"
                     "Your policies caught dangerous behavior while allowing lower-risk activity through. "
-                    "Want me to suggest adjustments or keep this strict?"
+                    "Want me to suggest adjustments or keep this strict?\n\n"
+                    "**Where to edit:** `policies/default.yaml` (restart the API), or the dashboard **Policies** page."
                 ),
                 "suggestions": ["Show policy trigger", "Suggest policy changes", "Keep current policy"],
             }
@@ -766,7 +910,8 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
             "role": "assistant",
             "content": (
                 f"With a {data['block_rate']}% block rate, I'd start by reviewing top blocked actions for false positives before changing thresholds globally. "
-                "If you want, I can propose targeted policy adjustments."
+                "If you want, I can propose targeted policy adjustments.\n\n"
+                "**Where to edit:** `policies/default.yaml` (restart the API), or the dashboard **Policies** page."
             ),
             "suggestions": ["Show false positives", "Suggest policy changes", "Generate custom rule"],
         }
@@ -822,6 +967,20 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
         rows = ", ".join(f"{t['tool']} ({t['risk']:.2f})" for t in top)
         return {"role": "assistant", "content": f"Top risks right now: {rows}. Want me to drill into one?", "suggestions": ["Analyze top tool", "Policy suggestions"]}
 
+    if intent == "allow_one":
+        return {
+            "role": "assistant",
+            "content": (
+                "To do a **one-off allow** (shadow → allow) for the most recent shadowed/blocked action:\n"
+                "- Trigger the action once (so it is in the audit DB)\n"
+                "- Ask: **allow this one** (or **allow for shadow**)\n"
+                "- Reply: **Confirm** to apply the narrow rule\n\n"
+                "Broader changes: edit **`policies/default.yaml`** in the repo and restart the API, or use the dashboard **Policies** page.\n\n"
+                "If this message appears instead of a YAML snippet, ensure the dashboard talks to the same API process that logged the action."
+            ),
+            "suggestions": ["Allow this one", "Confirm", "What was blocked?"],
+        }
+
     if intent.startswith("followup_") and intent not in (
         "followup_blocked",
         "followup_overview",
@@ -845,7 +1004,8 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
             "role": "assistant",
             "content": (
                 "I'm not sure I caught that — I can help with security analysis, compliance checks, and policy tuning. "
-                "Try: 'give me a summary', 'what was blocked?', or 'is my agent safe for production?'."
+                "Try: 'give me a summary', 'what was blocked?', or 'is my agent safe for production?'. "
+                "For **what to change in the repo**, policy rules live in **`policies/default.yaml`**; restart the API after edits."
             ),
             "suggestions": ["Session overview", "What was blocked?", "Compliance check"],
         }

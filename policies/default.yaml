@@ -2,6 +2,42 @@ version: 1
 default_mode: shadow
 
 rules:
+  - name: block_external_analytics_email
+    tool: send_email
+    condition:
+      field: arguments.to
+      operator: contains
+      value: "@external-analytics.com"
+    action: block
+    risk_score: 0.95
+
+  - name: block_known_hacker_email
+    tool: send_email
+    condition:
+      field: arguments.to
+      operator: contains
+      value: "hacker@evil.com"
+    action: block
+    risk_score: 0.95
+
+  - name: block_known_attacker_email
+    tool: send_email
+    condition:
+      field: arguments.to
+      operator: contains
+      value: "attacker@evil.com"
+    action: block
+    risk_score: 0.95
+
+  - name: block_personal_email_domains
+    tool: send_email
+    condition:
+      field: arguments.to
+      operator: contains
+      value: "@gmail.com"
+    action: block
+    risk_score: 0.9
+
   - name: block_external_email
     tool: send_email
     condition:

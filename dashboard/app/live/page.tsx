@@ -18,18 +18,18 @@ type ActionFeedItem = {
 const API_BASE = getHttpApiBase();
 const WS_BASE = getWsBase();
 
-function relTime(iso: string): string {
+function relTime(iso: string, _tick = 0): string {
   const t = new Date(iso).getTime();
   if (Number.isNaN(t)) return iso;
   const s = Math.floor((Date.now() - t) / 1000);
   if (s < 5) return "just now";
-  if (s < 60) return `${s} seconds ago`;
+  if (s < 60) return `${s}s ago`;
   const m = Math.floor(s / 60);
-  if (m < 60) return `${m} minute${m === 1 ? "" : "s"} ago`;
+  if (m < 60) return `${m}m ago`;
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h} hour${h === 1 ? "" : "s"} ago`;
+  if (h < 24) return `${h}h ago`;
   const d = Math.floor(h / 24);
-  return `${d} day${d === 1 ? "" : "s"} ago`;
+  return `${d}d ago`;
 }
 
 function borderForDecision(d: string) {
@@ -40,27 +40,81 @@ function borderForDecision(d: string) {
 
 export default function LiveFeedPage() {
   const [actions, setActions] = useState<ActionFeedItem[]>([]);
-  const [status, setStatus] = useState("connecting");
+  const [status, setStatus] = useState<"connecting" | "connected" | "disconnected" | "error" | "reconnecting">(
+    "connecting",
+  );
   const [filter, setFilter] = useState<"all" | "block" | "shadow" | "allow">("all");
   const [soundOn, setSoundOn] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const prevBlocked = useRef(0);
+  const attemptRef = useRef(0);
+  const wsRef = useRef<WebSocket | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket(`${WS_BASE}/ws/actions`);
-    ws.onopen = () => setStatus("connected");
-    ws.onclose = () => setStatus("disconnected");
-    ws.onerror = () => setStatus("error");
-    ws.onmessage = (event) => {
+    let cancelled = false;
+
+    function scheduleReconnect() {
+      if (cancelled) return;
+      attemptRef.current += 1;
+      const delay = Math.min(30_000, 800 * 2 ** Math.min(attemptRef.current, 6));
+      setStatus("reconnecting");
+      timerRef.current = setTimeout(connect, delay);
+    }
+
+    function connect() {
+      if (cancelled) return;
+      timerRef.current = null;
+      if (attemptRef.current === 0) setStatus("connecting");
       try {
-        const parsed = JSON.parse(event.data) as ActionFeedItem;
-        setActions((prev) => [parsed, ...prev].slice(0, 50));
+        wsRef.current?.close();
       } catch {
         /* ignore */
       }
+      const ws = new WebSocket(`${WS_BASE}/ws/actions`);
+      wsRef.current = ws;
+      ws.onopen = () => {
+        if (cancelled) return;
+        attemptRef.current = 0;
+        setStatus("connected");
+      };
+      ws.onclose = () => {
+        if (cancelled) return;
+        setStatus("disconnected");
+        scheduleReconnect();
+      };
+      ws.onerror = () => {
+        if (cancelled) return;
+        setStatus("error");
+      };
+      ws.onmessage = (event) => {
+        try {
+          const parsed = JSON.parse(event.data) as ActionFeedItem;
+          setActions((prev) => [parsed, ...prev].slice(0, 50));
+        } catch {
+          /* ignore */
+        }
+      };
+    }
+
+    connect();
+    return () => {
+      cancelled = true;
+      if (timerRef.current) clearTimeout(timerRef.current);
+      try {
+        wsRef.current?.close();
+      } catch {
+        /* ignore */
+      }
+      wsRef.current = null;
     };
-    return () => ws.close();
+  }, []);
+
+  const [timeTick, setTimeTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTimeTick((n) => n + 1), 5000);
+    return () => clearInterval(id);
   }, []);
 
   useEffect(() => {
@@ -130,7 +184,7 @@ export default function LiveFeedPage() {
         </label>
       </div>
 
-      <div className="glass-card flex items-center gap-3 px-4 py-3">
+      <div className="glass-card flex flex-wrap items-center gap-3 px-4 py-3">
         <span className="relative flex h-3 w-3">
           {status === "connected" ? (
             <>
@@ -141,8 +195,18 @@ export default function LiveFeedPage() {
             <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500" />
           )}
         </span>
-        <span className="text-sm font-semibold uppercase tracking-wide text-[#c9d1d9]">
-          {status === "connected" ? "Connected" : status}
+        <span
+          className={`text-sm font-bold uppercase tracking-wide ${
+            status === "connected" ? "text-emerald-400" : "text-amber-200"
+          }`}
+        >
+          {status === "connected"
+            ? "CONNECTED"
+            : status === "connecting"
+              ? "Connecting…"
+              : status === "reconnecting"
+                ? "Reconnecting…"
+                : status.toUpperCase()}
         </span>
         <span className="text-xs text-[#8b949e]">{WS_BASE}/ws/actions</span>
       </div>
@@ -157,12 +221,18 @@ export default function LiveFeedPage() {
               </div>
             </div>
             <div className="max-w-md space-y-2">
-              <p className="text-lg font-medium text-[#f0f6fc]">Waiting for actions</p>
+              <p className="flex items-center justify-center gap-2 text-lg font-medium text-[#f0f6fc]">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                </span>
+                Waiting for agent actions…
+              </p>
               <p className="text-sm text-[#8b949e]">
                 No actions yet. Run the demo to see Agentiva in action:
               </p>
               <code className="block rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2 text-left font-mono text-xs text-[#79c0ff]">
-                python demo/real_agent.py --mode protected
+                python demo/paybot_demo.py
               </code>
             </div>
           </div>
@@ -190,7 +260,7 @@ export default function LiveFeedPage() {
                     </div>
                     <div className="text-right">
                       <DecisionPill decision={action.decision} />
-                      <p className="mt-1 text-xs text-[#8b949e]">{relTime(action.timestamp)}</p>
+                      <p className="mt-1 text-xs text-[#8b949e]">{relTime(action.timestamp, timeTick)}</p>
                     </div>
                   </div>
                   <div className="mt-3">
@@ -221,15 +291,18 @@ export default function LiveFeedPage() {
 }
 
 function DecisionPill({ decision }: { decision: string }) {
+  const d = decision.toLowerCase();
   const cls =
-    decision === "block"
+    d === "block"
       ? "bg-red-500/20 text-red-200 ring-red-500/40"
-      : decision === "allow" || decision === "approve"
+      : d === "allow" || d === "approve"
         ? "bg-emerald-500/20 text-emerald-200 ring-emerald-500/40"
         : "bg-amber-500/20 text-amber-200 ring-amber-500/40";
+  const label =
+    d === "block" ? "BLOCK" : d === "allow" || d === "approve" ? "ALLOW" : d === "shadow" ? "SHADOW" : decision.toUpperCase();
   return (
     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wide ring-1 ${cls}`}>
-      {decision}
+      {label}
     </span>
   );
 }

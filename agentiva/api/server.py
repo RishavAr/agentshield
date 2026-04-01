@@ -16,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import AliasChoices, BaseModel, Field, field_validator
 
+from agentiva.auth.jwt_auth import auth_secret, try_verify_bearer_token
 from agentiva.db.database import (
     add_approval_log,
     add_chat_message,
@@ -127,6 +128,7 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     mode: str
+    risk_threshold: float
     total_actions_intercepted: int
     uptime_seconds: float
 
@@ -223,7 +225,7 @@ async def _chat_answer_with_optional_deterministic(
     try:
         from agentiva.api.basic_chat_responses import try_deterministic_chat
 
-        det = await try_deterministic_chat(msg, history=history, session_id=session_id)
+        det = await try_deterministic_chat(msg, shield, history=history, session_id=session_id)
         if det is not None:
             if not os.environ.get("PYTEST_CURRENT_TEST"):
                 await asyncio.sleep(random.uniform(0.5, 0.8))
@@ -282,7 +284,11 @@ async def lifespan(_: FastAPI):
     if policy_path:
         with open(policy_path, encoding="utf-8") as handle:
             yaml.safe_load(handle)
-    _shield = Agentiva(mode=mode, policy_path=policy_path)
+    _shield = Agentiva(
+        mode=mode,
+        policy_path=policy_path,
+        risk_threshold=float(_runtime_settings.get("risk_threshold", 0.7)),
+    )
     logger.info("agentiva_started mode=%s policy=%s", mode, policy_path)
     try:
         yield
@@ -311,20 +317,78 @@ async def request_id_and_logging_middleware(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
     start = time.perf_counter()
     _metrics["total_requests"] += 1
-    if request.url.path.startswith("/api/") and _tenant_manager.is_enabled():
-        # Chat co-pilot must remain available in deterministic/basic mode without API keys.
-        # We keep tenant auth for the rest of the API surface.
-        if request.url.path.startswith("/api/v1/chat"):
-            request.state.tenant_id = "default"
-        else:
-            api_key = request.headers.get("X-Agentiva-Key")
-            if not api_key:
-                return JSONResponse(status_code=401, content={"error": {"type": "unauthorized", "message": "Missing X-Agentiva-Key"}})
-            try:
-                tenant = _tenant_manager.tenant_from_key(api_key)
-                request.state.tenant_id = tenant.tenant_id
-            except KeyError:
-                return JSONResponse(status_code=403, content={"error": {"type": "forbidden", "message": "Invalid API key"}})
+    path = request.url.path
+    if path.startswith("/api/"):
+        jwt_secret = auth_secret()
+        if jwt_secret:
+            auth_hdr = request.headers.get("Authorization", "")
+            api_key_hdr = request.headers.get("X-Agentiva-Key")
+            if auth_hdr.startswith("Bearer "):
+                token = auth_hdr[7:].strip()
+                payload = try_verify_bearer_token(token)
+                if payload is None:
+                    return JSONResponse(
+                        status_code=401,
+                        content={
+                            "error": {
+                                "type": "unauthorized",
+                                "message": "Invalid or expired session token",
+                            }
+                        },
+                    )
+                request.state.tenant_id = "default"
+                request.state.auth_user = payload
+            elif _tenant_manager.is_enabled():
+                if path.startswith("/api/v1/chat"):
+                    request.state.tenant_id = "default"
+                elif api_key_hdr:
+                    try:
+                        tenant = _tenant_manager.tenant_from_key(api_key_hdr)
+                        request.state.tenant_id = tenant.tenant_id
+                    except KeyError:
+                        return JSONResponse(
+                            status_code=403,
+                            content={"error": {"type": "forbidden", "message": "Invalid API key"}},
+                        )
+                else:
+                    return JSONResponse(
+                        status_code=401,
+                        content={
+                            "error": {
+                                "type": "unauthorized",
+                                "message": "Missing X-Agentiva-Key or Authorization Bearer token",
+                            }
+                        },
+                    )
+            else:
+                return JSONResponse(
+                    status_code=401,
+                    content={
+                        "error": {
+                            "type": "unauthorized",
+                            "message": "Missing Authorization Bearer token",
+                        }
+                    },
+                )
+        elif _tenant_manager.is_enabled():
+            # Chat co-pilot must remain available in deterministic/basic mode without API keys.
+            if path.startswith("/api/v1/chat"):
+                request.state.tenant_id = "default"
+            else:
+                api_key = request.headers.get("X-Agentiva-Key")
+                if not api_key:
+                    return JSONResponse(
+                        status_code=401,
+                        content={"error": {"type": "unauthorized", "message": "Missing X-Agentiva-Key"}},
+                    )
+                try:
+                    tenant = _tenant_manager.tenant_from_key(api_key)
+                    request.state.tenant_id = tenant.tenant_id
+                except KeyError:
+                    return JSONResponse(
+                        status_code=403,
+                        content={"error": {"type": "forbidden", "message": "Invalid API key"}},
+                    )
     try:
         response = await call_next(request)
     except Exception as exc:
@@ -375,6 +439,7 @@ async def health() -> HealthResponse:
         status="healthy",
         version="0.1.0",
         mode=shield.mode,
+        risk_threshold=float(getattr(shield, "risk_threshold", 0.7)),
         total_actions_intercepted=len(shield.audit_log),
         uptime_seconds=round(elapsed, 2),
     )
@@ -397,13 +462,16 @@ async def intercept_action(request: InterceptRequest) -> InterceptResponse:
             context=request.context,
             timestamp=request.timestamp,
         )
+        # Return the evaluated decision as-is. Shadow *mode* still means observe-only
+        # execution semantics elsewhere; audit/UI should show true block vs shadow vs allow.
+        decision_for_api = action.decision
         await log_action(
             {
                 "id": action.id,
                 "tool_name": action.tool_name,
                 "arguments": action.arguments,
                 "agent_id": action.agent_id,
-                "decision": action.decision,
+                "decision": decision_for_api,
                 "risk_score": action.risk_score,
                 "mode": action.mode,
                 "simulation_result": (action.result or {}).get("simulation"),
@@ -432,7 +500,7 @@ async def intercept_action(request: InterceptRequest) -> InterceptResponse:
         tool_name=action.tool_name,
         arguments=action.arguments,
         agent_id=action.agent_id,
-        decision=action.decision,
+        decision=decision_for_api,
         risk_score=action.risk_score,
         mode=action.mode,
         timestamp=action.timestamp,
@@ -539,6 +607,97 @@ async def compliance_pci_report_pdf(
         media_type="application/pdf",
         headers={"Content-Disposition": 'attachment; filename="agentiva-pci-report.pdf"'},
     )
+
+
+def _action_row_to_dict(row: Any) -> Dict[str, Any]:
+    return {
+        "action_id": row.id,
+        "timestamp": row.timestamp.isoformat() if hasattr(row.timestamp, "isoformat") else str(row.timestamp),
+        "tool_name": row.tool_name,
+        "arguments": row.arguments or {},
+        "agent_id": row.agent_id,
+        "decision": row.decision,
+        "risk_score": float(row.risk_score),
+        "mode": row.mode,
+        "phi_detection": row.phi_detection,
+    }
+
+
+@app.get("/api/v1/compliance/soc2/evidence.json")
+async def compliance_soc2_evidence_json(
+    start: Optional[str] = Query(None),
+    end: Optional[str] = Query(None),
+):
+    """Structured JSON evidence mapped to SOC2 CC6–CC8 style groupings."""
+    start_dt, end_dt = _parse_report_range(start, end)
+    rows = await list_actions_between(start_dt, end_dt)
+    events = [_action_row_to_dict(r) for r in rows]
+    blocked = [e for e in events if e.get("decision") == "block"]
+    return {
+        "framework": "SOC2",
+        "period": {"start": start_dt.isoformat(), "end": end_dt.isoformat()},
+        "controls": {
+            "CC6.1_logical_access": {
+                "description": "Tool invocations evaluated before execution",
+                "events": events[:500],
+            },
+            "CC7.2_threat_detection": {
+                "description": "Blocked and high-risk actions",
+                "blocked_actions": blocked[:200],
+            },
+            "CC8.1_change_detection": {
+                "description": "Audit trail of agent decisions",
+                "total_evaluated": len(events),
+            },
+        },
+    }
+
+
+@app.get("/api/v1/compliance/hipaa/evidence.json")
+async def compliance_hipaa_evidence_json(
+    start: Optional[str] = Query(None),
+    end: Optional[str] = Query(None),
+):
+    """HIPAA-aligned audit evidence (45 CFR § 164.312)."""
+    start_dt, end_dt = _parse_report_range(start, end)
+    rows = await list_actions_between(start_dt, end_dt)
+    events = [_action_row_to_dict(r) for r in rows]
+    phi_related = [e for e in events if e.get("phi_detection") or "phi" in str(e.get("arguments", {})).lower()]
+    return {
+        "framework": "HIPAA-aligned",
+        "citations": ["45 CFR § 164.312(a)(1)", "45 CFR § 164.312(b)", "45 CFR § 164.312(e)(1)"],
+        "period": {"start": start_dt.isoformat(), "end": end_dt.isoformat()},
+        "phi_access_and_transmission": {
+            "events": phi_related[:300],
+            "all_actions_sample": events[:300],
+        },
+    }
+
+
+@app.get("/api/v1/compliance/pci/evidence.json")
+async def compliance_pci_evidence_json(
+    start: Optional[str] = Query(None),
+    end: Optional[str] = Query(None),
+):
+    """PCI-DSS Req 3, 7, 10 style evidence from audit log."""
+    start_dt, end_dt = _parse_report_range(start, end)
+    rows = await list_actions_between(start_dt, end_dt)
+    events = [_action_row_to_dict(r) for r in rows]
+    pay_keywords = ("card", "payment", "pci", "pan", "cvv", "stripe", "charge")
+    financial = [
+        e
+        for e in events
+        if any(k in str(e.get("arguments", {})).lower() + e.get("tool_name", "").lower() for k in pay_keywords)
+    ]
+    return {
+        "framework": "PCI-DSS aligned",
+        "requirements": {
+            "req_3_protect_stored_data": {"events": financial[:200]},
+            "req_7_restrict_access": {"blocked_high_risk": [e for e in events if e.get("decision") == "block"][:200]},
+            "req_10_track_access": {"all_logged_actions": len(events), "sample": events[:200]},
+        },
+        "period": {"start": start_dt.isoformat(), "end": end_dt.isoformat()},
+    }
 
 
 @app.get("/api/v1/export/csv")
@@ -926,6 +1085,7 @@ async def update_runtime_settings(payload: RuntimeSettingsPayload) -> Dict[str, 
     _runtime_settings["mode"] = mode
     shield = get_shield()
     shield.mode = mode
+    shield.risk_threshold = float(payload.risk_threshold)
     return {
         "status": "ok",
         "risk_threshold": _runtime_settings["risk_threshold"],
@@ -1174,6 +1334,7 @@ async def change_mode(new_mode: str) -> Dict[str, str]:
         raise HTTPException(status_code=400, detail="Mode must be: shadow, live, or approval")
     shield = get_shield()
     shield.mode = new_mode
+    _runtime_settings["mode"] = new_mode
     logger.info("mode_changed mode=%s", new_mode)
     return {"status": "ok", "mode": new_mode}
 

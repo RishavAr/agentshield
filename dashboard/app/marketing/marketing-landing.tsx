@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 
 const CALENDLY_DEMO_URL = "https://calendly.com/rishavaryan058/30min";
-const PYPI_URL = "https://pypi.org/project/agentiva/";
 
 const CODE_SAMPLE = `from agentiva import Agentiva
 shield = Agentiva(mode="shadow")
@@ -67,7 +66,7 @@ const faq = [
   },
   {
     q: "Can I use this with LangChain/CrewAI/OpenAI?",
-    a: "Yes. Agentiva works with LangChain, CrewAI, OpenAI Agents SDK, MCP protocol, and any custom agent via REST API.",
+    a: "Yes. Agentiva is framework-agnostic: you wrap your tools the same way regardless of stack. We document integrations for LangChain, CrewAI, OpenAI Agents SDK, MCP, and custom agents via REST.",
   },
   {
     q: "Do I need cloud access?",
@@ -409,92 +408,77 @@ export default function MarketingLanding() {
       </section>
 
       <section id="pricing" className="mx-auto max-w-6xl px-6 py-16">
-        <h2 className="text-3xl font-semibold text-white md:text-4xl">Pricing that scales with your team</h2>
-        <p className="mt-2 text-[#94a3b8]">Start free. Upgrade when you need cloud, alerts, and compliance.</p>
+        <h2 className="text-3xl font-semibold text-white md:text-4xl">Pricing</h2>
+        <p className="mt-2 text-[#94a3b8]">Self-hosted is free forever. Cloud dashboard on waitlist.</p>
         <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <article className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5">
             <p className="text-sm font-semibold text-white">Free</p>
             <p className="mt-2 text-3xl font-semibold text-white">$0</p>
             <p className="mt-1 text-xs font-medium text-[#93c5fd]">/forever</p>
-            <p className="mt-2 text-xs text-[#94a3b8]">No credit card required</p>
             <ul className="mt-4 flex-1 space-y-2 text-xs text-[#cbd5e1]">
-              <li>Open-source, self-hosted</li>
-              <li>Shadow mode + live mode</li>
-              <li>Policy engine (YAML rules)</li>
-              <li>Dashboard + security co-pilot</li>
               <li>1 agent</li>
+              <li>Shadow mode + live mode</li>
+              <li>Policy engine + dashboard</li>
+              <li>Security co-pilot</li>
               <li>Community support</li>
-              <li className="font-mono text-[#93c5fd]">pip install agentiva</li>
-            </ul>
-            <a
-              href={PYPI_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 inline-flex w-full items-center justify-center rounded-lg border border-white/15 bg-white/10 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-white/15"
-            >
-              Get started free
-            </a>
-          </article>
-          <article className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p className="text-sm font-semibold text-white">Pro</p>
-            <p className="mt-2 text-3xl font-semibold text-white">$18</p>
-            <p className="mt-1 text-xs text-[#94a3b8]">/month</p>
-            <p className="mt-2 text-xs text-[#64748b]">
-              <span className="text-[#93c5fd]">$14/mo</span> billed annually — Save 20%
-            </p>
-            <ul className="mt-4 flex-1 space-y-2 text-xs text-[#cbd5e1]">
-              <li>Everything in Free</li>
-              <li>Hosted cloud dashboard</li>
-              <li>Up to 3 agents</li>
-              <li>Email + Slack alerts</li>
-              <li>Chat history + export</li>
-              <li>Priority email support</li>
             </ul>
             <Link
               href="/dashboard"
-              className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-lg border border-white/15 bg-white/10 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-white/15"
             >
-              Start 7-day free trial
+              Get started free
             </Link>
           </article>
           <article className="relative flex flex-col rounded-2xl border-2 border-[#3b82f6] bg-gradient-to-b from-[#1d4ed8]/25 to-white/5 p-5 shadow-xl shadow-blue-900/30">
             <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-[#3b82f6] bg-[#1e3a8a] px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#bfdbfe]">
-              Most Popular
+              MOST POPULAR
             </span>
-            <p className="text-sm font-semibold text-[#bfdbfe]">Team</p>
-            <p className="mt-2 text-3xl font-semibold text-white">$36</p>
-            <p className="mt-1 text-xs text-[#94a3b8]">/month</p>
-            <p className="mt-2 text-xs text-[#64748b]">
-              <span className="text-[#93c5fd]">$29/mo</span> billed annually — Save 20%
-            </p>
+            <p className="text-sm font-semibold text-[#bfdbfe]">Pro</p>
+            <p className="mt-2 text-3xl font-semibold text-white">$18</p>
+            <p className="mt-1 text-xs text-[#94a3b8]">/month · cloud waitlist</p>
             <ul className="mt-4 flex-1 space-y-2 text-xs text-[#dbeafe]">
-              <li>Everything in Pro</li>
-              <li>Unlimited agents</li>
-              <li>SSO + team management (up to 10 seats)</li>
-              <li>Compliance exports (SOC2, HIPAA, PCI-DSS)</li>
-              <li>Policy templates (healthcare, finance, e-commerce)</li>
-              <li>Approval workflows</li>
-              <li>Slack + Teams integration</li>
+              <li>Up to 3 agents</li>
+              <li>Everything in Free</li>
+              <li>Hosted cloud dashboard (waitlist)</li>
+              <li>Email + Slack alerts</li>
+              <li>Priority support</li>
             </ul>
-            <Link
-              href="/dashboard"
+            <a
+              href="#waitlist"
               className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
             >
-              Start 7-day free trial
-            </Link>
+              Join waitlist
+            </a>
+          </article>
+          <article className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5">
+            <p className="text-sm font-semibold text-white">Team</p>
+            <p className="mt-2 text-3xl font-semibold text-white">$54</p>
+            <p className="mt-1 text-xs text-[#94a3b8]">/month · cloud waitlist</p>
+            <ul className="mt-4 flex-1 space-y-2 text-xs text-[#cbd5e1]">
+              <li>Unlimited agents</li>
+              <li>Everything in Pro</li>
+              <li>SSO + team management</li>
+              <li>Compliance evidence exports</li>
+              <li>Policy templates</li>
+              <li>Approval workflows</li>
+            </ul>
+            <a
+              href="#waitlist"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-lg border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
+            >
+              Join waitlist
+            </a>
           </article>
           <article className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5">
             <p className="text-sm font-semibold text-white">Enterprise</p>
-            <p className="mt-2 text-2xl font-semibold text-white">Custom pricing</p>
+            <p className="mt-2 text-2xl font-semibold text-white">Custom</p>
             <p className="mt-1 text-xs text-[#94a3b8]">For regulated industries</p>
             <ul className="mt-4 flex-1 space-y-2 text-xs text-[#cbd5e1]">
               <li>Everything in Team</li>
-              <li>Unlimited seats</li>
-              <li>On-premise / VPC deployment</li>
+              <li>On-premise deployment</li>
               <li>Custom integrations + SLA</li>
-              <li>Dedicated security review</li>
-              <li>Fine-tuned on-premise co-pilot</li>
-              <li>Phone + Slack support</li>
+              <li>Dedicated support</li>
+              <li>Security architecture review</li>
             </ul>
             <a
               href={CALENDLY_DEMO_URL}
@@ -506,14 +490,7 @@ export default function MarketingLanding() {
             </a>
           </article>
         </div>
-        <p className="mt-4 text-center text-xs text-[#64748b]">
-          Save 20% with annual billing — Pro{" "}
-          <span className="font-medium text-[#93c5fd]">$14/mo</span>, Team{" "}
-          <span className="font-medium text-[#93c5fd]">$29/mo</span> when billed yearly.
-        </p>
-        <p className="mt-2 text-center text-xs text-[#64748b]">
-          All paid plans include 7-day free trial. Cancel anytime.
-        </p>
+        <p className="mt-6 text-center text-xs text-[#64748b]">Self-hosted is free forever. Cloud tiers on waitlist.</p>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-12">
@@ -539,6 +516,69 @@ export default function MarketingLanding() {
             </button>
           </div>
         </div>
+      </section>
+
+      <section id="waitlist" className="mx-auto max-w-lg px-6 py-16">
+        <h2 className="text-center text-2xl font-semibold text-white md:text-3xl">Join the cloud waitlist</h2>
+        <p className="mt-2 text-center text-sm text-[#94a3b8]">Pro and Team tiers — we&apos;ll email you when hosted dashboard is ready.</p>
+        <form
+          action="https://formspree.io/f/maqlwezw"
+          method="POST"
+          className="mt-6 space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6"
+        >
+          <div>
+            <label htmlFor="mkt-wait-email" className="text-xs font-medium text-[#cbd5e1]">
+              Email
+            </label>
+            <input
+              id="mkt-wait-email"
+              type="email"
+              name="email"
+              required
+              autoComplete="email"
+              placeholder="you@company.com"
+              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#3b82f6]"
+            />
+          </div>
+          <div>
+            <label htmlFor="mkt-wait-company" className="text-xs font-medium text-[#cbd5e1]">
+              Company <span className="text-[#64748b]">(optional)</span>
+            </label>
+            <input
+              id="mkt-wait-company"
+              type="text"
+              name="company"
+              autoComplete="organization"
+              placeholder="Acme Inc."
+              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#3b82f6]"
+            />
+          </div>
+          <div>
+            <label htmlFor="mkt-wait-agents" className="text-xs font-medium text-[#cbd5e1]">
+              How many AI agents?
+            </label>
+            <select
+              id="mkt-wait-agents"
+              name="agents"
+              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#3b82f6]"
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select range
+              </option>
+              <option value="1-5">1–5</option>
+              <option value="5-20">5–20</option>
+              <option value="20-100">20–100</option>
+              <option value="100+">100+</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+          >
+            Join waitlist
+          </button>
+        </form>
       </section>
 
       <section id="faq" className="mx-auto max-w-4xl px-6 py-16">

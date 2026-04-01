@@ -104,6 +104,30 @@ export default function AuditPage() {
     await loadAudit();
   }
 
+  async function downloadEvidenceJson(kind: "soc2" | "hipaa" | "pci", filename: string) {
+    const key = `${kind}-json`;
+    setExporting(key);
+    const q = buildExportQuery(exportStart, exportEnd);
+    const path = `${API_BASE}/api/v1/compliance/${kind}/evidence.json${q ? `?${q}` : ""}`;
+    try {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error(String(res.status));
+      const data = await res.json();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast("Report generated", "success");
+    } catch {
+      toast("JSON export failed", "error");
+    } finally {
+      setExporting(null);
+    }
+  }
+
   async function downloadPdf(kind: "soc2" | "hipaa" | "pci", filename: string) {
     const key = `${kind}-pdf`;
     setExporting(key);
@@ -209,7 +233,30 @@ export default function AuditPage() {
               {exporting === `${k}-pdf` ? (
                 <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#8b949e] border-t-transparent" />
               ) : null}
-              Export {label}
+              Export {label} (PDF)
+            </button>
+          ))}
+        </div>
+        <p className="mb-2 mt-4 text-xs font-medium text-[#8b949e]">JSON evidence (SOC2 / HIPAA / PCI)</p>
+        <div className="flex flex-wrap gap-2">
+          {(
+            [
+              ["soc2", "SOC2", "agentiva-soc2-evidence.json"],
+              ["hipaa", "HIPAA", "agentiva-hipaa-evidence.json"],
+              ["pci", "PCI-DSS", "agentiva-pci-evidence.json"],
+            ] as const
+          ).map(([k, label, file]) => (
+            <button
+              key={`j-${k}`}
+              type="button"
+              disabled={!!exporting}
+              onClick={() => void downloadEvidenceJson(k, file)}
+              className="inline-flex items-center gap-2 rounded-xl border border-[#334155] bg-[#0d1117] px-4 py-2 text-sm font-medium text-[#c9d1d9] transition hover:border-[#58a6ff]/50 disabled:opacity-50"
+            >
+              {exporting === `${k}-json` ? (
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#8b949e] border-t-transparent" />
+              ) : null}
+              Export {label} evidence
             </button>
           ))}
         </div>
