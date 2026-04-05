@@ -7,6 +7,8 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)]()
 
+**Website:** [website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app) · **Demo video:** [Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing)
+
 ---
 
 ## Table of contents
@@ -204,7 +206,11 @@ Paths and env names match `docker-compose.yml` in this repo.
 
 ## Marketing site (`website/`)
 
-Static landing page (demo embed, pricing, install walkthrough). Deploy with any static host; many teams use [Vercel](https://vercel.com):
+The public marketing site is deployed at **[website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app)** (preview deployments for AI agents — features, install walkthrough, pricing, FAQ).
+
+**Product demo (hosted video):** [Agentiva product demo on Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing)
+
+The `website/` directory is a static landing page you can rebuild and redeploy. Many teams use [Vercel](https://vercel.com):
 
 ```bash
 cd website
