@@ -144,7 +144,7 @@ Open **`http://127.0.0.1:3001`** in the browser. The dev server binds to `127.0.
 | `agentiva serve [--port 8000] [--host 0.0.0.0] [--mode shadow\|live\|approval]` | Start the FastAPI server |
 | `agentiva scan [DIR]` | Static scan of a project tree (reports under `.agentiva/`) |
 | `agentiva dashboard [DIR]` | Open the last scan report in HTML |
-| `agentiva init` | Install git pre-push hook that runs `agentiva scan` |
+| `agentiva init` | Install git pre-push hook (`agentiva scan . --advisory-exit`) |
 | `agentiva init-policy [--output policies/default.yaml]` | Copy default policy YAML into your tree |
 | `agentiva mcp-proxy --upstream HOST:PORT --port 3002` | MCP proxy with interception |
 | `agentiva demo` | Run packaged demo scenarios |
@@ -283,13 +283,19 @@ python benchmarks/run_all_benchmarks.py
 
 ## Git pre-push scan
 
-If you run `agentiva init`, a **pre-push** hook runs `agentiva scan .`. If the scan exits non-zero (e.g. BLOCK findings in demos or tests), `git push` is blocked. To push anyway when you accept the risk:
+If you run `agentiva init`, a **pre-push** hook runs `agentiva scan . --advisory-exit`: you still see findings and get a local report, but **the hook does not block `git push`** (monorepos often contain intentional demo/test fixtures that look like secrets).
+
+For **CI or release gates**, run a strict scan (fails on any finding):
+
+```bash
+agentiva scan .
+```
+
+To skip the hook entirely for one push:
 
 ```bash
 git push --no-verify
 ```
-
-For day-to-day development, keep the hook or adjust scan configuration as your team prefers.
 
 ---
 
@@ -329,7 +335,7 @@ For day-to-day development, keep the hook or adjust scan configuration as your t
 | Blank page or connection error on `localhost` | Use **`http://127.0.0.1:3001`** (dev server hostname) |
 | Port 8000 or 3001 in use | Stop other processes or run `./scripts/serve-fresh.sh` for API |
 | `agentiva: command not found` | Activate `venv` and `pip install -e .` |
-| Push rejected by hook | Fix scan findings or `git push --no-verify` |
+| Push rejected by hook | Hook uses advisory exit; if scan crashed, fix and retry, or `git push --no-verify` |
 
 ---
 

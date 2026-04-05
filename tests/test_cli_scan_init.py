@@ -47,6 +47,13 @@ def test_scan_exits_nonzero_when_credentials_pattern(tmp_path: Path) -> None:
     assert any("leak.txt" in str(i.get("file", "")) for i in data["issues"])
 
 
+def test_scan_advisory_exit_zero_despite_findings(tmp_path: Path) -> None:
+    (tmp_path / "leak.txt").write_text("password = 'supersecret123'\n", encoding="utf-8")
+    r = _run_cli("scan", str(tmp_path), "--advisory-exit")
+    assert r.returncode == 0, r.stderr + r.stdout
+    assert "Advisory mode" in r.stdout
+
+
 def test_dashboard_opens_report_after_scan(tmp_path: Path) -> None:
     (tmp_path / "README.md").write_text("# ok\n", encoding="utf-8")
     sr = _run_cli("scan", str(tmp_path), cwd=tmp_path)
@@ -91,6 +98,7 @@ def test_init_installs_pre_push_hook() -> None:
         assert hook.is_file()
         text = hook.read_text(encoding="utf-8")
         assert "agentiva scan ." in text or "agentiva.cli scan" in text
+        assert "--advisory-exit" in text
         assert "agentiva dashboard" in text
         gi = root / ".gitignore"
         assert gi.is_file()

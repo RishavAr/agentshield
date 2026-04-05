@@ -524,7 +524,15 @@ def _cmd_scan(args: argparse.Namespace) -> None:
     print(f"  📁 {report_path}")
     print("  Open this report later: agentiva dashboard")
 
-    # Pre-push gate: non-zero if policy blocks OR any finding (incl. shadow / heuristic [BLOCK] rows).
+    # Strict exit (default): non-zero if policy blocks OR any finding (good for CI).
+    # --advisory-exit: always 0 when the scan completed (pre-push hook — surface findings, still allow push).
+    if getattr(args, "advisory_exit", False):
+        if blocked_count > 0 or issues_found > 0:
+            print(
+                "  ℹ️  Advisory mode: push will not be blocked. "
+                "Run `agentiva scan .` (without --advisory-exit) in CI for a strict gate.\n"
+            )
+        raise SystemExit(0)
     must_block_push = blocked_count > 0 or issues_found > 0
     raise SystemExit(1 if must_block_push else 0)
 
@@ -626,9 +634,9 @@ echo "🛡️  Agentiva scanning before push..."
 echo ""
 
 if command -v agentiva >/dev/null 2>&1; then
-  agentiva scan .
+  agentiva scan . --advisory-exit
 else
-  python -m agentiva.cli scan .
+  python -m agentiva.cli scan . --advisory-exit
 fi
 EXIT_CODE=$?
 
@@ -642,7 +650,7 @@ if [ "$EXIT_CODE" -ne 0 ]; then
 fi
 
 echo ""
-echo "✅ Agentiva: scan finished with no blocking issues. Pushing..."
+echo "✅ Agentiva: pre-push scan finished (advisory). Pushing..."
 echo ""
 exit 0
 """
@@ -702,6 +710,11 @@ def main() -> None:
 
     scan_cmd = sub.add_parser("scan", help="Scan a project for security issues (automatic heuristics)")
     scan_cmd.add_argument("directory", nargs="?", default=".", help="Root directory to scan (default: .)")
+    scan_cmd.add_argument(
+        "--advisory-exit",
+        action="store_true",
+        help="Always exit 0 after a completed scan (e.g. git pre-push: show findings without blocking push).",
+    )
     scan_cmd.set_defaults(func=_cmd_scan)
 
     dash_cmd = sub.add_parser(

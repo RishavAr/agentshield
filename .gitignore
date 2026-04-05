@@ -1,3 +1,5 @@
+.agentiva/
+
 venv/
 __pycache__/
 *.pyc
