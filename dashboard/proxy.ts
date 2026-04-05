@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/live", "/agents", "/audit", "/policies"];
 
-export default auth((req) => {
+export const proxy = auth((req) => {
   if (process.env.NEXT_PUBLIC_AUTH_DISABLED === "true") {
     return NextResponse.next();
   }

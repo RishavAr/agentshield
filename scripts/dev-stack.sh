@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start Agentiva API (port 8000) + Next dashboard (port 3000) with matching proxy config.
+# Start Agentiva API (port 8000) + Next dashboard (port 3001) with matching proxy config.
 # Usage: from repo root —  ./scripts/dev-stack.sh
 set -euo pipefail
 
@@ -33,9 +33,9 @@ fi
 
 if curl -sf "http://127.0.0.1:${PORT}/health" >/dev/null 2>&1; then
   echo "API already responding on port ${PORT}."
-  if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"3000" -sTCP:LISTEN >/dev/null 2>&1; then
-    echo "Dashboard already listening on port 3000 — open http://localhost:3000"
-    echo "Stop the old dev server before starting another: kill \$(lsof -ti :3000)"
+  if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"3001" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "Dashboard already listening on port 3001 — open http://localhost:3001"
+    echo "Stop the old dev server before starting another: kill \$(lsof -ti :3001)"
     exit 0
   fi
   echo "Starting dashboard only..."
@@ -63,14 +63,14 @@ if ! curl -sf "http://127.0.0.1:${PORT}/health" >/dev/null 2>&1; then
   exit 1
 fi
 
-if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"3000" -sTCP:LISTEN >/dev/null 2>&1; then
-  echo "Port 3000 is already in use. Open http://localhost:3000 or stop it: kill \$(lsof -ti :3000)"
+if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"3001" -sTCP:LISTEN >/dev/null 2>&1; then
+  echo "Port 3001 is already in use. Open http://localhost:3001 or stop it: kill \$(lsof -ti :3001)"
   echo "Stopping the API we just started (PID ${API_PID}) so you do not leave a stray process."
   kill "${API_PID}" 2>/dev/null || true
   exit 1
 fi
 
-echo "Starting dashboard (http://localhost:3000)..."
+echo "Starting dashboard (http://localhost:3001)..."
 cd "$ROOT/dashboard"
 trap - EXIT INT TERM
 npm run dev

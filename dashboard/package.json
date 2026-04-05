@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:clean": "rm -rf .next && next dev",
+    "dev": "next dev -p 3001 --hostname 127.0.0.1",
+    "dev:clean": "rm -rf .next && next dev -p 3001 --hostname 127.0.0.1",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001 --hostname 127.0.0.1",
     "lint": "eslint"
   },
   "dependencies": {

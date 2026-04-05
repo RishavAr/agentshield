@@ -54,7 +54,7 @@ function renderCodeAndRisk(part: string): ReactNode[] {
     if (!segment) continue;
     if (i % 2 === 1) {
       out.push(
-        <span key={`code-${i}`} className="rounded bg-[#21262d] px-1 font-mono text-[#c9d1d9]">
+        <span key={`code-${i}`} className="rounded bg-[#1a170f] px-1 font-mono text-[#c9d1d9]">
           {segment}
         </span>,
       );
@@ -138,7 +138,7 @@ function FormattedAnswer({ text }: { text: string }) {
       nodes.push(
         <pre
           key={`yaml-${i}`}
-          className="mt-2 whitespace-pre-wrap rounded border border-[#30363d] bg-[#0d1117] p-2 font-mono text-[11px] leading-relaxed text-[#c9d1d9]"
+          className="mt-2 whitespace-pre-wrap rounded border border-[#2e2918] bg-[#060504] p-2 font-mono text-[11px] leading-relaxed text-[#c9d1d9]"
         >
           {yamlLines.join("\n")}
         </pre>,
@@ -430,7 +430,7 @@ export function ShieldChatPanel() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`fixed bottom-6 right-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-white shadow-xl shadow-blue-900/40 transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-[#0d1117] ${open ? "animate-none" : "animate-[pulse_5s_ease-in-out_infinite]"} ${
+        className={`fixed bottom-6 right-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#ca8a04] to-[#854d0e] text-[#0a0805] shadow-xl shadow-amber-950/50 transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-[#060504] ${open ? "animate-none" : "animate-[pulse_5s_ease-in-out_infinite]"} ${
           open ? "pointer-events-none scale-0 opacity-0" : "scale-100 opacity-100"
         }`}
         aria-label="Open Agentiva chat"
@@ -439,17 +439,17 @@ export function ShieldChatPanel() {
       </button>
 
       <div
-        className={`fixed bottom-0 right-0 z-[70] flex h-[min(92vh,600px)] w-full max-w-[450px] flex-col rounded-t-2xl border border-[#30363d] bg-[#0a0e14] shadow-2xl transition-transform duration-300 ease-out sm:bottom-6 sm:right-6 sm:rounded-2xl ${
+        className={`fixed bottom-0 right-0 z-[70] flex h-[min(92vh,600px)] w-full max-w-[450px] flex-col rounded-t-2xl border border-[#2e2918] bg-[#080604] shadow-2xl transition-transform duration-300 ease-out sm:bottom-6 sm:right-6 sm:rounded-2xl ${
           open ? "translate-y-0" : "pointer-events-none translate-y-[110%]"
         }`}
         aria-hidden={!open}
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-[#30363d] px-3 py-2.5">
+        <div className="flex shrink-0 items-center justify-between border-b border-[#2e2918] px-3 py-2.5">
           <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={() => setSidebarOpen((s) => !s)}
-              className="rounded-lg p-2 text-[#8b949e] hover:bg-[#161b22] hover:text-white"
+              className="rounded-lg p-2 text-[#8a8270] hover:bg-[#14110a] hover:text-white"
               aria-label="Sessions"
             >
               <Menu className="h-5 w-5" />
@@ -460,7 +460,7 @@ export function ShieldChatPanel() {
             <div className="flex flex-col">
               <span className="text-sm font-semibold text-[#f0f6fc]">Security co-pilot</span>
               {llmEnabled !== null ? (
-                <span className="text-[10px] uppercase tracking-wide text-[#8b949e]">
+                <span className="text-[10px] uppercase tracking-wide text-[#8a8270]">
                   {llmEnabled ? "AI-powered" : "Deterministic"}
                 </span>
               ) : null}
@@ -469,7 +469,7 @@ export function ShieldChatPanel() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="flex shrink-0 items-center gap-1 rounded-lg border border-[#30363d] px-2 py-1.5 text-xs font-medium text-[#c9d1d9] hover:border-[#8b949e] hover:bg-[#161b22] hover:text-white"
+            className="flex shrink-0 items-center gap-1 rounded-lg border border-[#2e2918] px-2 py-1.5 text-xs font-medium text-[#c9d1d9] hover:border-[#a38f6a] hover:bg-[#14110a] hover:text-white"
             aria-label="Close chat"
           >
             <X className="h-4 w-4" strokeWidth={2.5} />
@@ -479,13 +479,13 @@ export function ShieldChatPanel() {
 
         <div className="relative flex min-h-0 flex-1">
           {sidebarOpen ? (
-            <aside className="absolute inset-y-0 left-0 z-10 flex w-[min(100%,280px)] flex-col border-r border-[#30363d] bg-[#0d1117] shadow-xl">
-              <div className="flex items-center justify-between border-b border-[#30363d] px-2 py-2">
-                <span className="px-2 text-xs font-semibold uppercase tracking-wide text-[#8b949e]">History</span>
+            <aside className="absolute inset-y-0 left-0 z-10 flex w-[min(100%,280px)] flex-col border-r border-[#2e2918] bg-[#060504] shadow-xl">
+              <div className="flex items-center justify-between border-b border-[#2e2918] px-2 py-2">
+                <span className="px-2 text-xs font-semibold uppercase tracking-wide text-[#8a8270]">History</span>
                 <button
                   type="button"
                   onClick={() => void newChat()}
-                  className="rounded-md bg-[#1f6feb]/20 px-2 py-1 text-xs font-medium text-[#58a6ff]"
+                  className="rounded-md bg-[#ca8a04]/25 px-2 py-1 text-xs font-medium text-[#fde047]"
                 >
                   New chat
                 </button>
@@ -496,8 +496,8 @@ export function ShieldChatPanel() {
                     key={s.id}
                     className={`group relative mb-1 rounded-lg border px-2 py-2 text-left text-xs ${
                       sessionId === s.id
-                        ? "border-[#1f6feb]/50 bg-[#1f6feb]/10"
-                        : "border-transparent hover:bg-[#161b22]"
+                        ? "border-[#eab308]/45 bg-[#ca8a04]/12"
+                        : "border-transparent hover:bg-[#14110a]"
                     }`}
                   >
                     {renameId === s.id ? (
@@ -512,7 +512,7 @@ export function ShieldChatPanel() {
                           }
                         }}
                         onBlur={() => void commitRename(s.id)}
-                        className="w-full rounded border border-[#30363d] bg-[#0d1117] px-2 py-1 text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none"
+                        className="w-full rounded border border-[#2e2918] bg-[#060504] px-2 py-1 text-[#f0f6fc] focus:border-[#facc15] focus:outline-none"
                       />
                     ) : (
                       <>
@@ -521,13 +521,13 @@ export function ShieldChatPanel() {
                             {(s.title || "Chat").length > 30 ? `${(s.title || "Chat").slice(0, 30)}…` : s.title || "Chat"}
                           </p>
                           {s.last_message_preview ? (
-                            <p className="text-[10px] text-[#8b949e] line-clamp-2">{s.last_message_preview}</p>
+                            <p className="text-[10px] text-[#8a8270] line-clamp-2">{s.last_message_preview}</p>
                           ) : null}
-                          <p className="text-[10px] text-[#8b949e]">{relShort(s.updated_at)}</p>
+                          <p className="text-[10px] text-[#8a8270]">{relShort(s.updated_at)}</p>
                         </button>
                         <button
                           type="button"
-                          className="absolute right-8 top-1.5 rounded p-1 opacity-0 transition group-hover:opacity-100 hover:bg-[#21262d]"
+                          className="absolute right-8 top-1.5 rounded p-1 opacity-0 transition group-hover:opacity-100 hover:bg-[#1a170f]"
                           onClick={(e) => {
                             e.stopPropagation();
                             setRenameId(s.id);
@@ -535,22 +535,22 @@ export function ShieldChatPanel() {
                           }}
                           aria-label="Rename session"
                         >
-                          <Pencil className="h-3.5 w-3.5 text-[#8b949e]" />
+                          <Pencil className="h-3.5 w-3.5 text-[#8a8270]" />
                         </button>
                         <button
                           type="button"
-                          className="absolute right-1 top-1 rounded p-1 opacity-0 transition group-hover:opacity-100 hover:bg-[#21262d]"
+                          className="absolute right-1 top-1 rounded p-1 opacity-0 transition group-hover:opacity-100 hover:bg-[#1a170f]"
                           onClick={(e) => void deleteSession(s.id, e)}
                           aria-label="Delete session"
                         >
-                          <X className="h-3.5 w-3.5 text-[#8b949e]" />
+                          <X className="h-3.5 w-3.5 text-[#8a8270]" />
                         </button>
                       </>
                     )}
                   </div>
                 ))}
               </div>
-              <div className="border-t border-[#30363d] p-2">
+              <div className="border-t border-[#2e2918] p-2">
                 <button
                   type="button"
                   onClick={() => void clearAllSessions()}
@@ -565,7 +565,7 @@ export function ShieldChatPanel() {
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-3">
               {messages.length === 0 && !loading && (
-                <p className="text-sm text-[#8b949e]">
+                <p className="text-sm text-[#8a8270]">
                   Ask about blocked actions, session summaries, HIPAA/SOC2, or policy tuning. Open the menu for chat
                   history.
                 </p>
@@ -576,26 +576,26 @@ export function ShieldChatPanel() {
                   m.role === "assistant" && last?.role === "assistant" && last.id === m.id && !loading;
                 return m.role === "user" ? (
                   <div key={m.id} className="flex justify-end">
-                    <div className="max-w-[88%] rounded-2xl rounded-br-md bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-3 py-2 text-sm text-white shadow-md">
+                    <div className="max-w-[88%] rounded-2xl rounded-br-md bg-gradient-to-br from-[#d4a10e] to-[#a16207] px-3 py-2 text-sm text-[#0a0805] shadow-md">
                       {m.text}
                     </div>
                   </div>
                 ) : (
                   <div key={m.id} className="flex gap-2">
-                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#21262d] ring-1 ring-[#30363d]">
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1a170f] ring-1 ring-[#2e2918]">
                       <Shield className="h-4 w-4 text-emerald-400" />
                     </div>
-                    <div className="flex max-w-[90%] flex-col rounded-2xl rounded-bl-md border border-[#30363d] bg-[#161b22] px-3 py-2 text-sm text-[#c9d1d9] shadow-inner">
+                    <div className="flex max-w-[90%] flex-col rounded-2xl rounded-bl-md border border-[#2e2918] bg-[#100e08] px-3 py-2 text-sm text-[#c9d1d9] shadow-inner">
                       <FormattedAnswer text={m.answer} />
                       {m.suggestions.length > 0 && isLatestAssistantReply ? (
-                        <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[#30363d] pt-3">
+                        <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[#2e2918] pt-3">
                           {m.suggestions.map((s) => (
                             <button
                               key={s}
                               type="button"
                               onClick={() => void send(s)}
                               disabled={busy}
-                              className="rounded-full border border-[#30363d] bg-[#0d1117] px-2.5 py-1 text-left text-xs text-[#58a6ff] hover:border-[#1f6feb] disabled:opacity-50"
+                              className="rounded-full border border-[#2e2918] bg-[#060504] px-2.5 py-1 text-left text-xs text-[#fde047] hover:border-[#eab308] disabled:opacity-50"
                             >
                               {s}
                             </button>
@@ -608,15 +608,15 @@ export function ShieldChatPanel() {
               })}
               {loading ? (
                 <div className="flex gap-2 pl-1">
-                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#21262d]">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1a170f]">
                     <Shield className="h-4 w-4 text-emerald-400" />
                   </div>
-                  <div className="flex flex-col gap-2 rounded-2xl border border-[#30363d] bg-[#161b22] px-4 py-3">
-                    <p className="text-xs text-[#8b949e]">Analyzing your data…</p>
+                  <div className="flex flex-col gap-2 rounded-2xl border border-[#2e2918] bg-[#100e08] px-4 py-3">
+                    <p className="text-xs text-[#8a8270]">Analyzing your data…</p>
                     <div className="flex items-center gap-1">
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff] [animation-delay:-0.2s]" />
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff] [animation-delay:-0.1s]" />
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#facc15] [animation-delay:-0.2s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#facc15] [animation-delay:-0.1s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#facc15]" />
                     </div>
                   </div>
                 </div>
@@ -624,13 +624,13 @@ export function ShieldChatPanel() {
               <div ref={bottomRef} />
             </div>
 
-            <form onSubmit={onSubmit} className="shrink-0 border-t border-[#30363d] p-3">
+            <form onSubmit={onSubmit} className="shrink-0 border-t border-[#2e2918] p-3">
               <div className="flex gap-2">
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask the security co-pilot…"
-                  className="min-w-0 flex-1 rounded-xl border border-[#30363d] bg-[#0d1117] px-3 py-2.5 text-sm text-[#f0f6fc] placeholder:text-[#484f58] focus:border-[#1f6feb] focus:outline-none focus:ring-1 focus:ring-[#1f6feb]"
+                  className="min-w-0 flex-1 rounded-xl border border-[#2e2918] bg-[#060504] px-3 py-2.5 text-sm text-[#f0f6fc] placeholder:text-[#484f58] focus:border-[#eab308] focus:outline-none focus:ring-1 focus:ring-[#ca8a04]"
                 />
                 <button
                   type="submit"

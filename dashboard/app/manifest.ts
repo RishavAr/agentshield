@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "AI agent safety dashboard",
     start_url: "/dashboard",
     display: "standalone",
-    background_color: "#0d1117",
-    theme_color: "#0d1117",
+    background_color: "#060504",
+    theme_color: "#ca8a04",
     icons: [],
   };
 }

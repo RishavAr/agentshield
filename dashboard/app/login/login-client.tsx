@@ -33,7 +33,7 @@ export function LoginClient({
         <p className="text-center text-[#8b949e]">
           Sign-in is disabled (set <code className="text-[#c9d1d9]">AUTH_SECRET</code> to enable, or use{" "}
           <code className="text-[#c9d1d9]">NEXT_PUBLIC_AUTH_DISABLED=true</code> for local dev).{" "}
-          <a className="text-[#58a6ff] underline" href="/dashboard">
+          <a className="text-[#facc15] underline" href="/dashboard">
             Dashboard
           </a>
         </p>
@@ -57,7 +57,7 @@ export function LoginClient({
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
       <div className="mb-10 text-center">
         <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#21262d]">
-          <Shield className="h-8 w-8 text-[#58a6ff]" aria-hidden />
+          <Shield className="h-8 w-8 text-[#facc15]" aria-hidden />
         </div>
         <h1 className="text-2xl font-semibold text-[#f0f6fc]">Sign in</h1>
         <p className="mt-2 text-sm text-[#8b949e]">OAuth (Google / GitHub) or demo password</p>
@@ -67,7 +67,7 @@ export function LoginClient({
         {hasGoogle && (
           <button
             type="button"
-            className="rounded-lg border border-[#30363d] bg-[#21262d] px-4 py-3 text-sm font-medium text-[#f0f6fc] transition hover:bg-[#30363d]"
+            className="rounded-lg border border-[#2e2918] bg-[#1a170f] px-4 py-3 text-sm font-medium text-[#f0f6fc] transition hover:bg-[#2e2918]"
             onClick={() => signIn("google", { callbackUrl })}
           >
             Continue with Google
@@ -76,7 +76,7 @@ export function LoginClient({
         {hasGitHub && (
           <button
             type="button"
-            className="rounded-lg border border-[#30363d] bg-[#21262d] px-4 py-3 text-sm font-medium text-[#f0f6fc] transition hover:bg-[#30363d]"
+            className="rounded-lg border border-[#2e2918] bg-[#1a170f] px-4 py-3 text-sm font-medium text-[#f0f6fc] transition hover:bg-[#2e2918]"
             onClick={() => signIn("github", { callbackUrl })}
           >
             Continue with GitHub
@@ -84,7 +84,7 @@ export function LoginClient({
         )}
 
         {hasDemo && (
-          <form onSubmit={onDemoSubmit} className="mt-4 space-y-3 rounded-lg border border-[#30363d] bg-[#161b22] p-4">
+          <form onSubmit={onDemoSubmit} className="mt-4 space-y-3 rounded-lg border border-[#2e2918] bg-[#100e08] p-4">
             <p className="text-xs text-[#8b949e]">Demo login (set AUTH_DEMO_EMAIL + AUTH_DEMO_PASSWORD)</p>
             <input
               type="email"
@@ -92,7 +92,7 @@ export function LoginClient({
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded border border-[#30363d] bg-[#0d1117] px-3 py-2 text-sm text-[#f0f6fc]"
+              className="w-full rounded border border-[#2e2918] bg-[#060504] px-3 py-2 text-sm text-[#f0f6fc]"
             />
             <input
               type="password"
@@ -100,7 +100,7 @@ export function LoginClient({
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded border border-[#30363d] bg-[#0d1117] px-3 py-2 text-sm text-[#f0f6fc]"
+              className="w-full rounded border border-[#2e2918] bg-[#060504] px-3 py-2 text-sm text-[#f0f6fc]"
             />
             {err && <p className="text-sm text-[#f85149]">{err}</p>}
             <button

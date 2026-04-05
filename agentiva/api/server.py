@@ -1,10 +1,11 @@
 import asyncio
+import html
 import logging
 import os
 import random
 import time
 import uuid
-from collections import deque
+from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
@@ -13,9 +14,10 @@ from typing import Any, Deque, Dict, List, Optional
 import yaml
 from fastapi import FastAPI, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from pydantic import AliasChoices, BaseModel, Field, field_validator
 
+from agentiva import __version__ as AGENTIVA_VERSION
 from agentiva.auth.jwt_auth import auth_secret, try_verify_bearer_token
 from agentiva.db.database import (
     add_approval_log,
@@ -39,6 +41,7 @@ from agentiva.db.database import (
     list_negotiations,
     log_action,
     touch_agent_registry,
+    truncate_action_logs,
     update_chat_session_title,
 )
 from agentiva.audit.compliance import ComplianceExporter
@@ -118,6 +121,16 @@ class ShadowReport(BaseModel):
     by_tool: Dict[str, int]
     by_decision: Dict[str, int]
     avg_risk_score: float
+
+
+class AgentAuditSummaryRow(BaseModel):
+    """Per-agent stats from the in-memory audit log (includes CLI scanners as scan-<dir>)."""
+
+    agent_id: str
+    display_name: str
+    total_actions: int
+    blocked_actions: int
+    last_active: Optional[str] = None
 
 
 class PolicyUpdateRequest(BaseModel):
@@ -299,7 +312,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="Agentiva",
     description="Preview deployments for AI agents. Intercept, preview, approve, and rollback agent actions.",
-    version="0.1.0",
+    version=AGENTIVA_VERSION,
     lifespan=lifespan,
 )
 
@@ -418,6 +431,47 @@ async def request_id_and_logging_middleware(request: Request, call_next):
     return response
 
 
+def _browser_api_root_html() -> str:
+    """Help users who open the API in a browser (e.g. confused with the Next.js dashboard)."""
+    dash = (os.environ.get("AGENTIVA_DASHBOARD_URL") or "http://127.0.0.1:3001").rstrip("/")
+    d = html.escape(dash)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Agentiva API</title>
+  <style>
+    body {{ font-family: system-ui, sans-serif; max-width: 38rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.55; color: #0f172a; }}
+    a {{ color: #1d4ed8; }}
+    code {{ background: #f1f5f9; padding: 0.12rem 0.4rem; border-radius: 4px; font-size: 0.9em; }}
+  </style>
+</head>
+<body>
+  <h1>Agentiva API</h1>
+  <p>This URL is the <strong>JSON HTTP API</strong> (what <code>agentiva serve</code> runs). It is <strong>not</strong> the web dashboard.</p>
+  <p>If you were looking for the UI, open the Next.js app instead:</p>
+  <p><a href="{d}">{d}</a></p>
+  <p>Useful API links:</p>
+  <ul>
+    <li><a href="/docs">OpenAPI docs</a> (<code>/docs</code>)</li>
+    <li><a href="/health">Health</a> (<code>/health</code>)</li>
+  </ul>
+</body>
+</html>"""
+
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+async def api_root_browser() -> HTMLResponse:
+    return HTMLResponse(content=_browser_api_root_html())
+
+
+@app.get("/dashboard", response_class=HTMLResponse, include_in_schema=False)
+async def api_dashboard_wrong_port_hint() -> HTMLResponse:
+    """Same hint when someone hits /dashboard on the API port by mistake."""
+    return HTMLResponse(content=_browser_api_root_html())
+
+
 def _rate_limit_allow(agent_id: str) -> bool:
     now = time.time()
     bucket = _request_counts_by_agent.setdefault(agent_id, deque())
@@ -437,7 +491,7 @@ async def health() -> HealthResponse:
     elapsed = (datetime.now(timezone.utc) - _start_time).total_seconds()
     return HealthResponse(
         status="healthy",
-        version="0.1.0",
+        version=AGENTIVA_VERSION,
         mode=shield.mode,
         risk_threshold=float(getattr(shield, "risk_threshold", 0.7)),
         total_actions_intercepted=len(shield.audit_log),
@@ -840,9 +894,22 @@ async def onboarding_bootstrap() -> Dict[str, Any]:
     }
 
 
+async def _clear_audit_runtime_state() -> None:
+    """Clear in-memory audit log, pending approvals, rate buckets, and persisted action_logs."""
+    shield = get_shield()
+    shield.audit_log.clear()
+    _pending_approvals.clear()
+    _request_counts_by_agent.clear()
+    await truncate_action_logs()
+
+
 @app.post("/api/v1/demo/seed")
 async def demo_seed_sample_data() -> Dict[str, Any]:
-    """Insert realistic sample intercepts into the audit log and in-memory shield."""
+    """Insert realistic sample intercepts into the audit log and in-memory shield.
+
+    Clears existing audit data first so each demo run shows only the fresh demo actions.
+    """
+    await _clear_audit_runtime_state()
     shield = get_shield()
     if not any(a["id"] == "demo-agent-1" for a in _registry.list_agents()):
         _registry.register_agent(
@@ -880,6 +947,13 @@ async def demo_seed_sample_data() -> Dict[str, Any]:
         )
         created += 1
     return {"status": "ok", "actions_created": created, "agent_id": "demo-agent-1"}
+
+
+@app.post("/api/v1/audit/clear")
+async def clear_audit_data() -> Dict[str, Any]:
+    """Clear dashboard audit data: in-memory log, pending approvals, rate buckets, and DB action_logs."""
+    await _clear_audit_runtime_state()
+    return {"status": "ok", "cleared": True}
 
 
 class ChatMessageRequest(BaseModel):
@@ -1305,6 +1379,42 @@ async def get_audit_log(
         )
         for a in paged
     ]
+
+
+@app.get("/api/v1/audit/agents/summary", response_model=List[AgentAuditSummaryRow])
+async def audit_agents_summary() -> List[AgentAuditSummaryRow]:
+    """Aggregate action counts and last-seen time per agent_id from the audit log."""
+    shield = get_shield()
+    agg: Dict[str, Dict[str, Any]] = defaultdict(lambda: {"total": 0, "blocked": 0, "last": None})
+    for a in shield.audit_log:
+        aid = a.agent_id
+        row = agg[aid]
+        row["total"] += 1
+        if getattr(a, "decision", "") == "block":
+            row["blocked"] += 1
+        ts = getattr(a, "timestamp", None)
+        if isinstance(ts, str) and ts:
+            if row["last"] is None or ts > row["last"]:
+                row["last"] = ts
+    out: List[AgentAuditSummaryRow] = []
+    for aid in sorted(agg.keys(), key=lambda x: (-agg[x]["total"], x)):
+        v = agg[aid]
+        display = aid
+        try:
+            if any(reg["id"] == aid for reg in _registry.list_agents()):
+                display = _registry.get_agent(aid).name
+        except Exception:
+            pass
+        out.append(
+            AgentAuditSummaryRow(
+                agent_id=aid,
+                display_name=display,
+                total_actions=int(v["total"]),
+                blocked_actions=int(v["blocked"]),
+                last_active=v["last"],
+            )
+        )
+    return out
 
 
 @app.get("/api/v1/report", response_model=ShadowReport)

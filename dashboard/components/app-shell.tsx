@@ -19,16 +19,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isMinimalChrome) {
     return (
       <>
-        <main className="min-h-screen bg-[#0a0a0a]">{children}</main>
+        <main className="min-h-screen bg-[#050403]">{children}</main>
         <ToastHost />
       </>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-[#0a0e14]">
+    <div className="flex min-h-screen bg-[#080604]">
       <Sidebar />
-      <main className="min-w-0 flex-1 overflow-y-auto bg-[#0a0f1e] px-4 pb-12 pt-16 md:px-10 md:pt-10">
+      <main className="min-w-0 flex-1 overflow-y-auto bg-[#0a0805] px-4 pb-12 pt-16 md:px-10 md:pt-10">
         <div className="mx-auto max-w-7xl">{children}</div>
       </main>
       <ShieldChatPanel />

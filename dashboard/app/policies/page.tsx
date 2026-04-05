@@ -68,7 +68,7 @@ function highlightYaml(src: string) {
   return src.split("\n").map((line, i) => {
     let cls = "text-[#8b949e]";
     if (/^\s*-\s*name:/.test(line)) cls = "text-[#ff7b72]";
-    else if (/^\s*(tool|action|risk_score|condition|field|operator|value):/.test(line)) cls = "text-[#79c0ff]";
+    else if (/^\s*(tool|action|risk_score|condition|field|operator|value):/.test(line)) cls = "text-[#fde047]";
     return (
       <span key={i} className={`block ${cls}`}>
         {line}
@@ -170,23 +170,23 @@ export default function PoliciesPage() {
     <div className="page-enter space-y-8 pb-12">
       <PageHeader title="Policies" subtitle="YAML rules & simulation" breadcrumbs={[{ label: "Policies" }]} />
 
-      <div className="rounded-xl border border-[#30363d] bg-[#0d1117] px-4 py-3 text-sm text-[#8b949e]">
-        <p className="text-[#c9d1d9]">
-          <span className="font-medium text-[#f0f6fc]">Two ways to fix blocks / allow exceptions:</span> edit YAML here and
-          save, or open the <span className="text-[#58a6ff]">Security co-pilot</span> and say e.g.{" "}
-          <span className="font-mono text-xs text-[#79c0ff]">&quot;help me tune policies&quot;</span>,{" "}
-          <span className="font-mono text-xs text-[#79c0ff]">&quot;help me unblock&quot;</span>, or{" "}
-          <span className="font-mono text-xs text-[#79c0ff]">&quot;add an allow rule for …&quot;</span>
+      <div className="rounded-xl border border-[#2e2918] bg-[#060504] px-4 py-3 text-sm text-[#8a8270]">
+        <p className="text-[#e8e4d4]">
+          <span className="font-medium text-[#faf6e8]">Two ways to fix blocks / allow exceptions:</span> edit YAML here and
+          save, or open the <span className="text-[#facc15]">Security co-pilot</span> and say e.g.{" "}
+          <span className="font-mono text-xs text-[#fde047]">&quot;help me tune policies&quot;</span>,{" "}
+          <span className="font-mono text-xs text-[#fde047]">&quot;help me unblock&quot;</span>, or{" "}
+          <span className="font-mono text-xs text-[#fde047]">&quot;add an allow rule for …&quot;</span>
           — then confirm with <span className="font-mono text-xs">apply policy</span> when it offers a fix.
         </p>
       </div>
 
       {loading ? (
-        <div className="h-40 animate-pulse rounded-2xl bg-[#161b22]" />
+        <div className="h-40 animate-pulse rounded-2xl bg-[#100e08]" />
       ) : (
         <section className="grid gap-4 lg:grid-cols-2">
           {rules.length === 0 ? (
-            <p className="text-sm text-[#8b949e]">No rules parsed — check YAML structure.</p>
+            <p className="text-sm text-[#8a8270]">No rules parsed — check YAML structure.</p>
           ) : (
             rules.map((rule) => {
               const f = parseRuleFields(rule.raw);
@@ -201,7 +201,7 @@ export default function PoliciesPage() {
                     <button
                       type="button"
                       onClick={() => void testRule(rule)}
-                      className="rounded-lg border border-[#30363d] p-2 text-[#8b949e] hover:text-[#58a6ff]"
+                      className="rounded-lg border border-[#2e2918] p-2 text-[#8a8270] hover:text-[#facc15]"
                       title="Test against recent actions"
                     >
                       <FlaskConical className="h-4 w-4" />
@@ -209,7 +209,7 @@ export default function PoliciesPage() {
                     <button
                       type="button"
                       onClick={() => removeRule(rule.id)}
-                      className="rounded-lg border border-[#30363d] p-2 text-[#8b949e] hover:text-red-400"
+                      className="rounded-lg border border-[#2e2918] p-2 text-[#8a8270] hover:text-red-400"
                       title="Remove from editor"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -219,7 +219,7 @@ export default function PoliciesPage() {
                 <dl className="mt-3 space-y-2 text-sm">
                   <div>
                     <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#8b949e]">Tool pattern</dt>
-                    <dd className="font-mono text-[#79c0ff]">{f.tool}</dd>
+                    <dd className="font-mono text-[#fde047]">{f.tool}</dd>
                   </div>
                   <div>
                     <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#8b949e]">Condition</dt>
@@ -239,8 +239,8 @@ export default function PoliciesPage() {
                   </div>
                 </dl>
                 <details className="mt-3">
-                  <summary className="cursor-pointer text-xs text-[#8b949e] hover:text-[#58a6ff]">Raw YAML</summary>
-                  <pre className="mt-2 max-h-48 overflow-auto rounded-lg border border-[#30363d] bg-[#0d1117] p-3 font-mono text-[11px] leading-relaxed text-[#c9d1d9]">
+                  <summary className="cursor-pointer text-xs text-[#8b949e] hover:text-[#facc15]">Raw YAML</summary>
+                  <pre className="mt-2 max-h-48 overflow-auto rounded-lg border border-[#2e2918] bg-[#060504] p-3 font-mono text-[11px] leading-relaxed text-[#c9d1d9]">
                     {highlightYaml(rule.raw)}
                   </pre>
                 </details>
@@ -252,7 +252,7 @@ export default function PoliciesPage() {
       )}
 
       {testResult ? (
-        <div className="rounded-xl border border-[#1f6feb]/40 bg-[#1f6feb]/10 px-4 py-3 text-sm text-[#c9d1d9]">{testResult}</div>
+        <div className="rounded-xl border border-[#eab308]/35 bg-[#ca8a04]/12 px-4 py-3 text-sm text-[#c9d1d9]">{testResult}</div>
       ) : null}
 
       <section className="glass-card p-4">
@@ -260,7 +260,7 @@ export default function PoliciesPage() {
         <textarea
           value={policyYaml}
           onChange={(e) => setPolicyYaml(e.target.value)}
-          className="h-[420px] w-full resize-none rounded-xl border border-[#30363d] bg-[#0a0e14] p-4 font-mono text-sm text-[#c9d1d9] outline-none focus:border-[#58a6ff]"
+          className="h-[420px] w-full resize-none rounded-xl border border-[#2e2918] bg-[#080604] p-4 font-mono text-sm text-[#e8e4d4] outline-none focus:border-[#eab308]"
           spellCheck={false}
         />
         <div className="mt-4 flex flex-wrap gap-2">
@@ -268,11 +268,11 @@ export default function PoliciesPage() {
             type="button"
             onClick={() => void onSave()}
             disabled={saving}
-            className="rounded-xl bg-[#1f6feb] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/25 hover:bg-[#388bfd] disabled:opacity-50"
+            className="rounded-xl bg-[#ca8a04] px-5 py-2.5 text-sm font-semibold text-[#0a0805] shadow-lg shadow-amber-950/35 hover:bg-[#eab308] disabled:opacity-50"
           >
             {saving ? "Saving…" : "Save policy"}
           </button>
-          {status ? <span className="text-sm text-[#8b949e]">{status}</span> : null}
+          {status ? <span className="text-sm text-[#8a8270]">{status}</span> : null}
         </div>
       </section>
     </div>

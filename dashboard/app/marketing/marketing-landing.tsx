@@ -88,17 +88,17 @@ export default function MarketingLanding() {
     {
       title: "Live policy decisions",
       subtitle: "Watch allow / shadow / block in real time",
-      tint: "from-sky-500/30 to-indigo-500/20",
+      tint: "from-amber-500/30 to-yellow-800/20",
     },
     {
       title: "Approval workflow",
       subtitle: "Review high-risk actions before execution",
-      tint: "from-emerald-500/30 to-cyan-500/20",
+      tint: "from-emerald-500/30 to-amber-700/20",
     },
     {
       title: "Compliance exports",
       subtitle: "Generate SOC2, HIPAA, and PCI evidence",
-      tint: "from-violet-500/30 to-fuchsia-500/20",
+      tint: "from-amber-600/35 to-yellow-900/25",
     },
   ];
 
@@ -139,13 +139,13 @@ export default function MarketingLanding() {
   }, []);
 
   return (
-    <div className="scroll-smooth bg-[#0a0f1e] text-[#e5e7eb]">
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.25),transparent_55%)]" />
+    <div className="scroll-smooth bg-[#080604] text-[#e5e7eb]">
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,rgba(234,179,8,0.18),transparent_55%)]" />
 
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0f1e]/80 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#080604]/80 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
-            <Shield className="h-4 w-4 text-[#60a5fa]" />
+            <Shield className="h-4 w-4 text-[#fcd34d]" />
             Agentiva
           </div>
           <nav className="hidden items-center gap-6 text-xs text-[#94a3b8] md:flex">
@@ -159,7 +159,7 @@ export default function MarketingLanding() {
             href={CALENDLY_DEMO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full border border-[#3b82f6]/40 bg-[#1d4ed8]/20 px-4 py-2 text-xs font-semibold text-[#bfdbfe] hover:bg-[#1d4ed8]/30"
+            className="rounded-full border border-[#eab308]/40 bg-[#a16207]/20 px-4 py-2 text-xs font-semibold text-[#fef3c7] hover:bg-[#a16207]/30"
           >
             Book a demo
           </a>
@@ -168,13 +168,13 @@ export default function MarketingLanding() {
 
       <section className="mx-auto grid min-h-[82vh] max-w-6xl items-center gap-10 px-6 py-20 md:grid-cols-2">
         <div data-reveal className="reveal-up">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[#bfdbfe]">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[#fef3c7]">
             <Sparkles className="h-3.5 w-3.5" /> Backed by 10,000+ security tests
           </span>
           <h1 className="mt-6 text-5xl font-semibold tracking-tight text-white md:text-6xl">
             Everything agents do,
             <br />
-            <span className="bg-gradient-to-r from-[#93c5fd] to-[#a78bfa] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#fde047] to-[#f59e0b] bg-clip-text text-transparent">
               now under control.
             </span>
           </h1>
@@ -190,7 +190,7 @@ export default function MarketingLanding() {
               href={CALENDLY_DEMO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-[#3b82f6]/40 bg-[#1d4ed8]/20 px-5 py-3 text-sm font-semibold text-[#bfdbfe] hover:bg-[#1d4ed8]/30"
+              className="rounded-full border border-[#eab308]/40 bg-[#a16207]/20 px-5 py-3 text-sm font-semibold text-[#fef3c7] hover:bg-[#a16207]/30"
             >
               Book a demo
             </a>
@@ -201,10 +201,10 @@ export default function MarketingLanding() {
         </div>
         <div
           data-reveal
-          className="reveal-up rounded-3xl border border-white/10 bg-gradient-to-b from-[#111827] to-[#0b1222] p-5 shadow-2xl shadow-black/40 transition-transform duration-300"
+          className="reveal-up rounded-3xl border border-white/10 bg-gradient-to-b from-[#1a1610] to-[#0c0a06] p-5 shadow-2xl shadow-black/40 transition-transform duration-300"
           style={{ transform: `translateY(${Math.min(scrollY * 0.05, 20)}px)` }}
         >
-          <div className="rounded-2xl border border-white/10 bg-[#0a0f1e] p-4">
+          <div className="rounded-2xl border border-white/10 bg-[#080604] p-4">
             <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-[#64748b]">Live command preview</p>
             <pre className="min-h-[160px] whitespace-pre-wrap font-mono text-sm text-[#d1d5db]">{typed}</pre>
           </div>
@@ -259,18 +259,18 @@ export default function MarketingLanding() {
           </span>
         </div>
         <div className="grid gap-5 lg:grid-cols-3">
-          <article className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#111827] to-[#0f172a] p-5">
+          <article className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#1a1610] to-[#12100a] p-5">
             <p className="text-xs uppercase tracking-[0.2em] text-[#64748b]">Step 1</p>
             <h3 className="mt-2 text-lg font-semibold text-white">Capture & score</h3>
             <p className="mt-2 text-sm text-[#94a3b8]">
               Agentiva intercepts each tool call and runs multi-signal scoring before side effects happen.
             </p>
-            <div className="mt-4 rounded-xl border border-white/10 bg-[#0b1222] p-3">
+            <div className="mt-4 rounded-xl border border-white/10 bg-[#0e0c08] p-3">
               <p className="text-xs text-[#cbd5e1]">send_email → external recipient</p>
               <p className="mt-2 text-xs font-semibold text-red-300">Risk 1.00 · BLOCK</p>
             </div>
           </article>
-          <article className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#111827] to-[#0f172a] p-5">
+          <article className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#1a1610] to-[#12100a] p-5">
             <p className="text-xs uppercase tracking-[0.2em] text-[#64748b]">Step 2</p>
             <h3 className="mt-2 text-lg font-semibold text-white">Decide by mode</h3>
             <p className="mt-2 text-sm text-[#94a3b8]">
@@ -279,30 +279,30 @@ export default function MarketingLanding() {
             <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px]">
               <span className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2 py-2 text-amber-200">Shadow</span>
               <span className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2 py-2 text-emerald-200">Live</span>
-              <span className="rounded-lg border border-sky-500/30 bg-sky-500/10 px-2 py-2 text-sky-200">Approval</span>
+              <span className="rounded-lg border border-amber-500/35 bg-amber-500/10 px-2 py-2 text-amber-200">Approval</span>
             </div>
           </article>
-          <article className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#111827] to-[#0f172a] p-5">
+          <article className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#1a1610] to-[#12100a] p-5">
             <p className="text-xs uppercase tracking-[0.2em] text-[#64748b]">Step 3</p>
             <h3 className="mt-2 text-lg font-semibold text-white">Audit & improve</h3>
             <p className="mt-2 text-sm text-[#94a3b8]">
               Chat with co-pilot, inspect incidents, and export SOC2/HIPAA/PCI evidence instantly.
             </p>
-            <div className="mt-4 rounded-xl border border-white/10 bg-[#0b1222] p-3 text-xs text-[#cbd5e1]">
+            <div className="mt-4 rounded-xl border border-white/10 bg-[#0e0c08] p-3 text-xs text-[#cbd5e1]">
               “Why was that blocked?” → contextual analyst response
             </div>
           </article>
         </div>
 
-        <div data-reveal className="reveal-up mt-10 rounded-3xl border border-white/10 bg-[#0b1222] p-5">
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0a0f1e] p-4">
+        <div data-reveal className="reveal-up mt-10 rounded-3xl border border-white/10 bg-[#0e0c08] p-5">
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#080604] p-4">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-xs uppercase tracking-[0.2em] text-[#64748b]">Product Showcase</p>
               <div className="flex items-center gap-1.5">
                 {shots.map((_, i) => (
                   <span
                     key={i}
-                    className={`h-1.5 rounded-full transition-all ${i === activeShot ? "w-6 bg-[#93c5fd]" : "w-2 bg-white/30"}`}
+                    className={`h-1.5 rounded-full transition-all ${i === activeShot ? "w-6 bg-[#fde68a]" : "w-2 bg-white/30"}`}
                   />
                 ))}
               </div>
@@ -332,9 +332,9 @@ export default function MarketingLanding() {
                           <div className="rounded-lg border border-white/10 bg-white/5 p-3">
                             <p className="text-[11px] text-[#9fb0c9]">Agents</p>
                             <div className="mt-2 space-y-2">
-                              <div className="rounded border border-white/10 bg-[#0d1324] px-2 py-1 text-xs text-[#dbeafe]">support-bot-v2</div>
-                              <div className="rounded border border-white/10 bg-[#0d1324] px-2 py-1 text-xs text-[#dbeafe]">billing-agent</div>
-                              <div className="rounded border border-white/10 bg-[#0d1324] px-2 py-1 text-xs text-[#dbeafe]">ops-runner</div>
+                              <div className="rounded border border-white/10 bg-[#0d1324] px-2 py-1 text-xs text-[#fef9c3]">support-bot-v2</div>
+                              <div className="rounded border border-white/10 bg-[#0d1324] px-2 py-1 text-xs text-[#fef9c3]">billing-agent</div>
+                              <div className="rounded border border-white/10 bg-[#0d1324] px-2 py-1 text-xs text-[#fef9c3]">ops-runner</div>
                             </div>
                           </div>
                           <div className="rounded-lg border border-white/10 bg-white/5 p-3">
@@ -361,7 +361,7 @@ export default function MarketingLanding() {
                   onClick={() => setActiveShot(i)}
                   className={`min-w-[180px] rounded-lg border px-3 py-2 text-left text-xs transition ${
                     i === activeShot
-                      ? "border-[#60a5fa]/50 bg-[#1d4ed8]/20 text-[#dbeafe]"
+                      ? "border-[#fcd34d]/50 bg-[#a16207]/20 text-[#fef9c3]"
                       : "border-white/10 bg-white/5 text-[#94a3b8]"
                   }`}
                 >
@@ -378,7 +378,7 @@ export default function MarketingLanding() {
         <div className="mt-8 grid gap-4 md:grid-cols-5">
           {modeCards.map((mode) => (
             <div key={mode.title} className="rounded-2xl border border-white/10 bg-[#0d1324] p-4 hover:bg-[#121a30]">
-              <mode.icon className="h-5 w-5 text-[#93c5fd]" />
+              <mode.icon className="h-5 w-5 text-[#fde68a]" />
               <p className="mt-3 font-medium text-white">{mode.title}</p>
               <p className="mt-1 text-sm text-[#94a3b8]">{mode.description}</p>
             </div>
@@ -414,7 +414,7 @@ export default function MarketingLanding() {
           <article className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5">
             <p className="text-sm font-semibold text-white">Free</p>
             <p className="mt-2 text-3xl font-semibold text-white">$0</p>
-            <p className="mt-1 text-xs font-medium text-[#93c5fd]">/forever</p>
+            <p className="mt-1 text-xs font-medium text-[#fde68a]">/forever</p>
             <ul className="mt-4 flex-1 space-y-2 text-xs text-[#cbd5e1]">
               <li>1 agent</li>
               <li>Shadow mode + live mode</li>
@@ -429,14 +429,14 @@ export default function MarketingLanding() {
               Get started free
             </Link>
           </article>
-          <article className="relative flex flex-col rounded-2xl border-2 border-[#3b82f6] bg-gradient-to-b from-[#1d4ed8]/25 to-white/5 p-5 shadow-xl shadow-blue-900/30">
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-[#3b82f6] bg-[#1e3a8a] px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#bfdbfe]">
+          <article className="relative flex flex-col rounded-2xl border-2 border-[#eab308] bg-gradient-to-b from-[#a16207]/25 to-white/5 p-5 shadow-xl shadow-amber-950/35">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-[#eab308] bg-[#422006] px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#fef3c7]">
               MOST POPULAR
             </span>
-            <p className="text-sm font-semibold text-[#bfdbfe]">Pro</p>
+            <p className="text-sm font-semibold text-[#fef3c7]">Pro</p>
             <p className="mt-2 text-3xl font-semibold text-white">$18</p>
             <p className="mt-1 text-xs text-[#94a3b8]">/month · cloud waitlist</p>
-            <ul className="mt-4 flex-1 space-y-2 text-xs text-[#dbeafe]">
+            <ul className="mt-4 flex-1 space-y-2 text-xs text-[#fef9c3]">
               <li>Up to 3 agents</li>
               <li>Everything in Free</li>
               <li>Hosted cloud dashboard (waitlist)</li>
@@ -445,7 +445,7 @@ export default function MarketingLanding() {
             </ul>
             <a
               href="#waitlist"
-              className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[#ca8a04] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#a16207]"
             >
               Join waitlist
             </a>
@@ -484,7 +484,7 @@ export default function MarketingLanding() {
               href={CALENDLY_DEMO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex w-full items-center justify-center rounded-lg border border-[#3b82f6]/50 bg-[#1d4ed8]/30 px-4 py-2.5 text-sm font-semibold text-[#bfdbfe] hover:bg-[#1d4ed8]/40"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-lg border border-[#eab308]/50 bg-[#a16207]/30 px-4 py-2.5 text-sm font-semibold text-[#fef3c7] hover:bg-[#a16207]/40"
             >
               Book a demo
             </a>
@@ -504,7 +504,7 @@ export default function MarketingLanding() {
               href={CALENDLY_DEMO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#ca8a04] px-4 py-2 text-sm font-semibold text-white hover:bg-[#a16207]"
             >
               Book a demo →
             </a>
@@ -537,7 +537,7 @@ export default function MarketingLanding() {
               required
               autoComplete="email"
               placeholder="you@company.com"
-              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#3b82f6]"
+              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#eab308]"
             />
           </div>
           <div>
@@ -550,7 +550,7 @@ export default function MarketingLanding() {
               name="company"
               autoComplete="organization"
               placeholder="Acme Inc."
-              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#3b82f6]"
+              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#eab308]"
             />
           </div>
           <div>
@@ -560,7 +560,7 @@ export default function MarketingLanding() {
             <select
               id="mkt-wait-agents"
               name="agents"
-              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#3b82f6]"
+              className="mt-1 w-full rounded-lg border border-white/10 bg-[#0d1324] px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#eab308]"
               defaultValue=""
             >
               <option value="" disabled>
@@ -574,7 +574,7 @@ export default function MarketingLanding() {
           </div>
           <button
             type="submit"
-            className="w-full rounded-lg bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+            className="w-full rounded-lg bg-[#ca8a04] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#a16207]"
           >
             Join waitlist
           </button>
@@ -593,7 +593,7 @@ export default function MarketingLanding() {
             >
               <div className="flex items-center justify-between gap-4">
                 <p className="font-medium text-white">{item.q}</p>
-                <span className="text-[#93c5fd]">{activeFaq === idx ? "−" : "+"}</span>
+                <span className="text-[#fde68a]">{activeFaq === idx ? "−" : "+"}</span>
               </div>
               {activeFaq === idx ? <p className="mt-3 text-sm text-[#94a3b8]">{item.a}</p> : null}
             </button>
@@ -606,7 +606,7 @@ export default function MarketingLanding() {
           <div className="flex flex-wrap items-center gap-4">
             <a href="https://github.com/RishavAr/agentiva" target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
-            <span className="font-mono text-[#93c5fd]">pip install agentiva</span>
+            <span className="font-mono text-[#fde68a]">pip install agentiva</span>
           </div>
           <p>Built by Rishav Aryan</p>
         </div>

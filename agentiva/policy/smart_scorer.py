@@ -217,13 +217,31 @@ class SmartRiskScorer:
 
     def _tool_sensitivity(self, tool_name: str) -> Tuple[float, str]:
         lower = tool_name.lower()
+        # High risk tools
+        if "shell" in lower or "command" in lower or "bash" in lower:
+            return 0.7, "tool_sensitivity=shell_command(+0.7)"
         if "email" in lower or "gmail" in lower:
             return 0.7, "tool_sensitivity=email(+0.7)"
-        if "database" in lower:
+        if "external_api" in lower or "call_api" in lower:
+            return 0.6, "tool_sensitivity=external_api(+0.6)"
+        if "database" in lower or "sql" in lower:
             return 0.6, "tool_sensitivity=database(+0.6)"
+        if "write_file" in lower or "edit_file" in lower:
+            return 0.4, "tool_sensitivity=file_write(+0.4)"
+        if "read_customer" in lower:
+            return 0.5, "tool_sensitivity=customer_data(+0.5)"
+        if "permission" in lower:
+            return 0.8, "tool_sensitivity=permission(+0.8)"
+        if "payment" in lower or "transfer" in lower:
+            return 0.8, "tool_sensitivity=financial(+0.8)"
+        if "query" in lower and "database" not in lower:
+            return 0.6, "tool_sensitivity=query(+0.6)"
+        # Medium risk
         if "slack" in lower:
             return 0.4, "tool_sensitivity=slack(+0.4)"
-        if "jira" in lower:
+        if "read_file" in lower:
+            return 0.3, "tool_sensitivity=file_read(+0.3)"
+        if "jira" in lower or "ticket" in lower:
             return 0.3, "tool_sensitivity=jira(+0.3)"
         return 0.2, "tool_sensitivity=default(+0.2)"
 
@@ -271,16 +289,97 @@ class SmartRiskScorer:
 
     def _content_analysis(self, arguments: Dict[str, Any]) -> Tuple[float, str]:
         blob = str(arguments).lower()
-        destructive = ["delete", "drop", "remove", "destroy", "truncate"]
-        sensitive = ["password", "secret", "token", "credential", "confidential"]
         score = 0.0
         notes: List[str] = []
+
+        # Destructive operations
+        destructive = [
+            "delete",
+            "drop",
+            "remove",
+            "destroy",
+            "truncate",
+            "rm -rf",
+            "terminate",
+            "delete-stack",
+            "delete-db",
+            "skip-final-snapshot",
+        ]
         if any(term in blob for term in destructive):
+            score += 0.5
+            notes.append("destructive_keywords(+0.5)")
+
+        # Credential/secret patterns
+        credential_patterns = [
+            "password",
+            "secret",
+            "token",
+            "credential",
+            "confidential",
+            "ssh",
+            "private.key",
+            "id_rsa",
+            "aws_access",
+            "aws_secret",
+            "api_key",
+            "api.key",
+            "stripe",
+            "openai_api",
+            "database_url",
+            "gcp",
+            "azure",
+            "kubeconfig",
+            ".env",
+            "git-credentials",
+        ]
+        if any(term in blob for term in credential_patterns):
+            score += 0.5
+            notes.append("credentials_detected(+0.5)")
+
+        # External/suspicious URLs
+        if any(term in blob for term in ["evil.com", "attacker", "malicious", "exfil", "litellm.cloud", "protonmail", "offshore"]):
+            score += 0.5
+            notes.append("suspicious_target(+0.5)")
+
+        # Infrastructure destruction commands
+        if any(term in blob for term in ["cloudformation", "terminate-instances", "delete-stack", "delete-db-instance"]):
+            score += 0.5
+            notes.append("infrastructure_destruction(+0.5)")
+
+        # Backdoor/persistence patterns
+        if any(term in blob for term in ["backdoor", "systemctl", "cron", "wget", "sysmon", "persistence"]):
+            score += 0.5
+            notes.append("persistence_attempt(+0.5)")
+        if re.search(r"curl\s+.*\|\s*bash", blob) or ("curl" in blob and "| bash" in blob):
+            score += 0.5
+            notes.append("curl_pipe_bash(+0.5)")
+
+        # kubectl dangerous operations (substring + regex)
+        if re.search(r"kubectl\s+.*get\s+secrets", blob) or re.search(r"kubectl\s+.*delete", blob):
+            score += 0.5
+            notes.append("k8s_dangerous(+0.5)")
+        if re.search(r"kubectl\s+run", blob) or "--privileged" in blob:
+            score += 0.5
+            notes.append("k8s_privileged(+0.5)")
+
+        # Bulk data access
+        cid = arguments.get("customer_id")
+        if cid == "*" or (isinstance(cid, str) and cid.strip() == "*"):
             score += 0.4
-            notes.append("destructive_keywords(+0.4)")
-        if any(term in blob for term in sensitive):
-            score += 0.3
-            notes.append("sensitive_data(+0.3)")
+            notes.append("bulk_data_access(+0.4)")
+
+        # PII patterns in outbound actions
+        pii = ["ssn", "social security", "credit_card", "credit card", "medical_record"]
+        if any(term in blob for term in pii):
+            score += 0.4
+            notes.append("pii_in_action(+0.4)")
+
+        # Force push
+        if "force" in blob and ("push" in blob or "git" in blob):
+            score += 0.4
+            notes.append("force_push(+0.4)")
+
+        score = min(score, 1.0)
         return score, f"content_analysis={','.join(notes)}" if notes else "content_analysis=normal(+0.0)"
 
     def _phi_detection(self, arguments: Dict[str, Any]) -> Tuple[float, str, Dict[str, Any]]:

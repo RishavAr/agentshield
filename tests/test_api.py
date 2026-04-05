@@ -27,7 +27,7 @@ def test_health_endpoint() -> None:
         assert response.status_code == 200
         body = response.json()
         assert body["status"] == "healthy"
-        assert body["version"] == "0.1.0"
+        assert body["version"] == "0.1.1"
         assert "uptime_seconds" in body
         assert body["mode"] in {"shadow", "live", "approval"}
         assert isinstance(body.get("risk_threshold"), (int, float))
@@ -121,6 +121,24 @@ def test_audit_log_filters() -> None:
         body = response.json()
         assert len(body) == 1
         assert body[0]["agent_id"] == "alpha"
+
+
+def test_audit_clear_endpoint() -> None:
+    with _new_client() as client:
+        _reset_runtime_state()
+        client.post(
+            "/api/v1/intercept",
+            json={
+                "tool_name": "send_email",
+                "arguments": {"to": "x@evil.com"},
+                "agent_id": "z1",
+            },
+        )
+        assert client.get("/api/v1/audit/count").json()["total"] >= 1
+        clear = client.post("/api/v1/audit/clear")
+        assert clear.status_code == 200
+        assert clear.json().get("cleared") is True
+        assert client.get("/api/v1/audit/count").json()["total"] == 0
 
 
 def test_shadow_report_endpoint() -> None:

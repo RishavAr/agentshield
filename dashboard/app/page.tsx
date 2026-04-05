@@ -10,13 +10,11 @@ import { toast } from "@/components/toast-host";
 
 const API_BASE = getHttpApiBase();
 
-type Bootstrap = { agents_count: number; action_logs_count: number; is_empty: boolean };
-
 const FRAMEWORKS = ["LangChain", "CrewAI", "OpenAI Agents", "MCP", "Custom"] as const;
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [boot, setBoot] = useState<Bootstrap | null>(null);
+  const [ready, setReady] = useState(false);
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -25,20 +23,19 @@ export default function OnboardingPage() {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [registeredName, setRegisteredName] = useState("");
 
-  const loadBoot = useCallback(async () => {
+  const pingApi = useCallback(async () => {
     try {
-      const r = await fetch(`${API_BASE}/api/v1/bootstrap`);
-      if (!r.ok) throw new Error("bootstrap");
-      const j = (await r.json()) as Bootstrap;
-      setBoot(j);
+      await fetch(`${API_BASE}/api/v1/bootstrap`);
     } catch {
-      setBoot({ agents_count: 0, action_logs_count: 0, is_empty: true });
+      /* ignore — onboarding still usable if API is down */
+    } finally {
+      setReady(true);
     }
   }, []);
 
   useEffect(() => {
-    void loadBoot();
-  }, [loadBoot]);
+    void pingApi();
+  }, [pingApi]);
 
   async function onRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -77,7 +74,7 @@ export default function OnboardingPage() {
     try {
       const r = await fetch(`${API_BASE}/api/v1/demo/seed`, { method: "POST" });
       if (!r.ok) throw new Error(await r.text());
-      toast("Demo data loaded! Check your dashboard.", "success");
+      toast("Fresh demo loaded — the dashboard now shows only this demo run.", "success");
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
@@ -93,19 +90,19 @@ export default function OnboardingPage() {
     toast("API key copied", "success");
   }
 
-  if (boot === null) {
+  if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0f1e] text-[#f8fafc]">
-        <Loader2 className="h-10 w-10 animate-spin text-[#3b82f6]" />
+      <div className="flex min-h-screen items-center justify-center bg-[#080604] text-[#f8fafc]">
+        <Loader2 className="h-10 w-10 animate-spin text-[#eab308]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0f1e] px-4 py-12 text-[#f8fafc]">
+    <div className="min-h-screen bg-[#080604] px-4 py-12 text-[#f8fafc]">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-violet-600">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#eab308] to-amber-700">
             <Shield className="h-7 w-7 text-white" />
           </div>
           <div>
@@ -118,31 +115,16 @@ export default function OnboardingPage() {
           {[1, 2, 3].map((s) => (
             <span
               key={s}
-              className={`rounded-full px-3 py-1 ${step >= s ? "bg-[#3b82f6]/20 text-[#93c5fd]" : "bg-[#131b2e]"}`}
+              className={`rounded-full px-3 py-1 ${step >= s ? "bg-[#eab308]/20 text-[#fde68a]" : "bg-[#14110a]"}`}
             >
               Step {s}
             </span>
           ))}
-          <span className="rounded-full bg-[#131b2e] px-3 py-1">Demo</span>
+          <span className="rounded-full bg-[#14110a] px-3 py-1">Demo</span>
         </div>
 
-        {!boot.is_empty ? (
-          <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-[#3b82f6]/30 bg-[#3b82f6]/10 px-4 py-3">
-            <p className="text-sm text-[#bfdbfe]">
-              You already have data in Agentiva ({boot.action_logs_count} actions, {boot.agents_count} agents).
-            </p>
-            <button
-              type="button"
-              onClick={() => router.push("/dashboard")}
-              className="shrink-0 rounded-lg bg-[#3b82f6] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#2563eb]"
-            >
-              Go to Dashboard
-            </button>
-          </div>
-        ) : null}
-
         {step === 1 && (
-          <section className="rounded-2xl border border-white/10 bg-[#131b2e]/80 p-6 backdrop-blur">
+          <section className="rounded-2xl border border-white/10 bg-[#14110a]/80 p-6 backdrop-blur">
             <h2 className="text-lg font-semibold">Register your first agent</h2>
             <p className="mt-1 text-sm text-[#64748b]">You’ll get an API key to use in your code.</p>
             <form onSubmit={onRegister} className="mt-6 space-y-4">
@@ -152,7 +134,7 @@ export default function OnboardingPage() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#0a0f1e] px-3 py-2.5 text-[#f8fafc] outline-none ring-[#3b82f6] focus:ring-2"
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#080604] px-3 py-2.5 text-[#f8fafc] outline-none ring-[#eab308] focus:ring-2"
                   placeholder="e.g. Support copilot"
                 />
               </div>
@@ -162,7 +144,7 @@ export default function OnboardingPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={2}
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#0a0f1e] px-3 py-2.5 text-[#f8fafc] outline-none focus:ring-2 focus:ring-[#3b82f6]"
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#080604] px-3 py-2.5 text-[#f8fafc] outline-none focus:ring-2 focus:ring-[#eab308]"
                   placeholder="What does this agent do?"
                 />
               </div>
@@ -174,7 +156,7 @@ export default function OnboardingPage() {
                 <select
                   value={framework}
                   onChange={(e) => setFramework(e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#0a0f1e] px-3 py-2.5 text-[#f8fafc] outline-none focus:ring-2 focus:ring-[#3b82f6]"
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#080604] px-3 py-2.5 text-[#f8fafc] outline-none focus:ring-2 focus:ring-[#eab308]"
                   aria-describedby="stack-hint"
                 >
                   {FRAMEWORKS.map((f) => (
@@ -187,7 +169,7 @@ export default function OnboardingPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full rounded-xl bg-[#3b82f6] py-3 font-semibold text-white transition hover:bg-[#2563eb] disabled:opacity-50"
+                className="w-full rounded-xl bg-[#eab308] py-3 font-semibold text-white transition hover:bg-[#ca8a04] disabled:opacity-50"
               >
                 {submitting ? "Creating…" : "Create agent & generate API key"}
               </button>
@@ -200,7 +182,7 @@ export default function OnboardingPage() {
             <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5">
               <h2 className="font-semibold text-amber-100">Your API key</h2>
               <p className="mt-1 text-sm text-amber-200/80">Save this key — you won’t see it again.</p>
-              <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl bg-[#0a0f1e] px-4 py-3 font-mono text-sm text-[#f8fafc]">
+              <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl bg-[#080604] px-4 py-3 font-mono text-sm text-[#f8fafc]">
                 <span className="break-all">{apiKey}</span>
                 <button
                   type="button"
@@ -212,17 +194,17 @@ export default function OnboardingPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-[#131b2e]/80 p-6">
+            <div className="rounded-2xl border border-white/10 bg-[#14110a]/80 p-6">
               <h3 className="font-semibold">Add Agentiva to your code</h3>
               <p className="mt-1 text-sm text-[#64748b]">With your API key:</p>
-              <pre className="mt-3 overflow-x-auto rounded-xl bg-[#0a0f1e] p-4 text-left text-xs leading-relaxed text-[#94a3b8]">
+              <pre className="mt-3 overflow-x-auto rounded-xl bg-[#080604] p-4 text-left text-xs leading-relaxed text-[#94a3b8]">
                 {`from agentiva import Agentiva
 
 shield = Agentiva(api_key="${apiKey}", mode="shadow")
 tools = shield.protect([your_existing_tools])`}
               </pre>
               <p className="mt-4 text-sm text-[#64748b]">Or use without an API key for local development:</p>
-              <pre className="mt-3 overflow-x-auto rounded-xl bg-[#0a0f1e] p-4 text-left text-xs leading-relaxed text-[#94a3b8]">
+              <pre className="mt-3 overflow-x-auto rounded-xl bg-[#080604] p-4 text-left text-xs leading-relaxed text-[#94a3b8]">
                 {`from agentiva import Agentiva
 
 shield = Agentiva(mode="shadow")
@@ -231,7 +213,7 @@ tools = shield.protect([your_existing_tools])`}
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3b82f6] py-3 font-semibold text-white hover:bg-[#2563eb]"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#eab308] py-3 font-semibold text-white hover:bg-[#ca8a04]"
               >
                 Next <Check className="h-4 w-4" />
               </button>
@@ -240,7 +222,7 @@ tools = shield.protect([your_existing_tools])`}
         )}
 
         {step === 3 && (
-          <section className="rounded-2xl border border-white/10 bg-[#131b2e]/80 p-8 text-center">
+          <section className="rounded-2xl border border-white/10 bg-[#14110a]/80 p-8 text-center">
             <h2 className="text-xl font-semibold">Start your agent</h2>
             <p className="mt-2 text-sm text-[#64748b]">
               When <span className="font-medium text-[#94a3b8]">{registeredName || name}</span> sends its first action,
@@ -256,21 +238,23 @@ tools = shield.protect([your_existing_tools])`}
           </section>
         )}
 
-        <div className="mt-10 rounded-2xl border border-dashed border-white/15 bg-[#131b2e]/40 p-6 text-center">
+        <div className="mt-10 rounded-2xl border border-dashed border-white/15 bg-[#14110a]/40 p-6 text-center">
           <p className="text-sm font-medium text-[#94a3b8]">Or try the demo first</p>
-          <p className="mt-1 text-xs text-[#64748b]">Loads sample intercepts so you can explore the product.</p>
+          <p className="mt-1 text-xs text-[#64748b]">
+            Clears existing audit data, then loads a fresh demo so the dashboard matches only this run.
+          </p>
           <button
             type="button"
             disabled={submitting}
             onClick={() => void runDemo()}
-            className="mt-4 rounded-xl border border-[#3b82f6]/50 bg-[#3b82f6]/15 px-6 py-2.5 text-sm font-semibold text-[#93c5fd] transition hover:bg-[#3b82f6]/25 disabled:opacity-50"
+            className="mt-4 rounded-xl border border-[#eab308]/50 bg-[#eab308]/15 px-6 py-2.5 text-sm font-semibold text-[#fde68a] transition hover:bg-[#eab308]/25 disabled:opacity-50"
           >
             Run demo with sample data
           </button>
         </div>
 
         <p className="mt-10 text-center text-sm text-[#64748b]">
-          <Link href="/marketing" className="text-[#3b82f6] hover:underline">
+          <Link href="/marketing" className="text-[#eab308] hover:underline">
             Marketing site
           </Link>
           {" · "}
@@ -278,7 +262,7 @@ tools = shield.protect([your_existing_tools])`}
             href="https://github.com/RishavAr/agentiva/blob/main/README.md"
             target="_blank"
             rel="noreferrer"
-            className="text-[#3b82f6] hover:underline"
+            className="text-[#eab308] hover:underline"
           >
             Read the docs
           </a>

@@ -122,6 +122,7 @@ class ShieldChat:
         elif any(
             w in q
             for w in [
+                "what was blocked",
                 "blocked actions",
                 "show blocked",
                 "blocked action",
@@ -193,6 +194,29 @@ class ShieldChat:
                 mode=resp.mode,
             )
         return resp
+
+    @staticmethod
+    def _action_path_from_args(arguments: Any) -> str:
+        if not isinstance(arguments, dict):
+            return ""
+        for key in ("path", "file", "filepath"):
+            v = arguments.get(key)
+            if isinstance(v, str) and v.strip():
+                return v.strip()
+        return ""
+
+    @staticmethod
+    def _describe_blocked_tool(tool: str, args: Any) -> str:
+        tl = (tool or "").lower()
+        if isinstance(args, dict) and args.get("credentials_found"):
+            return "hardcoded credentials"
+        if tl == "read_customer_data":
+            return "exposes PII (SSN/credit card)"
+        if tl == "run_shell_command":
+            return "dangerous shell patterns"
+        if tl == "install_package":
+            return "compromised or risky dependency"
+        return f"`{tool}` blocked by policy"
 
     def _get_block_reason(self, action: Any) -> str:
         res = getattr(action, "result", None) or {}
@@ -1230,7 +1254,8 @@ class ShieldChat:
         except Exception:
             db_rows = []
 
-        blocked = [a for a in self.shield.audit_log if a.decision == "block"]
+        log = getattr(self.shield, "audit_log", []) or []
+        blocked = [a for a in log if a.decision == "block"]
         recent = blocked[-5:] if blocked else []
 
         explanations: List[Dict[str, Any]] = []
@@ -1246,6 +1271,34 @@ class ShieldChat:
             )
 
         lines: List[str] = []
+        if blocked:
+            first = blocked[-1]
+            aid = getattr(first, "agent_id", "unknown")
+            args0 = getattr(first, "arguments", {}) or {}
+            if not isinstance(args0, dict):
+                args0 = {}
+            path0 = self._action_path_from_args(args0)
+            desc0 = self._describe_blocked_tool(str(getattr(first, "tool_name", "")), args0)
+            n_same = len([a for a in blocked if getattr(a, "agent_id", "") == aid])
+            cred_shadow = len(
+                [
+                    a
+                    for a in log
+                    if getattr(a, "decision", "") == "shadow"
+                    and isinstance(getattr(a, "arguments", None), dict)
+                    and (getattr(a, "arguments") or {}).get("credentials_found")
+                    and getattr(a, "agent_id", "") == aid
+                ]
+            )
+            lead = (
+                f"{aid} had {n_same} blocked action(s) in session: "
+                f"{(path0 + ' ') if path0 else ''}{desc0} at risk {float(getattr(first, 'risk_score', 0) or 0):.2f}."
+            )
+            if cred_shadow:
+                lead += f" {cred_shadow} warning(s) for hardcoded credentials in config files."
+            lines.append(lead)
+            lines.append("")
+
         if db_rows:
             lines.append(
                 f"Persisted audit log (action_logs): {len(db_rows)} recent blocked row(s) (up to 15 shown)."
@@ -1253,8 +1306,11 @@ class ShieldChat:
             for row in db_rows:
                 ts = getattr(row, "timestamp", None)
                 ts_s = ts.isoformat() if hasattr(ts, "isoformat") else str(ts)
+                args = getattr(row, "arguments", None) or {}
+                path = self._action_path_from_args(args if isinstance(args, dict) else {})
+                path_note = f" · `{path}`" if path else ""
                 lines.append(
-                    f"- `{row.tool_name}` risk: {float(row.risk_score):.2f} · agent `{row.agent_id}` · at {ts_s}"
+                    f"- `{row.tool_name}` risk: {float(row.risk_score):.2f} · agent `{row.agent_id}`{path_note} · at {ts_s}"
                 )
             lines.append("")
 
@@ -1264,8 +1320,12 @@ class ShieldChat:
         if explanations:
             lines.append("")
         for e in explanations:
+            ap = self._action_path_from_args(
+                e.get("arguments") if isinstance(e.get("arguments"), dict) else {}
+            )
+            path_e = f" · `{ap}`" if ap else ""
             lines.append(
-                f"- `{e['tool']}` risk: {float(e['risk_score']):.2f} · {e['reason']} · at {e['timestamp']}"
+                f"- `{e['tool']}` risk: {float(e['risk_score']):.2f} · {e['reason']}{path_e} · at {e['timestamp']}"
             )
         if not explanations and not db_rows:
             lines = [

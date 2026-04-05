@@ -259,12 +259,12 @@ export default function AgentsPage() {
       {loading ? (
         <div className="grid gap-4 md:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl bg-[#161b22]" />
+            <div key={i} className="h-48 animate-pulse rounded-2xl bg-[#100e08]" />
           ))}
         </div>
       ) : agents.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#30363d] bg-[#0d1117]/50 py-20 text-center">
-          <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1f6feb]/30 to-purple-600/20 text-4xl">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#2e2918] bg-[#060504]/50 py-20 text-center">
+          <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ca8a04]/35 to-amber-900/25 text-4xl">
             🤖
           </div>
           <p className="text-lg font-medium text-[#f0f6fc]">No agents yet</p>
@@ -287,7 +287,7 @@ export default function AgentsPage() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-lg font-semibold text-[#f0f6fc]">{agent.name}</h3>
-                  <p className="font-mono text-xs text-[#79c0ff]">{agent.id}</p>
+                  <p className="font-mono text-xs text-[#fde047]">{agent.id}</p>
                 </div>
                 <span
                   className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
@@ -354,7 +354,7 @@ export default function AgentsPage() {
                   </dd>
                 </div>
               </dl>
-              <div className="mt-4 flex justify-end border-t border-[#30363d] pt-4">
+              <div className="mt-4 flex justify-end border-t border-[#2e2918] pt-4">
                 <button
                   type="button"
                   onClick={() => killSwitch(agent.id)}
@@ -365,7 +365,7 @@ export default function AgentsPage() {
                 </button>
               </div>
               {expandedId === agent.id ? (
-                <div className="mt-4 border-t border-[#30363d] pt-4 text-xs text-[#8b949e]">
+                <div className="mt-4 border-t border-[#2e2918] pt-4 text-xs text-[#8b949e]">
                   {(() => {
                     const rows = agentAudit[agent.id] ?? [];
                     const last20 = rows.slice(0, 20);
@@ -397,7 +397,7 @@ export default function AgentsPage() {
                           ) : (
                             <ul className="space-y-1">
                               {last20.map((r) => (
-                                <li key={r.action_id} className="flex items-center justify-between rounded border border-[#30363d] bg-[#0d1117] px-2 py-1">
+                                <li key={r.action_id} className="flex items-center justify-between rounded border border-[#2e2918] bg-[#060504] px-2 py-1">
                                   <span>{r.tool_name}</span>
                                   <span className="font-mono">{r.decision} · {Number(r.risk_score).toFixed(2)}</span>
                                 </li>
@@ -446,7 +446,7 @@ export default function AgentsPage() {
                       type="text"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2 text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none focus:ring-1 focus:ring-[#58a6ff]"
+                      className="mt-1 w-full rounded-lg border border-[#2e2918] bg-[#060504] px-3 py-2 text-[#f0f6fc] focus:border-[#eab308] focus:outline-none focus:ring-1 focus:ring-[#ca8a04]"
                       placeholder="e.g. Sales outreach bot"
                       required
                     />
@@ -461,7 +461,7 @@ export default function AgentsPage() {
                       value={formDescription}
                       onChange={(e) => setFormDescription(e.target.value)}
                       rows={2}
-                      className="mt-1 w-full resize-none rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2 text-sm text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none focus:ring-1 focus:ring-[#58a6ff]"
+                      className="mt-1 w-full resize-none rounded-lg border border-[#2e2918] bg-[#060504] px-3 py-2 text-sm text-[#f0f6fc] focus:border-[#eab308] focus:outline-none focus:ring-1 focus:ring-[#ca8a04]"
                       placeholder="Optional — what does this agent do?"
                     />
                   </div>
@@ -477,7 +477,7 @@ export default function AgentsPage() {
                       aria-describedby="agent-framework-hint"
                       value={formFramework}
                       onChange={(e) => setFormFramework(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2 text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none focus:ring-1 focus:ring-[#58a6ff]"
+                      className="mt-1 w-full rounded-lg border border-[#2e2918] bg-[#060504] px-3 py-2 text-[#f0f6fc] focus:border-[#eab308] focus:outline-none focus:ring-1 focus:ring-[#ca8a04]"
                     >
                       {FRAMEWORK_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -488,14 +488,14 @@ export default function AgentsPage() {
                   </div>
                   <div>
                     <span className="block text-sm font-medium text-[#c9d1d9]">Allowed tools</span>
-                    <div className="mt-2 max-h-40 space-y-2 overflow-y-auto rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                    <div className="mt-2 max-h-40 space-y-2 overflow-y-auto rounded-lg border border-[#2e2918] bg-[#060504] p-3">
                       {TOOL_OPTIONS.map((tool) => (
                         <label key={tool} className="flex cursor-pointer items-center gap-2 text-sm text-[#c9d1d9]">
                           <input
                             type="checkbox"
                             checked={formTools.includes(tool)}
                             onChange={() => toggleTool(tool)}
-                            className="rounded border-[#30363d]"
+                            className="rounded border-[#2e2918]"
                           />
                           <span className="font-mono text-xs">{tool}</span>
                         </label>
@@ -507,7 +507,7 @@ export default function AgentsPage() {
                       <label htmlFor="max-risk" className="text-sm font-medium text-[#c9d1d9]">
                         Max risk tolerance
                       </label>
-                      <span className="font-mono text-sm text-[#79c0ff]">{formMaxRisk.toFixed(2)}</span>
+                      <span className="font-mono text-sm text-[#fde047]">{formMaxRisk.toFixed(2)}</span>
                     </div>
                     <input
                       id="max-risk"
@@ -517,14 +517,14 @@ export default function AgentsPage() {
                       step={0.05}
                       value={formMaxRisk}
                       onChange={(e) => setFormMaxRisk(Number(e.target.value))}
-                      className="mt-2 w-full accent-[#58a6ff]"
+                      className="mt-2 w-full accent-[#eab308]"
                     />
                   </div>
                   <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
                     <button
                       type="button"
                       onClick={closeRegisterModal}
-                      className="rounded-lg border border-[#30363d] px-4 py-2 text-sm font-medium text-[#c9d1d9] hover:bg-[#21262d]"
+                      className="rounded-lg border border-[#2e2918] px-4 py-2 text-sm font-medium text-[#c9d1d9] hover:bg-[#21262d]"
                     >
                       Cancel
                     </button>
@@ -548,13 +548,13 @@ export default function AgentsPage() {
                 <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-amber-200/90">Your API key</p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <code className="min-w-0 flex-1 break-all rounded-lg bg-[#0d1117] px-3 py-2 font-mono text-sm text-[#79c0ff]">
+                    <code className="min-w-0 flex-1 break-all rounded-lg bg-[#060504] px-3 py-2 font-mono text-sm text-[#fde047]">
                       {successApiKey}
                     </code>
                     <button
                       type="button"
                       onClick={() => void copyApiKey()}
-                      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#30363d] bg-[#21262d] px-3 py-2 text-xs font-semibold text-[#f0f6fc] hover:bg-[#30363d]"
+                      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#2e2918] bg-[#1a170f] px-3 py-2 text-xs font-semibold text-[#faf6e8] hover:bg-[#2e2918]"
                     >
                       {copiedKey ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
                       {copiedKey ? "Copied" : "Copy"}
@@ -563,7 +563,7 @@ export default function AgentsPage() {
                 </div>
                 <div>
                   <p className="text-xs font-medium text-[#8b949e]">Add to your code</p>
-                  <pre className="mt-2 overflow-x-auto rounded-lg border border-[#30363d] bg-[#0d1117] p-3 font-mono text-[11px] leading-relaxed text-[#c9d1d9]">
+                  <pre className="mt-2 overflow-x-auto rounded-lg border border-[#2e2918] bg-[#060504] p-3 font-mono text-[11px] leading-relaxed text-[#c9d1d9]">
                     {`from agentiva import Agentiva
 
 shield = Agentiva(api_key="${successApiKey}", mode="shadow")
@@ -593,7 +593,7 @@ tools = shield.protect([your_existing_tools])`}
                 <input
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2 text-[#f0f6fc]"
+                  className="mt-1 w-full rounded-lg border border-[#2e2918] bg-[#060504] px-3 py-2 text-[#f0f6fc]"
                 />
               </div>
               <div>
@@ -602,12 +602,12 @@ tools = shield.protect([your_existing_tools])`}
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
                   rows={3}
-                  className="mt-1 w-full rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2 text-[#f0f6fc]"
+                  className="mt-1 w-full rounded-lg border border-[#2e2918] bg-[#060504] px-3 py-2 text-[#f0f6fc]"
                 />
               </div>
               <div>
                 <label className="block text-sm text-[#c9d1d9]">Allowed tools</label>
-                <div className="mt-2 max-h-36 space-y-1 overflow-y-auto rounded-lg border border-[#30363d] bg-[#0d1117] p-2">
+                <div className="mt-2 max-h-36 space-y-1 overflow-y-auto rounded-lg border border-[#2e2918] bg-[#060504] p-2">
                   {TOOL_OPTIONS.map((tool) => (
                     <label key={tool} className="flex items-center gap-2 text-xs text-[#c9d1d9]">
                       <input
@@ -624,7 +624,7 @@ tools = shield.protect([your_existing_tools])`}
               </div>
             </div>
             <div className="mt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setEditAgent(null)} className="rounded-lg border border-[#30363d] px-3 py-2 text-sm text-[#c9d1d9]">Cancel</button>
+              <button type="button" onClick={() => setEditAgent(null)} className="rounded-lg border border-[#2e2918] px-3 py-2 text-sm text-[#c9d1d9]">Cancel</button>
               <button type="button" onClick={() => void saveEdit()} className="rounded-lg bg-[#238636] px-3 py-2 text-sm font-semibold text-white">Save</button>
             </div>
           </div>

@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0f1e;
-  --foreground: #f8fafc;
+  --background: #080604;
+  --foreground: #faf8f0;
+  --surface: #12100a;
+  --surface-raised: #1a170f;
+  --border-warm: #2e2918;
+  --accent: #eab308;
+  --accent-dim: #ca8a04;
+  --accent-bright: #fde047;
+  --accent-muted: #a16207;
 }
 
 @theme inline {
@@ -14,8 +21,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0f1e;
-    --foreground: #f8fafc;
+    --background: #080604;
+    --foreground: #faf8f0;
   }
 }
 
@@ -35,10 +42,10 @@ body {
 }
 
 .glass-card {
-  background: linear-gradient(180deg, rgba(19, 27, 46, 0.82), rgba(19, 27, 46, 0.62));
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, rgba(26, 22, 12, 0.92), rgba(18, 16, 10, 0.78));
+  border: 1px solid rgba(234, 179, 8, 0.08);
   border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(2, 8, 23, 0.35);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(12px);
 }
 
@@ -48,23 +55,11 @@ body {
 
 .glass-card-hover:hover {
   transform: scale(1.02);
-  border-color: rgba(59, 130, 246, 0.28);
-  box-shadow: 0 20px 42px rgba(2, 8, 23, 0.52);
-}
-
-.skeleton {
-  position: relative;
-  overflow: hidden;
-  background: rgba(100, 116, 139, 0.18);
-}
-
-.skeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(248, 250, 252, 0.1), transparent);
-  animation: shimmer 1.35s infinite;
+  border-color: rgba(234, 179, 8, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(234, 179, 8, 0.12),
+    0 20px 48px rgba(0, 0, 0, 0.7),
+    0 0 36px -6px rgba(234, 179, 8, 0.14);
 }
 
 @keyframes shimmer {
@@ -93,4 +88,181 @@ body {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+/* Dashboard “living” ambience */
+@keyframes living-orb-a {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: translate(4%, -3%) scale(1.06);
+  }
+}
+
+@keyframes living-orb-b {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.48;
+    transform: translate(-5%, 4%) scale(1.04);
+  }
+}
+
+@keyframes living-shine {
+  0% {
+    transform: translateX(-120%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-12deg);
+  }
+}
+
+@keyframes living-bar-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes live-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.45);
+  }
+  50% {
+    opacity: 0.95;
+    box-shadow: 0 0 0 6px rgba(234, 179, 8, 0);
+  }
+}
+
+.living-ambient {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.living-ambient__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+.living-ambient__orb--a {
+  width: min(90vw, 520px);
+  height: min(50vh, 380px);
+  top: -12%;
+  left: -8%;
+  background: rgba(234, 179, 8, 0.11);
+  animation: living-orb-a 14s ease-in-out infinite;
+}
+
+.living-ambient__orb--b {
+  width: min(85vw, 480px);
+  height: min(45vh, 320px);
+  bottom: -8%;
+  right: -12%;
+  background: rgba(180, 83, 9, 0.09);
+  animation: living-orb-b 19s ease-in-out infinite;
+}
+
+.living-kpi-grid > * {
+  animation: fade-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.living-kpi-grid > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.living-kpi-grid > *:nth-child(2) {
+  animation-delay: 55ms;
+}
+.living-kpi-grid > *:nth-child(3) {
+  animation-delay: 110ms;
+}
+.living-kpi-grid > *:nth-child(4) {
+  animation-delay: 165ms;
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.living-stat-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.living-stat-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  animation: living-shine 7s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.living-risk-bar-fill {
+  background: linear-gradient(90deg, #ca8a04, #eab308, #f59e0b, #eab308, #ca8a04);
+  background-size: 200% 100%;
+  animation: living-bar-shimmer 4s ease infinite;
+}
+
+.living-new-row {
+  animation: living-new-flash 1.4s ease-out;
+}
+
+@keyframes living-new-flash {
+  0% {
+    background-color: rgba(234, 179, 8, 0.18);
+    box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.35);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.living-live-dot {
+  animation: live-dot 2s ease-in-out infinite;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(120, 113, 94, 0.16);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(253, 224, 71, 0.1), transparent);
+  animation: shimmer 1.35s infinite;
 }

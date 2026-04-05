@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import {
   Area,
@@ -50,6 +50,14 @@ type AgentRow = {
   last_active?: string | null;
 };
 
+type AgentAuditSummary = {
+  agent_id: string;
+  display_name: string;
+  total_actions: number;
+  blocked_actions: number;
+  last_active: string | null;
+};
+
 const API_BASE = getHttpApiBase();
 const WS_BASE = getWsBase();
 
@@ -93,8 +101,8 @@ const DONUT_COLORS: Record<string, string> = {
   block: "#ef4444",
   shadow: "#f59e0b",
   allow: "#22c55e",
-  approve: "#3b82f6",
-  pending: "#64748b",
+  approve: "#eab308",
+  pending: "#78716c",
 };
 
 function useAnimatedNumber(target: number, duration = 900) {
@@ -134,6 +142,7 @@ function relTime(iso: string): string {
   const ts = new Date(iso).getTime();
   if (Number.isNaN(ts)) return "unknown";
   const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 6) return "just now";
   if (s < 60) return `${s}s ago`;
   const m = Math.floor(s / 60);
   if (m < 60) return `${m}m ago`;
@@ -148,21 +157,26 @@ export default function DashboardOverviewPage() {
   const [recentActions, setRecentActions] = useState<AuditEntry[]>([]);
   const [seriesSource, setSeriesSource] = useState<AuditEntry[]>([]);
   const [agents, setAgents] = useState<AgentRow[]>([]);
+  const [agentSummaries, setAgentSummaries] = useState<AgentAuditSummary[]>([]);
   const [mode, setMode] = useState("shadow");
   const [modeSetting, setModeSetting] = useState("shadow");
   const [riskThreshold, setRiskThreshold] = useState(0.7);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [relTick, setRelTick] = useState(0);
+  const [streamState, setStreamState] = useState<"connecting" | "live" | "offline">("connecting");
+  const [flashActionId, setFlashActionId] = useState<string | null>(null);
+  const flashClearRef = useRef<number | null>(null);
 
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
-      const [reportRes, auditRes, seriesRes, agentsRes, healthRes] = await Promise.all([
+      const [reportRes, auditRes, seriesRes, agentsRes, summaryRes, healthRes] = await Promise.all([
         fetch(`${API_BASE}/api/v1/report`),
         fetch(`${API_BASE}/api/v1/audit?limit=10`),
         fetch(`${API_BASE}/api/v1/audit?limit=500`),
         fetch(`${API_BASE}/api/v1/agents`),
+        fetch(`${API_BASE}/api/v1/audit/agents/summary`),
         fetch(`${API_BASE}/health`),
       ]);
 
@@ -186,6 +200,11 @@ export default function DashboardOverviewPage() {
       if (agentsRes.ok) {
         setAgents((await agentsRes.json()) as AgentRow[]);
       }
+      if (summaryRes.ok) {
+        setAgentSummaries((await summaryRes.json()) as AgentAuditSummary[]);
+      } else {
+        setAgentSummaries([]);
+      }
       setError("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -199,17 +218,29 @@ export default function DashboardOverviewPage() {
   }, [loadData]);
 
   useEffect(() => {
-    const id = setInterval(() => setRelTick((t) => t + 1), 5000);
-    return () => clearInterval(id);
-  }, []);
+    const fast = recentActions.length > 0;
+    const ms = fast ? 2000 : 12000;
+    const id = window.setInterval(() => setRelTick((t) => t + 1), ms);
+    return () => window.clearInterval(id);
+  }, [recentActions.length]);
 
   useEffect(() => {
     const ws = new WebSocket(`${WS_BASE}/ws/actions`);
+    setStreamState("connecting");
+    ws.onopen = () => setStreamState("live");
+    ws.onclose = () => setStreamState("offline");
+    ws.onerror = () => setStreamState("offline");
     ws.onmessage = (event) => {
       try {
         const raw = JSON.parse(event.data) as Record<string, unknown>;
         const row = wsPayloadToAuditEntry(raw);
         if (!row) return;
+        if (flashClearRef.current) window.clearTimeout(flashClearRef.current);
+        setFlashActionId(row.action_id);
+        flashClearRef.current = window.setTimeout(() => {
+          setFlashActionId(null);
+          flashClearRef.current = null;
+        }, 1500);
         setReport((prev) => mergeReportWithAction(prev, row));
         setRecentActions((prev) => {
           const next = [row, ...prev.filter((a) => a.action_id !== row.action_id)];
@@ -220,7 +251,10 @@ export default function DashboardOverviewPage() {
         /* ignore */
       }
     };
-    return () => ws.close();
+    return () => {
+      ws.close();
+      if (flashClearRef.current) window.clearTimeout(flashClearRef.current);
+    };
   }, []);
 
   const decisions = report?.by_decision ?? {};
@@ -282,6 +316,29 @@ export default function DashboardOverviewPage() {
   }
 
   const blockRate = total ? blocked / total : 0;
+
+  const mergedAgentCards = useMemo(() => {
+    const byId = new Map<string, AgentAuditSummary>();
+    for (const s of agentSummaries) {
+      byId.set(s.agent_id, { ...s });
+    }
+    for (const ag of agents) {
+      if (!byId.has(ag.id)) {
+        byId.set(ag.id, {
+          agent_id: ag.id,
+          display_name: ag.name,
+          total_actions: ag.total_actions,
+          blocked_actions: ag.blocked_actions,
+          last_active: ag.last_active ?? null,
+        });
+      }
+    }
+    return [...byId.values()].sort((a, b) => {
+      if (b.total_actions !== a.total_actions) return b.total_actions - a.total_actions;
+      return a.display_name.localeCompare(b.display_name);
+    });
+  }, [agentSummaries, agents]);
+
   const isEmptyDashboard =
     !loading && report !== null && total === 0 && agents.length === 0;
   const showTuningBanner = !loading && report && !isEmptyDashboard && blockRate > 0.4;
@@ -291,10 +348,28 @@ export default function DashboardOverviewPage() {
       const r = await fetch(`${API_BASE}/api/v1/demo/seed`, { method: "POST" });
       if (!r.ok) throw new Error((await r.text()) || "Demo seed failed");
       await loadData();
-      toast("Demo data loaded", "success");
+      toast("Fresh demo loaded — overview shows only this demo run.", "success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Demo failed");
       toast(err instanceof Error ? err.message : "Demo failed", "error");
+    }
+  }
+
+  async function clearDashboardData() {
+    if (
+      !window.confirm(
+        "Clear all audit log data from memory and the database? Registered agents and policies stay as-is. This cannot be undone.",
+      )
+    ) {
+      return;
+    }
+    try {
+      const r = await fetch(`${API_BASE}/api/v1/audit/clear`, { method: "POST" });
+      if (!r.ok) throw new Error((await r.text()) || "Clear failed");
+      await loadData();
+      toast("Dashboard cleared — run scans or agents again when you want fresh data.", "success");
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Clear failed", "error");
     }
   }
 
@@ -313,19 +388,59 @@ export default function DashboardOverviewPage() {
   }
 
   return (
-    <div className="page-enter space-y-8 pb-12">
+    <div className="page-enter relative z-0 space-y-8 pb-12">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[min(78vh,880px)] overflow-hidden"
+        aria-hidden
+      >
+        <div className="living-ambient__orb living-ambient__orb--a" />
+        <div className="living-ambient__orb living-ambient__orb--b" />
+      </div>
+
+      <div className="relative z-[1] space-y-8">
       <PageHeader
         title="Overview"
         subtitle="Preview deployments for AI agents"
         breadcrumbs={[{ label: "Overview" }]}
         actions={
-          <button
-            type="button"
-            onClick={() => void loadData()}
-            className="rounded-lg border border-[#30363d] bg-[#161b22] px-4 py-2 text-sm text-[#c9d1d9] transition hover:border-[#58a6ff]/50 hover:bg-[#1c2128]"
-          >
-            Refresh
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <div
+              className="flex items-center gap-2 rounded-full border border-[#2e2918] bg-[#0c0a06]/90 px-3 py-1.5 text-xs shadow-sm backdrop-blur-sm"
+              title="WebSocket feed of intercepted actions"
+            >
+              <span
+                className={`h-2 w-2 shrink-0 rounded-full ${
+                  streamState === "live"
+                    ? "living-live-dot bg-emerald-400"
+                    : streamState === "connecting"
+                      ? "animate-pulse bg-amber-400"
+                      : "bg-zinc-500"
+                }`}
+              />
+              <span className="text-[#a89f88]">
+                {streamState === "live"
+                  ? "Live"
+                  : streamState === "connecting"
+                    ? "Connecting…"
+                    : "Stream offline"}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => void loadData()}
+              className="rounded-lg border border-[#2e2918] bg-[#100e08] px-4 py-2 text-sm text-[#e8e4d4] transition hover:border-[#eab308]/40 hover:bg-[#15130c] active:scale-[0.98]"
+            >
+              Refresh
+            </button>
+            <button
+              type="button"
+              title="Remove all intercepted actions from the dashboard and database"
+              onClick={() => void clearDashboardData()}
+              className="rounded-lg border border-red-500/35 bg-[#100e08] px-4 py-2 text-sm text-red-200/90 transition hover:border-red-400/50 hover:bg-red-950/30 active:scale-[0.98]"
+            >
+              Clear data
+            </button>
+          </div>
         }
       />
 
@@ -352,27 +467,27 @@ export default function DashboardOverviewPage() {
         <section className="glass-card space-y-6 p-6">
           <div>
             <h2 className="text-xl font-semibold text-[#f8fafc]">Welcome to Agentiva</h2>
-            <p className="mt-1 text-sm text-[#64748b]">Your dashboard is empty. Let&apos;s get started!</p>
+            <p className="mt-1 text-sm text-[#9a8f78]">Your dashboard is empty. Let&apos;s get started!</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-[#0a0f1e]/80 px-4 py-3">
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-[#0c0a06]/90 px-4 py-3">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#3b82f6] opacity-40" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#3b82f6]" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#eab308] opacity-40" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#eab308]" />
             </span>
-            <p className="text-sm text-[#94a3b8]">Waiting for your agent&apos;s first action…</p>
+            <p className="text-sm text-[#9a8f78]">Waiting for your agent&apos;s first action…</p>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <Link
               href="/agents?register=1"
-              className="glass-card-hover rounded-2xl border border-white/10 bg-[#131b2e]/60 p-5 transition hover:border-[#3b82f6]/40"
+              className="glass-card-hover rounded-2xl border border-white/10 bg-[#14110a]/75 p-5 transition hover:border-[#eab308]/40"
             >
               <p className="font-semibold text-[#f8fafc]">Register your first agent</p>
-              <p className="mt-1 text-xs text-[#64748b]">Opens agent registration on the Agents page.</p>
+              <p className="mt-1 text-xs text-[#9a8f78]">Opens agent registration on the Agents page.</p>
             </Link>
-            <div className="glass-card-hover rounded-2xl border border-white/10 bg-[#131b2e]/60 p-5 transition hover:border-emerald-500/40">
+            <div className="glass-card-hover rounded-2xl border border-white/10 bg-[#14110a]/75 p-5 transition hover:border-emerald-500/40">
               <p className="font-semibold text-[#f8fafc]">Run the demo</p>
-              <p className="mt-1 text-xs text-[#64748b]">From the repo root (with venv active):</p>
-              <code className="mt-2 block rounded-lg border border-white/10 bg-[#0a0f1e] px-3 py-2 font-mono text-xs text-[#93c5fd]">
+              <p className="mt-1 text-xs text-[#9a8f78]">From the repo root (with venv active):</p>
+              <code className="mt-2 block rounded-lg border border-white/10 bg-[#080604] px-3 py-2 font-mono text-xs text-[#fde68a]">
                 python demo/paybot_demo.py
               </code>
               <button
@@ -380,17 +495,17 @@ export default function DashboardOverviewPage() {
                 onClick={() => void runDemoSeed()}
                 className="mt-3 w-full rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/20"
               >
-                Or load sample data in one click
+                Or load a fresh demo in one click (clears prior audit data)
               </button>
             </div>
             <a
               href="https://github.com/RishavAr/agentiva/blob/main/README.md"
               target="_blank"
               rel="noreferrer"
-              className="glass-card-hover rounded-2xl border border-white/10 bg-[#131b2e]/60 p-5 transition hover:border-violet-500/40"
+              className="glass-card-hover rounded-2xl border border-white/10 bg-[#14110a]/75 p-5 transition hover:border-amber-500/35"
             >
               <p className="font-semibold text-[#f8fafc]">Read the docs</p>
-              <p className="mt-1 text-xs text-[#64748b]">Install, configure policies, and export compliance.</p>
+              <p className="mt-1 text-xs text-[#9a8f78]">Install, configure policies, and export compliance.</p>
             </a>
           </div>
         </section>
@@ -398,46 +513,109 @@ export default function DashboardOverviewPage() {
 
       {isEmptyDashboard ? null : (
         <>
-      <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <div className="glass-card glass-card-hover group relative overflow-hidden p-6" style={{ background: "linear-gradient(135deg, #1E3A5F, #0A1628)" }}>
-          <p className="text-xs font-medium uppercase tracking-wider text-blue-200/80">Total actions</p>
+      <section className="living-kpi-grid grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div
+          className="living-stat-shine glass-card glass-card-hover group relative z-[1] overflow-hidden p-6 ring-1 ring-amber-500/10 transition-[box-shadow] hover:ring-amber-400/25 hover:shadow-[0_0_28px_-4px_rgba(234,179,8,0.25)]"
+          style={{ background: "linear-gradient(135deg, #3a2f12, #0a0805)" }}
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-amber-200/85">Total actions</p>
           <p className="mt-2 text-5xl font-bold tabular-nums text-white">{nTotal}</p>
-          <div className="mt-3 h-10 w-full min-w-0 opacity-80">
+          <div className="relative z-[1] mt-3 h-10 w-full min-w-0 opacity-90">
             <ResponsiveContainer width="100%" height={40}>
               <LineChart data={sparkData}>
-                <Line type="monotone" dataKey="v" stroke="#58a6ff" strokeWidth={2} dot={false} />
+                <Line
+                  type="monotone"
+                  dataKey="v"
+                  stroke="#facc15"
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive
+                  animationDuration={450}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="glass-card glass-card-hover group relative overflow-hidden p-6" style={{ background: "linear-gradient(135deg, #4A1520, #1A0A0F)" }}>
+        <div
+          className="glass-card glass-card-hover group relative z-[1] overflow-hidden p-6 ring-1 ring-red-500/10 transition-[box-shadow] hover:ring-red-400/20 hover:shadow-[0_0_24px_-4px_rgba(248,113,113,0.2)]"
+          style={{ background: "linear-gradient(135deg, #4A1520, #1A0A0F)" }}
+        >
           <p className="text-xs font-medium uppercase tracking-wider text-red-200/80">Blocked</p>
           <p className="mt-2 text-5xl font-bold tabular-nums text-red-300">{nBlock}</p>
           <p className="mt-1 inline-flex rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-200">{blockPct}% of total</p>
         </div>
 
-        <div className="glass-card glass-card-hover group relative overflow-hidden p-6" style={{ background: "linear-gradient(135deg, #3D3215, #1A150A)" }}>
+        <div
+          className="glass-card glass-card-hover group relative z-[1] overflow-hidden p-6 ring-1 ring-amber-400/15 transition-[box-shadow] hover:ring-amber-300/30 hover:shadow-[0_0_28px_-4px_rgba(251,191,36,0.22)]"
+          style={{ background: "linear-gradient(135deg, #3D3215, #1A150A)" }}
+        >
           <p className="text-xs font-medium uppercase tracking-wider text-amber-200/80">Shadowed</p>
           <p className="mt-2 text-5xl font-bold tabular-nums text-amber-200">{nShadow}</p>
           <p className="mt-1 text-sm text-amber-200/60">Observed, not executed</p>
         </div>
 
-        <div className="glass-card glass-card-hover group relative overflow-hidden p-6" style={{ background: "linear-gradient(135deg, #0A3D2A, #0A1A15)" }}>
+        <div
+          className="glass-card glass-card-hover group relative z-[1] overflow-hidden p-6 ring-1 ring-emerald-500/10 transition-[box-shadow] hover:ring-emerald-400/25 hover:shadow-[0_0_24px_-4px_rgba(52,211,153,0.18)]"
+          style={{ background: "linear-gradient(135deg, #0A3D2A, #0A1A15)" }}
+        >
           <p className="text-xs font-medium uppercase tracking-wider text-emerald-200/80">Allowed</p>
           <p className="mt-2 text-5xl font-bold tabular-nums text-emerald-200">{nAllow}</p>
           <p className="mt-1 text-sm text-emerald-200/60">Including approve</p>
         </div>
       </section>
 
+      {mergedAgentCards.length > 0 ? (
+        <section className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-[#f0f6fc]">Agents &amp; scanners</h3>
+            <p className="text-sm text-[#8a8270]">
+              Each row is an <span className="text-[#e8e4d4]">agent_id</span> (including CLI scans like{" "}
+              <code className="text-[#fde047]">scan-myproject</code>). Open the audit log filtered to that source.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {mergedAgentCards.map((card) => (
+              <Link
+                key={card.agent_id}
+                href={`/audit?agent=${encodeURIComponent(card.agent_id)}`}
+                className="glass-card-hover group rounded-2xl border border-[#2e2918] bg-[#0c0a06]/90 p-5 transition hover:border-[#eab308]/40 hover:shadow-lg hover:shadow-amber-950/20"
+              >
+                <p className="font-mono text-sm font-semibold text-[#fde047] group-hover:text-[#fef08a]">{card.agent_id}</p>
+                {card.display_name !== card.agent_id ? (
+                  <p className="mt-1 text-sm text-[#e8e4d4]">{card.display_name}</p>
+                ) : null}
+                <div className="mt-4 flex flex-wrap gap-4 text-sm">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#8a8270]">Total actions</p>
+                    <p className="font-mono text-lg text-[#f0f6fc]">{card.total_actions}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#8a8270]">Blocked</p>
+                    <p className="font-mono text-lg text-red-300">{card.blocked_actions}</p>
+                  </div>
+                </div>
+                <p className="mt-3 text-xs text-[#8a8270]">
+                  Last active:{" "}
+                  {card.last_active
+                    ? `${new Date(card.last_active).toLocaleString()} (${relTime(card.last_active)})`
+                    : "—"}
+                </p>
+                <p className="mt-2 text-xs font-medium text-[#ca8a04]">View audit log →</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-[#8b949e]">
-          Mode: <span className="font-medium text-[#c9d1d9]">{mode}</span>
+        <p className="text-sm text-[#8a8270]">
+          Mode: <span className="font-medium text-[#e8e4d4]">{mode}</span>
         </p>
         <button
           type="button"
           onClick={() => void toggleMode()}
-          className="rounded-lg border border-[#30363d] bg-[#161b22] px-4 py-2 text-sm text-[#c9d1d9] transition hover:bg-[#1c2128]"
+          className="rounded-lg border border-[#2e2918] bg-[#100e08] px-4 py-2 text-sm text-[#e8e4d4] transition hover:bg-[#15130c]"
         >
           Switch to {nextMode}
         </button>
@@ -445,53 +623,71 @@ export default function DashboardOverviewPage() {
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="glass-card xl:col-span-2 p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[#8b949e]">Actions over time</h3>
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[#8a8270]">Actions over time</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={lineData}>
                 <defs>
                   <linearGradient id="fillAct" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#1f6feb" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#1f6feb" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#ca8a04" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#ca8a04" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="#21262d" strokeDasharray="3 3" />
-                <XAxis dataKey="t" tick={{ fill: "#8b949e", fontSize: 11 }} />
-                <YAxis allowDecimals={false} tick={{ fill: "#8b949e", fontSize: 11 }} />
+                <CartesianGrid stroke="#2a2418" strokeDasharray="3 3" />
+                <XAxis dataKey="t" tick={{ fill: "#8a8270", fontSize: 11 }} />
+                <YAxis allowDecimals={false} tick={{ fill: "#8a8270", fontSize: 11 }} />
                 <Tooltip
-                  contentStyle={{ background: "#161b22", border: "1px solid #30363d", borderRadius: 8 }}
-                  labelStyle={{ color: "#c9d1d9" }}
+                  contentStyle={{ background: "#100e08", border: "1px solid #3d3520", borderRadius: 8 }}
+                  labelStyle={{ color: "#fde68a" }}
                 />
-                <Area type="monotone" dataKey="count" stroke="#3b82f6" fill="url(#fillAct)" strokeWidth={2.5} />
+                <Area
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#eab308"
+                  fill="url(#fillAct)"
+                  strokeWidth={2.5}
+                  isAnimationActive
+                  animationDuration={500}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div className="glass-card p-6">
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-[#8b949e]">Decisions</h3>
+          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-[#8a8270]">Decisions</h3>
           <div className="h-64 w-full min-w-0 min-h-[16rem]">
             <ResponsiveContainer width="100%" height={256}>
               <PieChart>
-                <Pie data={donutData} dataKey="value" nameKey="name" innerRadius={52} outerRadius={84} paddingAngle={3}>
+                <Pie
+                  data={donutData}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={52}
+                  outerRadius={84}
+                  paddingAngle={3}
+                  isAnimationActive
+                  animationDuration={480}
+                >
                   {donutData.map((entry) => (
-                    <Cell key={entry.name} fill={DONUT_COLORS[entry.name] ?? "#64748b"} />
+                    <Cell key={entry.name} fill={DONUT_COLORS[entry.name] ?? "#78716c"} />
                   ))}
                 </Pie>
                 <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fill="#f8fafc" fontSize={24} fontWeight={700}>
                   {total}
                 </text>
                 <Tooltip
-                  contentStyle={{ background: "#161b22", border: "1px solid #30363d", borderRadius: 8 }}
+                  contentStyle={{ background: "#100e08", border: "1px solid #3d3520", borderRadius: 8 }}
+                  labelStyle={{ color: "#fde68a" }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <ul className="mt-2 space-y-1 text-xs text-[#8b949e]">
+          <ul className="mt-2 space-y-1 text-xs text-[#8a8270]">
             {donutData.map((d) => (
               <li key={d.name} className="flex justify-between">
                 <span className="capitalize">{d.name}</span>
-                <span className="font-mono text-[#c9d1d9]">{d.value}</span>
+                <span className="font-mono text-[#e8e4d4]">{d.value}</span>
               </li>
             ))}
           </ul>
@@ -502,26 +698,28 @@ export default function DashboardOverviewPage() {
         <section className="glass-card p-6">
           <h3 className="mb-4 text-lg font-semibold text-[#f0f6fc]">Recent activity</h3>
           {recentActions.length === 0 ? (
-            <p className="text-sm text-[#8b949e]">No actions yet.</p>
+            <p className="text-sm text-[#8a8270]">No actions yet.</p>
           ) : (
-            <ul key={relTick} className="max-h-[420px] space-y-3 overflow-y-auto pr-1">
+            <ul className="max-h-[420px] space-y-3 overflow-y-auto pr-1">
               {recentActions.slice(0, 10).map((action, idx) => (
                 <li
                   key={action.action_id}
-                  className="glass-card glass-card-hover flex items-start justify-between gap-3 border-l-4 border-l-[#64748b] px-3 py-2"
+                  className={`glass-card glass-card-hover flex items-start justify-between gap-3 rounded-r-xl border-l-4 border-l-[#57534e] px-3 py-2 transition-shadow duration-300 ${
+                    flashActionId === action.action_id ? "living-new-row" : ""
+                  }`}
                   style={{
                     borderLeftColor:
                       action.decision === "block" ? "#ef4444" : action.decision === "shadow" ? "#f59e0b" : "#10b981",
-                    animation: `page-enter 280ms ease ${idx * 55}ms both`,
+                    animation: flashActionId === action.action_id ? undefined : `page-enter 320ms ease ${idx * 45}ms both`,
                   }}
                 >
                   <div>
                     <p className="font-medium text-[#f0f6fc]">{action.tool_name}</p>
-                    <p className="text-xs text-[#8b949e]">{relTime(action.timestamp)}</p>
+                    <p className="text-xs tabular-nums text-[#8a8270]">{relTime(action.timestamp)}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
                     <DecisionBadge decision={action.decision} />
-                    <span className="font-mono text-xs text-[#8b949e]">{(action.risk_score ?? 0).toFixed(2)}</span>
+                    <span className="font-mono text-xs text-[#8a8270]">{(action.risk_score ?? 0).toFixed(2)}</span>
                   </div>
                 </li>
               ))}
@@ -532,22 +730,22 @@ export default function DashboardOverviewPage() {
         <section className="glass-card p-6">
           <h3 className="mb-4 text-lg font-semibold text-[#f0f6fc]">Top risks</h3>
           {topRisks.length === 0 ? (
-            <p className="text-sm text-[#8b949e]">No data.</p>
+            <p className="text-sm text-[#8a8270]">No data.</p>
           ) : (
             <ul className="space-y-3">
               {topRisks.map((a) => (
-                <li key={a.action_id} className="rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
+                <li key={a.action_id} className="rounded-xl border border-[#2e2918] bg-[#060504] p-3">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold text-[#f0f6fc]">{a.tool_name}</span>
                     <RiskBadge score={a.risk_score} />
                   </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#21262d]">
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#1a170f]">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-amber-500 to-red-500"
+                      className="living-risk-bar-fill h-full rounded-full"
                       style={{ width: `${Math.min(100, Math.round(a.risk_score * 100))}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-[#8b949e]">{a.agent_id}</p>
+                  <p className="mt-1 text-xs text-[#8a8270]">{a.agent_id}</p>
                 </li>
               ))}
             </ul>
@@ -560,8 +758,8 @@ export default function DashboardOverviewPage() {
         <div className="space-y-4">
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <label className="text-sm font-medium text-[#c9d1d9]">Risk threshold</label>
-              <span className="font-mono text-sm text-[#79c0ff]">{riskThreshold.toFixed(2)}</span>
+              <label className="text-sm font-medium text-[#e8e4d4]">Risk threshold</label>
+              <span className="font-mono text-sm text-[#fde047]">{riskThreshold.toFixed(2)}</span>
             </div>
             <input
               type="range"
@@ -570,16 +768,16 @@ export default function DashboardOverviewPage() {
               step={0.05}
               value={riskThreshold}
               onChange={(e) => setRiskThreshold(Number(e.target.value))}
-              className="w-full accent-[#58a6ff]"
+              className="w-full accent-[#eab308]"
             />
-            <p className="mt-1 text-xs text-[#8b949e]">
-              In <span className="text-[#c9d1d9]">live</span> mode, policy allows with risk at or above this level are
-              treated as blocks. In <span className="text-[#c9d1d9]">shadow</span>, policy blocks and high-risk allows
+            <p className="mt-1 text-xs text-[#8a8270]">
+              In <span className="text-[#e8e4d4]">live</span> mode, policy allows with risk at or above this level are
+              treated as blocks. In <span className="text-[#e8e4d4]">shadow</span>, policy blocks and high-risk allows
               are logged as shadow (observe). Existing audit rows do not change until new actions run.
             </p>
           </div>
           <div>
-            <p className="mb-2 text-sm font-medium text-[#c9d1d9]">Mode</p>
+            <p className="mb-2 text-sm font-medium text-[#e8e4d4]">Mode</p>
             <div className="grid gap-2 md:grid-cols-3">
               {[
                 { value: "shadow", label: "Shadow", desc: "Observe only" },
@@ -590,8 +788,8 @@ export default function DashboardOverviewPage() {
                   key={m.value}
                   className={`cursor-pointer rounded-lg border p-3 text-sm ${
                     modeSetting === m.value
-                      ? "border-[#1f6feb]/50 bg-[#1f6feb]/10"
-                      : "border-[#30363d] bg-[#0d1117]"
+                      ? "border-[#eab308]/45 bg-[#ca8a04]/12"
+                      : "border-[#2e2918] bg-[#060504]"
                   }`}
                 >
                   <input
@@ -603,7 +801,7 @@ export default function DashboardOverviewPage() {
                     className="sr-only"
                   />
                   <p className="font-semibold text-[#f0f6fc]">{m.label}</p>
-                  <p className="text-xs text-[#8b949e]">{m.desc}</p>
+                  <p className="text-xs text-[#8a8270]">{m.desc}</p>
                 </label>
               ))}
             </div>
@@ -621,7 +819,7 @@ export default function DashboardOverviewPage() {
       <section className="glass-card p-6">
         <h3 className="mb-4 text-lg font-semibold text-[#f0f6fc]">Agent health</h3>
         {agents.length === 0 ? (
-          <Link href="/agents" className="text-sm text-[#58a6ff] hover:underline">
+          <Link href="/agents" className="text-sm text-[#facc15] hover:underline">
             Register your first agent →
           </Link>
         ) : (
@@ -630,12 +828,12 @@ export default function DashboardOverviewPage() {
               <Link
                 key={ag.id}
                 href={`/agents?agent=${encodeURIComponent(ag.id)}`}
-                className="rounded-xl border border-[#30363d] bg-[#0d1117] p-4 transition hover:border-[#58a6ff]/40 hover:shadow-md"
+                className="rounded-xl border border-[#2e2918] bg-[#060504] p-4 transition hover:border-[#eab308]/35 hover:shadow-md"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-medium text-[#f0f6fc]">{ag.name}</p>
-                    <p className="font-mono text-xs text-[#79c0ff]">{ag.id}</p>
+                    <p className="font-mono text-xs text-[#fde047]">{ag.id}</p>
                   </div>
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -645,7 +843,7 @@ export default function DashboardOverviewPage() {
                     {ag.status}
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-[#8b949e]">
+                <p className="mt-2 text-xs text-[#8a8270]">
                   Actions: {ag.total_actions} · Blocked: {ag.blocked_actions}
                   {ag.last_active ? ` · Last active: ${new Date(ag.last_active).toLocaleString()}` : ""}
                 </p>
@@ -662,6 +860,7 @@ export default function DashboardOverviewPage() {
       </section>
         </>
       )}
+      </div>
     </div>
   );
 }

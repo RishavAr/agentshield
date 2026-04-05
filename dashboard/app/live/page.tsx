@@ -170,15 +170,15 @@ export default function LiveFeedPage() {
               onClick={() => setFilter(c.id)}
               className={`rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition ${
                 filter === c.id
-                  ? "bg-[#1f6feb] text-white shadow-lg shadow-blue-900/30"
-                  : "border border-[#30363d] bg-[#161b22] text-[#8b949e] hover:border-[#58a6ff]/40"
+                  ? "bg-[#ca8a04] text-[#0a0805] shadow-lg shadow-amber-950/40"
+                  : "border border-[#2e2918] bg-[#100e08] text-[#8a8270] hover:border-[#eab308]/40"
               }`}
             >
               {c.label}
             </button>
           ))}
         </div>
-        <label className="flex cursor-pointer items-center gap-2 text-xs text-[#8b949e]">
+        <label className="flex cursor-pointer items-center gap-2 text-xs text-[#8a8270]">
           <input type="checkbox" checked={soundOn} onChange={(e) => setSoundOn(e.target.checked)} className="rounded" />
           Sound on block
         </label>
@@ -208,15 +208,15 @@ export default function LiveFeedPage() {
                 ? "Reconnecting…"
                 : status.toUpperCase()}
         </span>
-        <span className="text-xs text-[#8b949e]">{WS_BASE}/ws/actions</span>
+        <span className="text-xs text-[#8a8270]">{WS_BASE}/ws/actions</span>
       </div>
 
       <div ref={listRef} className="glass-card max-h-[calc(100vh-280px)] space-y-3 overflow-y-auto p-4">
         {filtered.length === 0 && actions.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
             <div className="relative h-32 w-32">
-              <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-[#1f6feb]/30 to-purple-600/20 blur-xl" />
-              <div className="relative flex h-full w-full items-center justify-center rounded-full border border-[#30363d] bg-[#161b22] text-4xl">
+              <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-[#ca8a04]/35 to-amber-900/25 blur-xl" />
+              <div className="relative flex h-full w-full items-center justify-center rounded-full border border-[#2e2918] bg-[#100e08] text-4xl">
                 ⚡
               </div>
             </div>
@@ -228,16 +228,16 @@ export default function LiveFeedPage() {
                 </span>
                 Waiting for agent actions…
               </p>
-              <p className="text-sm text-[#8b949e]">
+              <p className="text-sm text-[#8a8270]">
                 No actions yet. Run the demo to see Agentiva in action:
               </p>
-              <code className="block rounded-lg border border-[#30363d] bg-[#0d1117] px-3 py-2 text-left font-mono text-xs text-[#79c0ff]">
+              <code className="block rounded-lg border border-[#2e2918] bg-[#060504] px-3 py-2 text-left font-mono text-xs text-[#fde047]">
                 python demo/paybot_demo.py
               </code>
             </div>
           </div>
         ) : filtered.length === 0 ? (
-          <p className="py-8 text-center text-sm text-[#8b949e]">No items match this filter.</p>
+          <p className="py-8 text-center text-sm text-[#8a8270]">No items match this filter.</p>
         ) : (
           filtered.map((action) => {
             const pct = Math.max(0, Math.min(100, Math.round(action.risk_score * 100)));
@@ -254,17 +254,17 @@ export default function LiveFeedPage() {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-1">
                       <p className="text-base font-bold text-[#f0f6fc]">{action.tool_name}</p>
-                      <span className="inline-block rounded-full bg-[#21262d] px-2 py-0.5 font-mono text-[11px] text-[#79c0ff]">
+                      <span className="inline-block rounded-full bg-[#21262d] px-2 py-0.5 font-mono text-[11px] text-[#fde047]">
                         {action.agent_id}
                       </span>
                     </div>
                     <div className="text-right">
                       <DecisionPill decision={action.decision} />
-                      <p className="mt-1 text-xs text-[#8b949e]">{relTime(action.timestamp, timeTick)}</p>
+                      <p className="mt-1 text-xs text-[#8a8270]">{relTime(action.timestamp, timeTick)}</p>
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="mb-1 flex justify-between text-xs text-[#8b949e]">
+                    <div className="mb-1 flex justify-between text-xs text-[#8a8270]">
                       <span>Risk</span>
                       <span className="font-mono">{action.risk_score.toFixed(2)}</span>
                     </div>
@@ -277,7 +277,7 @@ export default function LiveFeedPage() {
                   </div>
                 </button>
                 {open ? (
-                  <pre className="mt-3 max-h-48 overflow-auto rounded-lg border border-[#30363d] bg-[#0d1117] p-3 font-mono text-xs text-[#c9d1d9]">
+                  <pre className="mt-3 max-h-48 overflow-auto rounded-lg border border-[#2e2918] bg-[#060504] p-3 font-mono text-xs text-[#c9d1d9]">
                     {JSON.stringify(action.arguments, null, 2)}
                   </pre>
                 ) : null}

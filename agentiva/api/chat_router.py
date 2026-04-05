@@ -100,6 +100,30 @@ def _arg_hint(arguments: Any) -> str:
     return ""
 
 
+def _action_path_from_args(arguments: Any) -> str:
+    """Best-effort file path for scanners (path / file / filepath)."""
+    if not isinstance(arguments, dict):
+        return ""
+    for key in ("path", "file", "filepath"):
+        v = arguments.get(key)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    return ""
+
+
+def _describe_blocked_tool(tool: str, args: Any) -> str:
+    tl = (tool or "").lower()
+    if isinstance(args, dict) and args.get("credentials_found"):
+        return "hardcoded credentials"
+    if tl == "read_customer_data":
+        return "exposes PII (SSN/credit card)"
+    if tl == "run_shell_command":
+        return "dangerous shell patterns"
+    if tl == "install_package":
+        return "compromised or risky dependency"
+    return f"`{tool}` blocked by policy"
+
+
 def _plain_explain_blocked(top: Dict[str, Any]) -> str:
     """Short, plain-English explanation for the top blocked row (co-pilot 'I didn't get it' path)."""
     tool = str(top.get("tool") or "unknown")
@@ -166,21 +190,39 @@ async def fetch_audit_data(db: Any = None) -> Dict[str, Any]:
     allowed = await count_action_logs_by_decision("allow") + await count_action_logs_by_decision("approve")
     block_rows = await list_actions(decision="block", limit=5)
     shadow_rows = await list_actions(decision="shadow", limit=5)
-    top_blocked = [
-        {
-            "tool": r.tool_name,
-            "risk": float(r.risk_score),
-            "args": r.arguments,
-            "agent": r.agent_id,
-            "time": r.timestamp.isoformat() if hasattr(r, "timestamp") else "",
-        }
-        for r in block_rows
-    ]
+    block_agg = await list_actions(decision="block", limit=2000)
+    shadow_agg = await list_actions(decision="shadow", limit=2000)
+
+    agent_block_counts: Dict[str, int] = {}
+    for r in block_agg:
+        agent_block_counts[r.agent_id] = agent_block_counts.get(r.agent_id, 0) + 1
+
+    credential_shadow_by_agent: Dict[str, int] = {}
+    for r in shadow_agg:
+        args = r.arguments if isinstance(r.arguments, dict) else {}
+        if isinstance(args, dict) and args.get("credentials_found"):
+            credential_shadow_by_agent[r.agent_id] = credential_shadow_by_agent.get(r.agent_id, 0) + 1
+
+    top_blocked = []
+    for r in block_rows:
+        args = r.arguments if isinstance(r.arguments, dict) else {}
+        path = _action_path_from_args(args)
+        top_blocked.append(
+            {
+                "tool": r.tool_name,
+                "risk": float(r.risk_score),
+                "args": r.arguments,
+                "path": path,
+                "agent": r.agent_id,
+                "time": r.timestamp.isoformat() if hasattr(r, "timestamp") else "",
+            }
+        )
     top_shadowed = [
         {
             "tool": r.tool_name,
             "risk": float(r.risk_score),
             "args": r.arguments,
+            "path": _action_path_from_args(r.arguments if isinstance(r.arguments, dict) else {}),
             "agent": r.agent_id,
             "time": r.timestamp.isoformat() if hasattr(r, "timestamp") else "",
         }
@@ -199,6 +241,8 @@ async def fetch_audit_data(db: Any = None) -> Dict[str, Any]:
         "top_blocked": top_blocked,
         "top_shadowed": top_shadowed,
         "agents": agents,
+        "agent_block_counts": agent_block_counts,
+        "credential_shadow_by_agent": credential_shadow_by_agent,
         "has_data": total > 0,
     }
 
@@ -745,13 +789,33 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
         top = data["top_blocked"]
         if not top:
             return {"role": "assistant", "content": "Good news — no blocked actions in the current data. Want me to review shadowed actions instead?", "suggestions": ["View shadowed actions", "Session overview"]}
+        agent_block_counts = data.get("agent_block_counts") or {}
+        cred_shadow = data.get("credential_shadow_by_agent") or {}
         lines = []
         for i, b in enumerate(top[:5], start=1):
-            lines.append(f"{i}. `{b['tool']}` by `{b['agent']}` at risk {b['risk']:.2f}")
+            path_note = ""
+            p = b.get("path") or _action_path_from_args(b.get("args"))
+            if p:
+                path_note = f" · file `{p}`"
+            lines.append(f"{i}. `{b['tool']}` by `{b['agent']}` at risk {b['risk']:.2f}{path_note}")
+        first = top[0]
+        agent = str(first.get("agent") or "")
+        n_agent_blocks = int(agent_block_counts.get(agent, len(top)))
+        path = first.get("path") or _action_path_from_args(first.get("args"))
+        desc = _describe_blocked_tool(str(first.get("tool")), first.get("args"))
+        risk = float(first.get("risk") or 0.0)
+        path_seg = f"{path} " if path else ""
+        lead = (
+            f"{agent} had {n_agent_blocks} blocked action{'s' if n_agent_blocks != 1 else ''}: "
+            f"{path_seg}{desc} at risk {risk:.2f}."
+        )
+        cred_n = int(cred_shadow.get(agent, 0))
+        if cred_n > 0:
+            lead += f" {cred_n} warning(s) for hardcoded credentials in scanned files."
         ctx.setdefault("last_data", {})["focus_blocked"] = top
         return {
             "role": "assistant",
-            "content": "I found blocked actions worth reviewing:\n\n" + "\n".join(lines) + "\n\nAll were intercepted before execution. Want me to explain the top one?",
+            "content": lead + "\n\n" + "I found blocked actions worth reviewing:\n\n" + "\n".join(lines) + "\n\nAll were intercepted before execution. Want me to explain the top one?",
             "suggestions": ["Why was #1 blocked?", "Show full details", "Export audit report"],
         }
     if intent == "followup_blocked":
@@ -784,10 +848,12 @@ async def generate_for_intent(intent: str, msg: str, data: Dict[str, Any], ctx: 
             return {"role": "assistant", "content": "I can explain it, but I need a blocked action in context first. Ask 'what was blocked?' and I'll drill in.", "suggestions": ["Show blocked actions", "Session overview"]}
         top = focus[0]
         hint = _arg_hint(top.get("args"))
+        path = top.get("path") or _action_path_from_args(top.get("args"))
+        path_note = f" File: `{path}`." if path else ""
         return {
             "role": "assistant",
             "content": (
-                f"That top item was `{top['tool']}` from `{top['agent']}` with risk {top['risk']:.2f}. "
+                f"That top item was `{top['tool']}` from `{top['agent']}` with risk {top['risk']:.2f}.{path_note} "
                 "It likely combined tool sensitivity with content/target risk signals. "
                 f"I can see `{hint}` in the request payload, which helps explain why it was treated as high-risk. "
                 "Say **show full details** to see every blocked row with full arguments."

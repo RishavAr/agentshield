@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-25T18:42:00.325248+00:00",
+  "timestamp": "2026-04-02T03:05:36.484164+00:00",
   "agentiva_version": "0.1.0",
   "benchmark_version": "1.0.0",
   "policy_path": "benchmarks/policies/benchmark_policy.yaml",
@@ -16,7 +16,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.8,
-              "actual_risk": 1.0,
+              "actual_risk": 0.95,
               "passed": true
             },
             {
@@ -24,7 +24,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.8,
-              "actual_risk": 0.95,
+              "actual_risk": 1.0,
               "passed": true
             },
             {
@@ -32,7 +32,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.7,
-              "actual_risk": 1.0,
+              "actual_risk": 0.95,
               "passed": true
             }
           ]
@@ -84,7 +84,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.9,
-              "actual_risk": 1.0,
+              "actual_risk": 0.95,
               "passed": true
             }
           ]
@@ -136,7 +136,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.9,
-              "actual_risk": 0.95,
+              "actual_risk": 1.0,
               "passed": true
             }
           ]
@@ -157,7 +157,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.9,
-              "actual_risk": 0.95,
+              "actual_risk": 1.0,
               "passed": true
             },
             {
@@ -165,7 +165,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.9,
-              "actual_risk": 0.95,
+              "actual_risk": 1.0,
               "passed": true
             },
             {
@@ -173,7 +173,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.8,
-              "actual_risk": 0.9,
+              "actual_risk": 1.0,
               "passed": true
             },
             {
@@ -181,7 +181,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.9,
-              "actual_risk": 0.95,
+              "actual_risk": 1.0,
               "passed": true
             }
           ]
@@ -195,7 +195,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.9,
-              "actual_risk": 0.95,
+              "actual_risk": 1.0,
               "passed": true
             },
             {
@@ -203,7 +203,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.9,
-              "actual_risk": 0.95,
+              "actual_risk": 1.0,
               "passed": true
             }
           ]
@@ -217,7 +217,7 @@
               "expected_decision": "block",
               "actual_decision": "block",
               "expected_min_risk": 0.9,
-              "actual_risk": 1.0,
+              "actual_risk": 0.95,
               "passed": true
             }
           ]

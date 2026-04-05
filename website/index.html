@@ -14,6 +14,7 @@
       content="See what your AI agent would do before it does it. Open-source. 24,599 tests passing."
     />
     <meta property="og:type" content="website" />
+    <!-- Dashboard links open http://127.0.0.1:3001 (local Next.js). Replace with your deployed URL when hosting the UI. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,15 +23,17 @@
     />
     <style>
       :root {
-        --bg-deep: #030712;
-        --bg-card: rgba(15, 23, 42, 0.65);
-        --text: #f1f5f9;
-        --muted: #94a3b8;
-        --border: rgba(148, 163, 184, 0.15);
-        --accent: #3b82f6;
-        --accent-glow: rgba(59, 130, 246, 0.45);
-        --emerald: #10b981;
-        --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        --bg-deep: #050203;
+        --bg-card: rgba(24, 8, 10, 0.72);
+        --text: #fef2f2;
+        --muted: #a8a0a0;
+        --border: rgba(220, 38, 38, 0.18);
+        --accent: #ef4444;
+        --accent-deep: #991b1b;
+        --accent-glow: rgba(239, 68, 68, 0.5);
+        --rose: #fb7185;
+        --emerald: #34d399;
+        --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
       }
       * {
         box-sizing: border-box;
@@ -42,7 +45,7 @@
       #waitlist,
       #demo,
       #roadmap {
-        scroll-margin-top: 5rem;
+        scroll-margin-top: 7rem;
       }
       body {
         margin: 0;
@@ -62,30 +65,82 @@
       }
       .aurora {
         position: absolute;
-        inset: -20%;
-        background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.35), transparent),
-          radial-gradient(ellipse 60% 40% at 100% 50%, rgba(139, 92, 246, 0.2), transparent),
-          radial-gradient(ellipse 50% 30% at 0% 80%, rgba(16, 185, 129, 0.15), transparent);
-        animation: aurora-shift 18s ease-in-out infinite alternate;
+        inset: -25%;
+        background: radial-gradient(ellipse 75% 55% at 50% -15%, rgba(185, 28, 28, 0.45), transparent 55%),
+          radial-gradient(ellipse 55% 45% at 95% 45%, rgba(127, 29, 29, 0.35), transparent 50%),
+          radial-gradient(ellipse 50% 40% at 5% 75%, rgba(239, 68, 68, 0.2), transparent 50%),
+          radial-gradient(ellipse 40% 35% at 70% 90%, rgba(0, 0, 0, 0.5), transparent);
+        animation: aurora-shift 14s ease-in-out infinite alternate;
       }
       @keyframes aurora-shift {
         0% {
-          transform: translate(0, 0) rotate(0deg);
-          opacity: 0.9;
+          transform: translate(0, 0) rotate(0deg) scale(1);
+          opacity: 0.88;
         }
         100% {
-          transform: translate(3%, 2%) rotate(2deg);
+          transform: translate(4%, 3%) rotate(-3deg) scale(1.04);
           opacity: 1;
+        }
+      }
+      .living-orbs {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .living-orbs .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.55;
+        animation: blob-drift 22s ease-in-out infinite;
+      }
+      .living-orbs .blob:nth-child(1) {
+        width: min(55vw, 420px);
+        height: min(55vw, 420px);
+        background: rgba(220, 38, 38, 0.35);
+        top: 10%;
+        left: -10%;
+        animation-delay: 0s;
+      }
+      .living-orbs .blob:nth-child(2) {
+        width: min(45vw, 360px);
+        height: min(45vw, 360px);
+        background: rgba(127, 29, 29, 0.45);
+        bottom: 5%;
+        right: -8%;
+        animation-delay: -7s;
+        animation-duration: 26s;
+      }
+      .living-orbs .blob:nth-child(3) {
+        width: min(35vw, 280px);
+        height: min(35vw, 280px);
+        background: rgba(251, 113, 133, 0.22);
+        top: 45%;
+        left: 40%;
+        animation-delay: -12s;
+        animation-duration: 19s;
+      }
+      @keyframes blob-drift {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(6%, -4%) scale(1.08);
+        }
+        66% {
+          transform: translate(-5%, 5%) scale(0.95);
         }
       }
       .grid-lines {
         position: absolute;
         inset: 0;
-        background-image: linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
-        background-size: 64px 64px;
-        mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent);
-        animation: grid-pulse 12s ease-in-out infinite;
+        background-image: linear-gradient(rgba(248, 113, 113, 0.07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(248, 113, 113, 0.06) 1px, transparent 1px);
+        background-size: 56px 56px;
+        mask-image: radial-gradient(ellipse 75% 65% at 50% 28%, black, transparent);
+        animation: grid-pulse 10s ease-in-out infinite;
       }
       @keyframes grid-pulse {
         0%,
@@ -99,8 +154,181 @@
       .noise {
         position: absolute;
         inset: 0;
-        opacity: 0.035;
+        opacity: 0.045;
+        animation: noise-flicker 8s steps(4) infinite;
         background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      @keyframes noise-flicker {
+        0%,
+        100% {
+          opacity: 0.04;
+        }
+        50% {
+          opacity: 0.055;
+        }
+      }
+      /* 3D hero scene */
+      .hero-visual-wrap {
+        perspective: 1100px;
+        perspective-origin: 50% 40%;
+        margin: 2.5rem auto 0;
+        max-width: min(420px, 92vw);
+        height: 220px;
+        position: relative;
+        z-index: 2;
+      }
+      .hero-3d {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform-style: preserve-3d;
+        animation: hero-3d-orbit 16s ease-in-out infinite;
+      }
+      @keyframes hero-3d-orbit {
+        0%,
+        100% {
+          transform: rotateX(12deg) rotateY(-18deg) rotateZ(0deg);
+        }
+        25% {
+          transform: rotateX(18deg) rotateY(8deg) rotateZ(2deg);
+        }
+        50% {
+          transform: rotateX(8deg) rotateY(22deg) rotateZ(-1deg);
+        }
+        75% {
+          transform: rotateX(20deg) rotateY(-6deg) rotateZ(1deg);
+        }
+      }
+      .shield-stack {
+        position: relative;
+        width: 140px;
+        height: 160px;
+        transform-style: preserve-3d;
+        animation: shield-pulse 3.2s ease-in-out infinite;
+      }
+      @keyframes shield-pulse {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.45));
+        }
+        50% {
+          filter: drop-shadow(0 0 36px rgba(251, 113, 133, 0.65));
+        }
+      }
+      .shield-layer {
+        position: absolute;
+        inset: 0;
+        border-radius: 50% 50% 12% 12% / 40% 40% 60% 60%;
+        transform-style: preserve-3d;
+        border: 2px solid rgba(248, 113, 113, 0.35);
+        background: linear-gradient(160deg, rgba(40, 10, 12, 0.95) 0%, rgba(80, 15, 20, 0.85) 50%, rgba(20, 5, 8, 0.98) 100%);
+        box-shadow: inset 0 0 40px rgba(239, 68, 68, 0.12), 0 12px 40px rgba(0, 0, 0, 0.5);
+      }
+      .shield-layer.back {
+        transform: translateZ(-28px) scale(0.92);
+        opacity: 0.55;
+        border-color: rgba(127, 29, 29, 0.5);
+      }
+      .shield-layer.mid {
+        transform: translateZ(-14px) scale(0.96);
+        opacity: 0.78;
+      }
+      .shield-layer.front {
+        transform: translateZ(0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .shield-layer.front::after {
+        content: "";
+        width: 48%;
+        height: 52%;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), transparent);
+        border-radius: 50% 50% 12% 12% / 40% 40% 60% 60%;
+        animation: shield-sheen 5s ease-in-out infinite;
+      }
+      @keyframes shield-sheen {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: translateX(-10%);
+        }
+        50% {
+          opacity: 0.9;
+          transform: translateX(10%);
+        }
+      }
+      .shield-core {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #ef4444, #991b1b);
+        transform: translateZ(18px);
+        box-shadow: 0 0 24px rgba(239, 68, 68, 0.8);
+        animation: core-glow 2s ease-in-out infinite alternate;
+      }
+      @keyframes core-glow {
+        from {
+          box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
+        }
+        to {
+          box-shadow: 0 0 32px rgba(251, 113, 133, 0.95);
+        }
+      }
+      .float-particles {
+        position: absolute;
+        inset: -20%;
+        pointer-events: none;
+        transform-style: preserve-3d;
+      }
+      .float-particles span {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: rgba(252, 165, 165, 0.85);
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+        animation: particle-rise 6s linear infinite;
+      }
+      .float-particles span:nth-child(1) {
+        left: 15%;
+        bottom: 0;
+        animation-delay: 0s;
+      }
+      .float-particles span:nth-child(2) {
+        left: 45%;
+        bottom: 10%;
+        animation-delay: -1.5s;
+        width: 3px;
+        height: 3px;
+      }
+      .float-particles span:nth-child(3) {
+        left: 70%;
+        bottom: 5%;
+        animation-delay: -3s;
+      }
+      .float-particles span:nth-child(4) {
+        left: 85%;
+        bottom: 20%;
+        animation-delay: -4.2s;
+        width: 2px;
+        height: 2px;
+      }
+      @keyframes particle-rise {
+        0% {
+          transform: translateY(0) translateZ(0) scale(1);
+          opacity: 0;
+        }
+        12% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-200px) translateZ(40px) scale(0.3);
+          opacity: 0;
+        }
       }
       .container {
         width: min(1120px, 92vw);
@@ -113,7 +341,7 @@
         position: sticky;
         top: 0;
         z-index: 50;
-        background: rgba(3, 7, 18, 0.75);
+        background: rgba(8, 2, 4, 0.82);
         backdrop-filter: blur(16px) saturate(1.2);
         border-bottom: 1px solid var(--border);
       }
@@ -121,26 +349,83 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 64px;
+        gap: 1rem;
+        min-height: 64px;
+        padding: 0.75rem 0;
+        position: relative;
       }
       .logo {
-        font-weight: 800;
-        font-size: 1.15rem;
-        letter-spacing: -0.03em;
-        color: var(--text);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
         text-decoration: none;
+        color: var(--text);
+        flex-shrink: 0;
       }
-      .logo span {
-        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      .logo-mark {
+        flex-shrink: 0;
+        display: block;
+        filter: drop-shadow(0 0 14px rgba(239, 68, 68, 0.45));
+      }
+      .logo-text {
+        display: flex;
+        align-items: baseline;
+        font-weight: 800;
+        font-size: 1.22rem;
+        letter-spacing: -0.045em;
+        line-height: 1;
+      }
+      .logo-text .accent {
+        background: linear-gradient(135deg, #fecaca 0%, #ef4444 45%, #b91c1c 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
+      .nav-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: rgba(24, 6, 8, 0.85);
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: border-color 0.2s ease, background 0.2s ease;
+      }
+      .nav-toggle:hover {
+        border-color: rgba(248, 113, 113, 0.45);
+        background: rgba(60, 10, 14, 0.6);
+      }
+      .nav-toggle span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        margin: 0 auto;
+        background: #fecaca;
+        border-radius: 1px;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+      header.nav.nav-open .nav-toggle span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      header.nav.nav-open .nav-toggle span:nth-child(2) {
+        opacity: 0;
+      }
+      header.nav.nav-open .nav-toggle span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
       .nav-links {
         display: flex;
-        gap: 1.25rem;
-        flex-wrap: wrap;
+        flex: 1 1 auto;
+        justify-content: flex-end;
+        gap: 0.5rem 0.75rem;
+        flex-wrap: nowrap;
         align-items: center;
+        min-width: 0;
       }
       .nav-links a {
         color: var(--muted);
@@ -148,6 +433,8 @@
         font-size: 0.88rem;
         font-weight: 500;
         transition: color 0.2s ease, text-shadow 0.2s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
       .nav-links a:hover {
         color: var(--text);
@@ -156,10 +443,10 @@
       .nav-cta {
         padding: 0.5rem 1rem;
         border-radius: 999px;
-        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        background: linear-gradient(135deg, #dc2626, #991b1b);
         color: #fff !important;
         font-weight: 600;
-        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+        box-shadow: 0 4px 24px rgba(239, 68, 68, 0.45);
       }
       .nav-cta:hover {
         filter: brightness(1.08);
@@ -174,23 +461,8 @@
         font-size: 0.82rem;
       }
       .nav-dashboard-link:hover {
-        border-color: rgba(59, 130, 246, 0.5);
-        color: #93c5fd !important;
-      }
-      .nav-dashboard-note {
-        margin: 0;
-        padding: 0.35rem 0 0.6rem;
-        font-size: 0.72rem;
-        color: var(--muted);
-        line-height: 1.45;
-        text-align: right;
-      }
-      .nav-dashboard-note code {
-        font-size: 0.7rem;
-        background: rgba(15, 23, 42, 0.9);
-        padding: 0.12rem 0.35rem;
-        border-radius: 4px;
-        border: 1px solid var(--border);
+        border-color: rgba(239, 68, 68, 0.55);
+        color: #fca5a5 !important;
       }
       .hero {
         padding: 4.5rem 0 3.5rem;
@@ -205,12 +477,13 @@
         padding: 0.35rem 0.9rem;
         border-radius: 999px;
         border: 1px solid var(--border);
-        background: rgba(59, 130, 246, 0.08);
+        background: rgba(127, 29, 29, 0.35);
         font-size: 0.78rem;
         font-weight: 600;
-        color: #93c5fd;
+        color: #fecaca;
         margin-bottom: 1.25rem;
         animation: fade-up 0.8s ease-out both;
+        box-shadow: 0 0 24px rgba(239, 68, 68, 0.15);
       }
       .hero-badge .dot {
         width: 6px;
@@ -248,11 +521,12 @@
         max-width: 920px;
         margin-left: auto;
         margin-right: auto;
-        background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 45%, #94a3b8 100%);
+        background: linear-gradient(135deg, #fff5f5 0%, #fecaca 35%, #f87171 70%, #b91c1c 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         animation: fade-up 0.85s ease-out 0.08s both;
+        filter: drop-shadow(0 0 40px rgba(239, 68, 68, 0.2));
       }
       .hero .sub {
         font-size: clamp(1.05rem, 2vw, 1.2rem);
@@ -284,56 +558,101 @@
         transform: translateY(-2px);
       }
       .btn-primary {
-        background: linear-gradient(135deg, #2563eb, #6366f1);
+        background: linear-gradient(135deg, #dc2626, #b91c1b);
         color: #fff;
-        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+        box-shadow: 0 8px 36px rgba(239, 68, 68, 0.45);
       }
       .btn-outline {
         border: 1px solid var(--border);
-        background: rgba(15, 23, 42, 0.5);
+        background: rgba(24, 6, 8, 0.55);
         color: var(--text);
       }
       .btn-outline:hover {
-        border-color: rgba(148, 163, 184, 0.35);
-        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(248, 113, 113, 0.45);
+        background: rgba(60, 10, 14, 0.75);
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.12);
       }
       .code-box {
         max-width: 560px;
         margin: 0 auto;
         text-align: left;
-        background: rgba(15, 23, 42, 0.9);
-        color: #e2e8f0;
+        background: rgba(12, 4, 6, 0.92);
+        color: #fecaca;
         border-radius: 14px;
         padding: 1rem 1.25rem;
         font-family: ui-monospace, monospace;
         font-size: 0.85rem;
         line-height: 1.55;
         border: 1px solid var(--border);
-        box-shadow: var(--shadow), 0 0 40px rgba(59, 130, 246, 0.08);
-        animation: fade-up 0.85s ease-out 0.28s both;
+        box-shadow: var(--shadow), 0 0 48px rgba(239, 68, 68, 0.12);
+        animation: fade-up 0.85s ease-out 0.28s both, code-live 4s ease-in-out infinite;
+      }
+      @keyframes code-live {
+        0%,
+        100% {
+          box-shadow: var(--shadow), 0 0 40px rgba(239, 68, 68, 0.1);
+        }
+        50% {
+          box-shadow: var(--shadow), 0 0 56px rgba(251, 113, 133, 0.22);
+        }
       }
       .terminal-demo {
         margin-top: 1.5rem;
         max-width: 640px;
         margin-left: auto;
         margin-right: auto;
-        background: rgba(15, 23, 42, 0.85);
-        border: 1px solid var(--border);
+        background: rgba(10, 3, 5, 0.9);
+        border: 1px solid rgba(220, 38, 38, 0.35);
         border-radius: 14px;
         padding: 1rem 1.1rem;
         font-size: 0.8rem;
         color: var(--muted);
         min-height: 104px;
         box-shadow: var(--shadow);
-        animation: terminal-glow 4s ease-in-out infinite;
+        animation: terminal-glow 3s ease-in-out infinite, terminal-scan 2.8s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+      }
+      .terminal-demo::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(252, 165, 165, 0.9), transparent);
+        animation: scan-line 2.8s ease-in-out infinite;
+        pointer-events: none;
+        opacity: 0.7;
+      }
+      @keyframes scan-line {
+        0%,
+        100% {
+          top: 8%;
+          opacity: 0.3;
+        }
+        50% {
+          top: 88%;
+          opacity: 0.85;
+        }
       }
       @keyframes terminal-glow {
         0%,
         100% {
-          box-shadow: var(--shadow), 0 0 0 0 rgba(59, 130, 246, 0);
+          box-shadow: var(--shadow), 0 0 0 0 rgba(239, 68, 68, 0);
+          border-color: rgba(220, 38, 38, 0.3);
         }
         50% {
-          box-shadow: var(--shadow), 0 0 40px rgba(59, 130, 246, 0.12);
+          box-shadow: var(--shadow), 0 0 36px rgba(239, 68, 68, 0.25);
+          border-color: rgba(248, 113, 113, 0.5);
+        }
+      }
+      @keyframes terminal-scan {
+        0%,
+        100% {
+          transform: translateZ(0);
+        }
+        50% {
+          transform: translateZ(0) scale(1.008);
         }
       }
       .terminal-demo .line {
@@ -354,13 +673,341 @@
         color: #4ade80;
         font-weight: 600;
       }
+
+      /* Install guide — dual path + subtle 3D (matches site theme) */
+      .install-3d-scene {
+        perspective: 1400px;
+        perspective-origin: 50% 35%;
+        margin-bottom: 2.5rem;
+      }
+      .install-path-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        transform-style: preserve-3d;
+      }
+      @media (max-width: 768px) {
+        .install-path-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .install-path-card {
+        cursor: pointer;
+        text-align: left;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 1.5rem 1.35rem;
+        transform-style: preserve-3d;
+        transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+        animation: install-card-float 7s ease-in-out infinite;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      }
+      .install-path-card:nth-child(2) {
+        animation-delay: -3.5s;
+      }
+      .install-path-card:hover {
+        transform: translateY(-10px) translateZ(28px) rotateX(2deg);
+        border-color: rgba(248, 113, 113, 0.55);
+        box-shadow: 0 28px 56px rgba(0, 0, 0, 0.5), 0 0 48px rgba(239, 68, 68, 0.18);
+      }
+      .install-path-card.active {
+        border-color: rgba(248, 113, 113, 0.75);
+        background: linear-gradient(145deg, rgba(60, 10, 14, 0.55), rgba(24, 6, 8, 0.85));
+        box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25), 0 24px 48px rgba(0, 0, 0, 0.45), 0 0 56px rgba(185, 28, 28, 0.15);
+      }
+      @keyframes install-card-float {
+        0%,
+        100% {
+          transform: translateY(0) rotateX(5deg) rotateY(-4deg);
+        }
+        50% {
+          transform: translateY(-6px) rotateX(7deg) rotateY(4deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .install-path-card {
+          animation: none;
+        }
+        .install-path-card:hover {
+          transform: translateY(-4px);
+        }
+      }
+      .install-path-card .ipc-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        margin-bottom: 0.85rem;
+        border: 1px solid var(--border);
+      }
+      .install-path-card:first-child .ipc-icon {
+        background: rgba(139, 92, 246, 0.12);
+      }
+      .install-path-card:last-child .ipc-icon {
+        background: rgba(16, 185, 129, 0.1);
+      }
+      .install-path-card h3 {
+        margin: 0 0 0.35rem;
+        font-size: 1.15rem;
+        color: var(--text);
+      }
+      .install-path-card > p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .install-tool-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-top: 0.85rem;
+      }
+      .install-tool-tags span {
+        font-family: ui-monospace, monospace;
+        font-size: 0.72rem;
+        padding: 0.25rem 0.55rem;
+        border-radius: 8px;
+        background: rgba(12, 4, 6, 0.85);
+        border: 1px solid var(--border);
+        color: #fca5a5;
+      }
+      .install-pane {
+        display: none;
+      }
+      .install-pane.active {
+        display: block;
+        animation: fade-up 0.55s ease both;
+      }
+      .install-step-block {
+        position: relative;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 1.5rem 1.35rem 1.35rem;
+        margin-bottom: 1.25rem;
+        transform-style: preserve-3d;
+        transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+      }
+      .install-step-block:hover {
+        transform: translateY(-4px) translateZ(12px);
+        border-color: rgba(248, 113, 113, 0.35);
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4), 0 0 36px rgba(239, 68, 68, 0.08);
+      }
+      .install-step-badge {
+        position: absolute;
+        top: -12px;
+        left: 1.25rem;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #dc2626, #991b1b);
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.45);
+      }
+      .install-step-block h3 {
+        margin: 0.25rem 0 0.35rem;
+        font-size: 1.05rem;
+        text-align: left;
+      }
+      .install-step-block .install-desc {
+        margin: 0 0 0.75rem;
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.5;
+        text-align: left;
+      }
+      .install-code-block {
+        position: relative;
+        background: rgba(10, 3, 5, 0.92);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem 1rem 1rem;
+        margin-top: 0.5rem;
+        overflow-x: auto;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+      .install-code-block pre {
+        margin: 0;
+        font-family: ui-monospace, monospace;
+        font-size: 0.8rem;
+        line-height: 1.65;
+        color: #fecaca;
+      }
+      .install-code-block .install-lang {
+        position: absolute;
+        top: 8px;
+        left: 12px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-family: ui-monospace, monospace;
+      }
+      .install-code-block .install-copy {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(24, 8, 10, 0.95);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        padding: 0.25rem 0.65rem;
+        border-radius: 8px;
+        font-size: 0.72rem;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .install-code-block .install-copy:hover {
+        border-color: rgba(248, 113, 113, 0.5);
+        color: #fecaca;
+      }
+      .install-code-block pre {
+        padding-top: 1.15rem;
+      }
+      .syn-cmt {
+        color: #64748b;
+      }
+      .syn-kw {
+        color: #f87171;
+      }
+      .syn-str {
+        color: #93c5fd;
+      }
+      .install-result {
+        margin-top: 0.75rem;
+        background: rgba(10, 3, 5, 0.88);
+        border: 1px solid rgba(220, 38, 38, 0.35);
+        border-radius: 12px;
+        padding: 1rem;
+        font-family: ui-monospace, monospace;
+        font-size: 0.78rem;
+        line-height: 1.65;
+        color: var(--muted);
+      }
+      .install-result .r-block {
+        color: #f87171;
+      }
+      .install-result .r-shadow {
+        color: #fbbf24;
+      }
+      .install-result .r-ok {
+        color: #4ade80;
+      }
+      .install-note {
+        margin-top: 0.85rem;
+        padding: 1rem 1.1rem;
+        border-radius: 14px;
+        border: 1px solid rgba(248, 113, 113, 0.25);
+        background: linear-gradient(135deg, rgba(127, 29, 29, 0.25), rgba(24, 6, 8, 0.6));
+        text-align: left;
+      }
+      .install-note h4 {
+        margin: 0 0 0.35rem;
+        font-size: 0.9rem;
+        color: #fecaca;
+      }
+      .install-note p {
+        margin: 0;
+        font-size: 0.82rem;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .install-detect-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.65rem 1rem;
+        margin-top: 1rem;
+      }
+      @media (max-width: 640px) {
+        .install-detect-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .install-detect-grid div {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .install-flow {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 1rem;
+      }
+      .install-flow-step {
+        background: rgba(12, 4, 6, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.65rem 0.85rem;
+        text-align: center;
+        min-width: 110px;
+      }
+      .install-flow-step .fl {
+        font-size: 0.65rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .install-flow-step .fv {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-top: 0.2rem;
+      }
+      .install-flow-arr {
+        color: var(--muted);
+        font-size: 1.1rem;
+      }
+      .install-fw-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin: 0.75rem 0 1rem;
+      }
+      .install-fw-tab {
+        background: rgba(12, 4, 6, 0.85);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        padding: 0.4rem 0.75rem;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        cursor: pointer;
+        font-family: inherit;
+        transition: border-color 0.2s, color 0.2s, background 0.2s;
+      }
+      .install-fw-tab:hover {
+        border-color: rgba(248, 113, 113, 0.45);
+        color: var(--text);
+      }
+      .install-fw-tab.active {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.35), rgba(127, 29, 29, 0.4));
+        border-color: rgba(248, 113, 113, 0.55);
+        color: #fecaca;
+      }
+      .install-fw-pane {
+        display: none;
+      }
+      .install-fw-pane.active {
+        display: block;
+      }
+
       section {
         padding: 4rem 0;
         position: relative;
         z-index: 1;
       }
       section.alt {
-        background: linear-gradient(180deg, rgba(15, 23, 42, 0.35) 0%, transparent 100%);
+        background: linear-gradient(180deg, rgba(60, 10, 14, 0.25) 0%, transparent 100%);
       }
       h2 {
         font-size: clamp(1.5rem, 3vw, 2rem);
@@ -375,6 +1022,31 @@
         max-width: 560px;
         margin: 0 auto 2.5rem;
         font-size: 1rem;
+      }
+      .demo-video-wrap {
+        max-width: min(900px, 100%);
+        margin: 0 auto 1.25rem;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow), 0 0 48px rgba(239, 68, 68, 0.1);
+        aspect-ratio: 16 / 9;
+        background: #0a0304;
+      }
+      .demo-video-wrap iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
+      .demo-video-foot {
+        text-align: center;
+        font-size: 0.88rem;
+        color: var(--muted);
+        margin: 0 0 1rem;
+      }
+      .demo-video-foot a {
+        color: #fca5a5;
       }
       .reveal {
         opacity: 0;
@@ -401,12 +1073,13 @@
         border-radius: 16px;
         padding: 1.5rem;
         backdrop-filter: blur(12px);
-        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        transform-style: preserve-3d;
+        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
       }
       .card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(59, 130, 246, 0.35);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(59, 130, 246, 0.15);
+        transform: translateY(-6px) rotateX(2deg) rotateY(-2deg);
+        border-color: rgba(248, 113, 113, 0.45);
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(239, 68, 68, 0.2), 0 0 40px rgba(185, 28, 28, 0.12);
       }
       .icon {
         width: 40px;
@@ -429,18 +1102,38 @@
         gap: 2rem;
         align-items: start;
       }
+      a.dashboard-preview-tile {
+        margin-top: 1rem;
+        height: 120px;
+        border-radius: 12px;
+        border: 1px dashed rgba(248, 113, 113, 0.35);
+        background: rgba(24, 8, 10, 0.72);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-size: 0.85rem;
+        box-shadow: inset 0 0 40px rgba(127, 29, 29, 0.15);
+        text-decoration: none;
+        transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+      }
+      a.dashboard-preview-tile:hover {
+        border-color: rgba(248, 113, 113, 0.55);
+        color: #fecaca;
+        box-shadow: inset 0 0 48px rgba(185, 28, 28, 0.22), 0 0 24px rgba(239, 68, 68, 0.12);
+      }
       .step-num {
         width: 36px;
         height: 36px;
         border-radius: 10px;
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(99, 102, 241, 0.2));
-        color: #93c5fd;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.28), rgba(127, 29, 29, 0.35));
+        color: #fecaca;
         font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 0.75rem;
-        border: 1px solid rgba(59, 130, 246, 0.3);
+        border: 1px solid rgba(248, 113, 113, 0.4);
       }
       .social {
         display: flex;
@@ -462,7 +1155,7 @@
       }
       .social .pill:hover {
         transform: scale(1.03);
-        border-color: rgba(59, 130, 246, 0.4);
+        border-color: rgba(248, 113, 113, 0.45);
       }
       .testimonial-grid {
         display: grid;
@@ -478,7 +1171,7 @@
       }
       .testimonial-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(139, 92, 246, 0.35);
+        border-color: rgba(248, 113, 113, 0.4);
       }
       .testimonial-card p {
         font-size: 0.92rem;
@@ -495,7 +1188,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        background: linear-gradient(135deg, #ef4444, #991b1b);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -525,7 +1218,7 @@
         transition: border-color 0.25s ease;
       }
       .faq details[open] {
-        border-color: rgba(59, 130, 246, 0.35);
+        border-color: rgba(248, 113, 113, 0.45);
       }
       .faq summary {
         padding: 1rem 1.15rem;
@@ -612,23 +1305,23 @@
         color: #e2e8f0;
       }
       .roadmap-soon {
-        background: rgba(15, 23, 42, 0.55);
-        border-color: rgba(139, 92, 246, 0.22);
+        background: rgba(24, 8, 10, 0.65);
+        border-color: rgba(220, 38, 38, 0.28);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
       }
       .roadmap-soon h3 {
-        color: #c4b5fd;
+        color: #fca5a5;
       }
       .roadmap-soon li {
         color: #a8b2c4;
       }
       .roadmap-later {
-        background: rgba(15, 23, 42, 0.45);
-        border-color: rgba(99, 102, 241, 0.2);
+        background: rgba(18, 6, 8, 0.55);
+        border-color: rgba(127, 29, 29, 0.35);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
       }
       .roadmap-later h3 {
-        color: #a5b4fc;
+        color: #f87171;
       }
       .roadmap-later li {
         color: #94a3b8;
@@ -649,14 +1342,14 @@
         border: 1px solid rgba(52, 211, 153, 0.35);
       }
       .roadmap-pill.soon {
-        background: rgba(139, 92, 246, 0.15);
-        color: #c4b5fd;
-        border: 1px solid rgba(139, 92, 246, 0.25);
+        background: rgba(185, 28, 28, 0.2);
+        color: #fecaca;
+        border: 1px solid rgba(248, 113, 113, 0.3);
       }
       .roadmap-pill.later {
-        background: rgba(99, 102, 241, 0.12);
-        color: #a5b4fc;
-        border: 1px solid rgba(99, 102, 241, 0.22);
+        background: rgba(127, 29, 29, 0.22);
+        color: #fca5a5;
+        border: 1px solid rgba(220, 38, 38, 0.28);
       }
       .pricing {
         display: grid;
@@ -676,8 +1369,8 @@
         box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
       }
       .price-card.featured {
-        border-color: rgba(59, 130, 246, 0.5);
-        box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2), 0 20px 50px rgba(59, 130, 246, 0.12);
+        border-color: rgba(248, 113, 113, 0.55);
+        box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25), 0 20px 50px rgba(185, 28, 28, 0.18);
       }
       .price-card h3 {
         margin: 0 0 0.25rem;
@@ -715,18 +1408,18 @@
         transform: translateY(-2px);
       }
       .btn-tier.primary {
-        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        background: linear-gradient(135deg, #dc2626, #991b1b);
         color: #fff;
         border: none;
-        box-shadow: 0 6px 24px rgba(59, 130, 246, 0.35);
+        box-shadow: 0 6px 24px rgba(239, 68, 68, 0.4);
       }
       .btn-tier.outline {
         background: transparent;
-        color: #93c5fd;
-        border: 1px solid rgba(59, 130, 246, 0.5);
+        color: #fecaca;
+        border: 1px solid rgba(248, 113, 113, 0.55);
       }
       .btn-tier.outline:hover {
-        background: rgba(59, 130, 246, 0.1);
+        background: rgba(127, 29, 29, 0.35);
       }
       .price-note {
         margin: 0.5rem 0 0;
@@ -786,8 +1479,8 @@
       .waitlist-form input:focus,
       .waitlist-form select:focus {
         outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.28);
       }
       .waitlist-form select {
         cursor: pointer;
@@ -798,12 +1491,12 @@
         padding: 0.85rem 1.25rem;
         border-radius: 10px;
         border: none;
-        background: linear-gradient(135deg, #2563eb, #6366f1);
+        background: linear-gradient(135deg, #dc2626, #b91c1b);
         color: #fff;
         font-weight: 700;
         font-size: 1rem;
         cursor: pointer;
-        box-shadow: 0 6px 28px rgba(59, 130, 246, 0.4);
+        box-shadow: 0 6px 28px rgba(239, 68, 68, 0.42);
         transition: transform 0.15s ease, filter 0.15s ease;
       }
       .waitlist-form .btn-waitlist:hover {
@@ -837,10 +1530,10 @@
         font-size: 0.88em;
       }
       .cta-band {
-        background: linear-gradient(135deg, #064e3b 0%, #022c22 50%, #0f172a 100%);
+        background: linear-gradient(135deg, #1c0709 0%, #0a0304 50%, #050203 100%);
         padding: 4rem 0;
         text-align: center;
-        border-top: 1px solid rgba(16, 185, 129, 0.2);
+        border-top: 1px solid rgba(220, 38, 38, 0.25);
         position: relative;
         z-index: 1;
         overflow: hidden;
@@ -849,7 +1542,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(16, 185, 129, 0.15), transparent);
+        background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(239, 68, 68, 0.12), transparent);
         pointer-events: none;
       }
       .cta-band .container {
@@ -858,17 +1551,17 @@
       .cta-band h2 {
         font-size: clamp(1.5rem, 3vw, 2.1rem);
         margin-bottom: 0.75rem;
-        color: #ecfdf5;
+        color: #fff5f5;
       }
       .cta-band p {
-        color: #a7f3d0;
+        color: #fecaca;
         max-width: 480px;
         margin: 0 auto 1.5rem;
         font-size: 1rem;
       }
       .cta-band .btn {
         background: #fff;
-        color: #064e3b;
+        color: #991b1b;
         font-weight: 700;
       }
       .cta-band .btn:hover {
@@ -880,7 +1573,7 @@
         text-align: center;
         font-size: 0.9rem;
         color: var(--muted);
-        background: #020617;
+        background: #030102;
         position: relative;
         z-index: 1;
       }
@@ -896,11 +1589,84 @@
         text-decoration: none;
       }
       footer a:hover {
-        color: #93c5fd;
+        color: #fca5a5;
       }
-      @media (max-width: 640px) {
+      @media (prefers-reduced-motion: reduce) {
+        .aurora,
+        .living-orbs .blob,
+        .grid-lines,
+        .noise,
+        .hero-3d,
+        .shield-stack,
+        .shield-layer.front::after,
+        .shield-core,
+        .float-particles span,
+        .terminal-demo,
+        .terminal-demo::before,
+        .code-box,
+        .hero-badge .dot {
+          animation: none !important;
+        }
+        .card:hover {
+          transform: translateY(-2px);
+        }
+      }
+      /* Tablet / narrow laptop: drawer menu (like typical marketing sites) */
+      @media (max-width: 1024px) {
+        .nav-toggle {
+          display: flex;
+        }
         .nav-links {
           display: none;
+          position: absolute;
+          top: calc(100% - 2px);
+          left: 0;
+          right: 0;
+          flex-direction: column;
+          flex-wrap: nowrap;
+          align-items: stretch;
+          gap: 0;
+          padding: 0.75rem 0 1rem;
+          margin: 0 -1rem;
+          padding-left: 1rem;
+          padding-right: 1rem;
+          background: rgba(8, 2, 4, 0.97);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid var(--border);
+          box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+          z-index: 60;
+        }
+        header.nav.nav-open .nav-links {
+          display: flex;
+        }
+        .nav-links a {
+          white-space: normal;
+          padding: 0.65rem 0.85rem;
+          border-radius: 10px;
+          font-size: 0.95rem;
+        }
+        .nav-links a:hover {
+          background: rgba(127, 29, 29, 0.25);
+        }
+        .nav-links .btn-primary {
+          text-align: center;
+          margin-top: 0.35rem;
+        }
+        .nav-links .nav-dashboard-link {
+          text-align: center;
+        }
+      }
+      /* Slightly tighter text links on medium desktops */
+      @media (min-width: 1025px) and (max-width: 1180px) {
+        .nav-links {
+          gap: 0.4rem 0.55rem;
+        }
+        .nav-links a {
+          font-size: 0.8rem;
+        }
+        .nav-links .nav-dashboard-link {
+          font-size: 0.76rem;
+          padding: 0.4rem 0.75rem;
         }
       }
     </style>
@@ -908,15 +1674,66 @@
   <body>
     <div class="site-bg" aria-hidden="true">
       <div class="aurora"></div>
+      <div class="living-orbs">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+      </div>
       <div class="grid-lines"></div>
       <div class="noise"></div>
     </div>
 
-    <header class="nav">
+    <header class="nav" id="site-header">
       <div class="container">
         <div class="nav-inner">
-          <a class="logo" href="#">Agent<span>iva</span></a>
-          <nav class="nav-links">
+          <a class="logo" href="#" aria-label="Agentiva home">
+            <svg
+              class="logo-mark"
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="logo-shield-grad" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#fecaca" />
+                  <stop offset="0.45" stop-color="#ef4444" />
+                  <stop offset="1" stop-color="#991b1b" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M16 2.5L5.5 7.2v8.4c0 5.8 4.2 11.2 10.5 12.8 6.3-1.6 10.5-7 10.5-12.8V7.2L16 2.5z"
+                fill="url(#logo-shield-grad)"
+                fill-opacity="0.14"
+                stroke="url(#logo-shield-grad)"
+                stroke-width="1.65"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 16.5l2.8 2.8L21 13"
+                stroke="url(#logo-shield-grad)"
+                stroke-width="2.1"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span class="logo-text">Agent<span class="accent">iva</span></span>
+          </a>
+          <button
+            type="button"
+            class="nav-toggle"
+            id="nav-toggle"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="site-nav"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <nav class="nav-links" id="site-nav" aria-label="Primary">
             <a href="#features">Features</a>
             <a href="#how">How it works</a>
             <a href="#compliance">Compliance</a>
@@ -928,20 +1745,14 @@
             <a href="#install" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.82rem">Get started free</a>
             <a
               class="nav-dashboard-link"
-              href="http://localhost:3000/dashboard"
+              href="http://127.0.0.1:3001/"
               target="_blank"
               rel="noopener noreferrer"
+              title="Local dashboard (run npm run dev in dashboard/ first)"
               >Agentiva Dashboard</a
             >
-            <a class="nav-cta" href="https://calendly.com/rishavaryan058/30min" target="_blank" rel="noopener">Book a demo</a>
           </nav>
         </div>
-        <p class="nav-dashboard-note">
-          Dashboard runs locally after install. Start the API first:
-          <code>agentiva serve --port 8000</code>
-          then run the dashboard (e.g. <code>cd dashboard &amp;&amp; npm run dev</code>) and open
-          <code>localhost:3000</code>.
-        </p>
       </div>
     </header>
 
@@ -954,8 +1765,29 @@
         </p>
         <div class="cta-row">
           <a class="btn btn-primary" href="#install">Get started free</a>
+          <a
+            class="btn btn-outline"
+            href="http://127.0.0.1:3001/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Local dashboard (run npm run dev in dashboard/ first)"
+            >Open dashboard</a
+          >
           <a class="btn btn-outline" href="https://calendly.com/rishavaryan058/30min" target="_blank" rel="noopener">Book a demo</a>
           <a class="btn btn-outline" href="#demo">Watch demo →</a>
+        </div>
+        <div class="hero-visual-wrap" aria-hidden="true">
+          <div class="hero-3d">
+            <div class="float-particles">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <div class="shield-stack">
+              <div class="shield-layer back"></div>
+              <div class="shield-layer mid"></div>
+              <div class="shield-layer front"></div>
+              <div class="shield-core"></div>
+            </div>
+          </div>
         </div>
         <div class="code-box">pip install agentiva</div>
         <div class="terminal-demo" aria-live="polite">
@@ -968,19 +1800,304 @@
 
     <section id="install" class="alt reveal">
       <div class="container">
-        <h2>Install Agentiva</h2>
-        <p class="section-lead">Self-hosted API + local dashboard. Run these on your machine:</p>
-        <div class="code-box" style="text-align: left; max-width: 560px; margin: 0 auto">
-          pip install agentiva<br />
-          agentiva serve --port 8000<br />
-          <span style="color: var(--muted); font-size: 0.88em"
-            ># In another terminal: <code style="color: #93c5fd">cd dashboard &amp;&amp; npm run dev</code></span
-          ><br />
-          <span style="color: var(--muted); font-size: 0.88em"># Then open </span><strong>http://localhost:3000</strong>
+        <h2>Get started with Agentiva</h2>
+        <p class="section-lead">Choose your setup. Protect your agents in under a few minutes—same look as the rest of this site.</p>
+
+        <div class="install-3d-scene">
+          <div class="install-path-grid">
+            <div class="install-path-card active" data-path="coding" onclick="agentivaInstallPath('coding', this)">
+              <div class="ipc-icon" aria-hidden="true">⌨️</div>
+              <h3>AI coding agents</h3>
+              <p>For developers using AI to write code. Agentiva scans your project and catches dangerous patterns before deployment.</p>
+              <div class="install-tool-tags">
+                <span>Cursor</span>
+                <span>Claude Code</span>
+                <span>Kiro</span>
+                <span>Replit Agent</span>
+                <span>Devin</span>
+              </div>
+            </div>
+            <div class="install-path-card" data-path="framework" onclick="agentivaInstallPath('framework', this)">
+              <div class="ipc-icon" aria-hidden="true">🔗</div>
+              <h3>Agent frameworks</h3>
+              <p>For teams running AI agents in production. Agentiva monitors every action in real time and blocks dangerous ones.</p>
+              <div class="install-tool-tags">
+                <span>LangChain</span>
+                <span>CrewAI</span>
+                <span>OpenAI SDK</span>
+                <span>MCP</span>
+                <span>Anthropic</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <p style="text-align: center; margin-top: 1.25rem; color: var(--muted); font-size: 0.9rem">
-          Dashboard runs locally after install. Start <code style="font-size: 0.85em">agentiva serve --port 8000</code> first.
-        </p>
+
+        <div id="install-pane-coding" class="install-pane active">
+          <div class="install-step-block">
+            <div class="install-step-badge">1</div>
+            <h3>Install Agentiva</h3>
+            <p class="install-desc">One command. Works in any project directory.</p>
+            <div class="install-code-block">
+              <span class="install-lang">terminal</span>
+              <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+              <pre>pip install agentiva</pre>
+            </div>
+          </div>
+
+          <div class="install-step-block">
+            <div class="install-step-badge">2</div>
+            <h3>Scan your project</h3>
+            <p class="install-desc">
+              Detects hardcoded credentials, dangerous scripts, compromised packages, and exposed PII-style patterns. Actions show in the dashboard under
+              <strong style="color: #fecaca">scan-&lt;folder&gt;</strong>.
+            </p>
+            <div class="install-code-block">
+              <span class="install-lang">terminal</span>
+              <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+              <pre><span class="syn-cmt"># In your project directory</span>
+agentiva scan .</pre>
+            </div>
+            <div class="install-result" aria-label="Example scan output">
+              <pre>  Agentiva scanning: /Users/dev/my-project
+
+  <span class="r-block">[BLOCK] paybot/routes/api.py</span>
+     Endpoint exposes PII (SSN/credit card)
+     Risk: 1.00
+
+  <span class="r-shadow">[WARN] config/config.yaml</span>
+     Hardcoded credentials: password, database_url
+     Risk: 0.45
+
+  <span class="r-shadow">[WARN] deploy.sh</span>
+     Dangerous commands: git push --force
+     Risk: 0.65
+
+  Scan complete. 3 issues found.</pre>
+            </div>
+          </div>
+
+          <div class="install-step-block" id="dashboard">
+            <div class="install-step-badge">3</div>
+            <h3>Open the dashboard</h3>
+            <p class="install-desc">Start the Agentiva API, then the Next.js dashboard—full audit log, agents, and security co-pilot. After <code>npm run dev</code>, open <strong>http://127.0.0.1:3001</strong> (or <code>localhost:3001</code>) on <em>your</em> machine.</p>
+            <div class="install-code-block">
+              <span class="install-lang">terminal</span>
+              <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+              <pre><span class="syn-cmt"># Terminal 1 — API</span>
+agentiva serve --port 8000
+
+<span class="syn-cmt"># Terminal 2 — dashboard UI (from repo root)</span>
+cd dashboard &amp;&amp; npm install &amp;&amp; npm run dev
+
+<span class="syn-cmt"># Then open in your browser</span>
+http://127.0.0.1:3001</pre>
+            </div>
+            <div class="install-note">
+              <h4>Dashboard</h4>
+              <p>
+                Live feed, audit log with filters (including agent / scanner id), compliance exports (HIPAA, SOC2, PCI), and a co-pilot that answers questions like
+                “what was blocked?” with paths and agent names.
+              </p>
+            </div>
+          </div>
+
+          <div class="install-step-block">
+            <div class="install-step-badge">4</div>
+            <h3>Fix issues and rescan</h3>
+            <p class="install-desc">Fix findings in your editor, then rescan before deploy.</p>
+            <div class="install-code-block">
+              <span class="install-lang">terminal</span>
+              <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+              <pre><span class="syn-cmt"># After fixes</span>
+agentiva scan .</pre>
+            </div>
+          </div>
+
+          <div class="install-step-block">
+            <h3 style="margin-top: 0">What Agentiva detects</h3>
+            <div class="install-detect-grid">
+              <div>🔑 Hardcoded credentials (API keys, passwords, tokens)</div>
+              <div>💣 Dangerous shell commands (rm -rf, force push)</div>
+              <div>📦 Known compromised dependency strings (e.g. litellm 1.82.8, event-stream)</div>
+              <div>🔓 PII-style patterns in code (SSN, credit cards)</div>
+              <div>🌐 High-risk tool usage (policy + scoring)</div>
+              <div>🗃️ Destructive patterns in payloads (DROP, DELETE)</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="install-pane-framework" class="install-pane">
+          <div class="install-step-block">
+            <div class="install-step-badge">1</div>
+            <h3>Install Agentiva</h3>
+            <p class="install-desc">Add Agentiva to your Python environment.</p>
+            <div class="install-code-block">
+              <span class="install-lang">terminal</span>
+              <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+              <pre>pip install agentiva</pre>
+            </div>
+          </div>
+
+          <div class="install-step-block">
+            <div class="install-step-badge">2</div>
+            <h3>Start the server</h3>
+            <p class="install-desc">Run the API locally; the dashboard connects to it.</p>
+            <div class="install-code-block">
+              <span class="install-lang">terminal</span>
+              <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+              <pre>agentiva serve --port 8000
+
+<span class="syn-cmt"># Dashboard (separate terminal)</span>
+cd dashboard &amp;&amp; npm install &amp;&amp; npm run dev
+<span class="syn-cmt"># Open http://127.0.0.1:3001 — register an agent for an API key if you use HTTP intercept.</span></pre>
+            </div>
+          </div>
+
+          <div class="install-step-block">
+            <div class="install-step-badge">3</div>
+            <h3>Wrap your tools</h3>
+            <p class="install-desc">Add a few lines so every tool call is scored and logged. Use <span class="syn-str" style="font-family: ui-monospace, monospace">mode="shadow"</span> to observe first.</p>
+
+            <div class="install-fw-tabs">
+              <button type="button" class="install-fw-tab active" onclick="agentivaFw('langchain', this)">LangChain</button>
+              <button type="button" class="install-fw-tab" onclick="agentivaFw('crewai', this)">CrewAI</button>
+              <button type="button" class="install-fw-tab" onclick="agentivaFw('openai', this)">OpenAI SDK</button>
+              <button type="button" class="install-fw-tab" onclick="agentivaFw('mcp', this)">MCP</button>
+              <button type="button" class="install-fw-tab" onclick="agentivaFw('anthropic', this)">Anthropic</button>
+              <button type="button" class="install-fw-tab" onclick="agentivaFw('custom', this)">REST API</button>
+            </div>
+
+            <div id="install-fw-langchain" class="install-fw-pane active">
+              <div class="install-code-block">
+                <span class="install-lang">python</span>
+                <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+                <pre><span class="syn-cmt"># Your LangChain-style agent</span>
+<span class="syn-kw">from</span> agentiva <span class="syn-kw">import</span> Agentiva
+
+shield = Agentiva(mode=<span class="syn-str">"shadow"</span>)
+tools = shield.protect([your_tool_1, your_tool_2])
+
+<span class="syn-cmt"># Pass tools into your agent / executor as usual</span></pre>
+              </div>
+            </div>
+
+            <div id="install-fw-crewai" class="install-fw-pane">
+              <div class="install-code-block">
+                <span class="install-lang">python</span>
+                <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+                <pre><span class="syn-cmt"># CrewAI — wrap tools before building agents</span>
+<span class="syn-kw">from</span> agentiva <span class="syn-kw">import</span> Agentiva
+
+shield = Agentiva(mode=<span class="syn-str">"shadow"</span>)
+tools = shield.protect([search_tool, email_tool])
+
+<span class="syn-cmt"># tools = Crew / Agent(tools=tools, ...)</span></pre>
+              </div>
+            </div>
+
+            <div id="install-fw-openai" class="install-fw-pane">
+              <div class="install-code-block">
+                <span class="install-lang">python</span>
+                <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+                <pre><span class="syn-cmt"># OpenAI Agents / function tools</span>
+<span class="syn-kw">from</span> agentiva <span class="syn-kw">import</span> Agentiva
+
+shield = Agentiva(mode=<span class="syn-str">"shadow"</span>)
+tools = shield.protect([send_email, query_db])
+
+<span class="syn-cmt"># Register tool defs with the wrapped callables your SDK expects</span></pre>
+              </div>
+            </div>
+
+            <div id="install-fw-mcp" class="install-fw-pane">
+              <div class="install-code-block">
+                <span class="install-lang">terminal</span>
+                <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+                <pre><span class="syn-cmt"># MCP proxy — point your client at Agentiva</span>
+agentiva mcp-proxy --upstream localhost:3001 --port 3002
+
+<span class="syn-cmt"># MCP client URL: http://localhost:3002</span></pre>
+              </div>
+            </div>
+
+            <div id="install-fw-anthropic" class="install-fw-pane">
+              <div class="install-code-block">
+                <span class="install-lang">python</span>
+                <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+                <pre><span class="syn-cmt"># Anthropic tool list</span>
+<span class="syn-kw">from</span> agentiva <span class="syn-kw">import</span> Agentiva
+
+shield = Agentiva(mode=<span class="syn-str">"shadow"</span>)
+tools = shield.protect([email_tool, db_tool])
+
+<span class="syn-cmt"># Pass tools into messages.create(...)</span></pre>
+              </div>
+            </div>
+
+            <div id="install-fw-custom" class="install-fw-pane">
+              <div class="install-code-block">
+                <span class="install-lang">python</span>
+                <button type="button" class="install-copy" onclick="agentivaCopyCode(this)">Copy</button>
+                <pre><span class="syn-cmt"># Direct HTTP check before executing an action</span>
+<span class="syn-kw">import</span> requests
+
+r = requests.post(<span class="syn-str">"http://localhost:8000/api/v1/intercept"</span>, json={
+    <span class="syn-str">"tool_name"</span>: <span class="syn-str">"send_email"</span>,
+    <span class="syn-str">"arguments"</span>: {<span class="syn-str">"to"</span>: <span class="syn-str">"user@email.com"</span>},
+    <span class="syn-str">"agent_id"</span>: <span class="syn-str">"my-custom-agent"</span>,
+})
+result = r.json()
+<span class="syn-kw">if</span> result.get(<span class="syn-str">"decision"</span>) == <span class="syn-str">"block"</span>:
+    <span class="syn-kw">raise</span> <span class="syn-kw">RuntimeError</span>(<span class="syn-str">"Blocked by Agentiva"</span>)
+<span class="syn-cmt"># else: execute</span></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="install-step-block">
+            <div class="install-step-badge">4</div>
+            <h3>Monitor on the dashboard</h3>
+            <p class="install-desc">Actions stream in real time. Ask the co-pilot <strong style="color: #fecaca">what was blocked?</strong> for agent + file context.</p>
+            <div class="install-result">
+              <pre>  <span class="syn-cmt"># Example feed</span>
+
+  <span class="r-ok">ALLOW   read_customer_data   support-bot   risk=0.10</span>
+  <span class="r-ok">ALLOW   send_email           support-bot   risk=0.15</span>
+  <span class="r-block">BLOCK   send_email           support-bot   risk=0.97</span>
+  <span class="r-block">BLOCK   update_database      pipeline      risk=0.95</span>
+  <span class="r-shadow">SHADOW  call_external_api    sales-agent   risk=0.55</span></pre>
+            </div>
+            <p style="margin: 0.75rem 0 0; font-size: 0.85rem; color: var(--muted); text-align: center">
+              After <code style="font-size: 0.8rem">npm install &amp;&amp; npm run dev</code>, open
+              <strong style="color: #fecaca">http://127.0.0.1:3001</strong> in your browser (local only).
+            </p>
+          </div>
+
+          <div class="install-step-block">
+            <h3 style="margin-top: 0">How it works</h3>
+            <div class="install-flow">
+              <div class="install-flow-step">
+                <div class="fl">Your agent</div>
+                <div class="fv">Decides to act</div>
+              </div>
+              <span class="install-flow-arr" aria-hidden="true">→</span>
+              <div class="install-flow-step" style="border-color: rgba(248, 113, 113, 0.45)">
+                <div class="fl">Agentiva</div>
+                <div class="fv">Scores risk</div>
+              </div>
+              <span class="install-flow-arr" aria-hidden="true">→</span>
+              <div class="install-flow-step">
+                <div class="fl">Decision</div>
+                <div class="fv" style="color: #86efac">Allow / Shadow / Block</div>
+              </div>
+              <span class="install-flow-arr" aria-hidden="true">→</span>
+              <div class="install-flow-step">
+                <div class="fl">Dashboard</div>
+                <div class="fv">Logged</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -988,8 +2105,25 @@
       <div class="container">
         <h2>Demo</h2>
         <p class="section-lead">
-          Demo video coming soon. Run the demo yourself:
-          <code style="display: block; margin-top: 0.75rem; padding: 0.75rem 1rem; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border); border-radius: 10px; font-size: 0.9rem"
+          Product walkthrough (hosted on Google Drive). If the player does not load, open the video in a new tab—Drive requires the file to be shared as
+          <strong style="color: #fecaca; font-weight: 600">Anyone with the link</strong> for embeds to work for all visitors.
+        </p>
+        <div class="demo-video-wrap">
+          <iframe
+            src="https://drive.google.com/file/d/1maD2eU4l6k9AXkmpVJBfBfHgBBd11x9B/preview"
+            title="Agentiva product demo"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        <p class="demo-video-foot">
+          <a href="https://drive.google.com/file/d/1maD2eU4l6k9AXkmpVJBfBfHgBBd11x9B/view?usp=sharing" target="_blank" rel="noopener noreferrer"
+            >Open in Google Drive</a
+          >
+          · Run locally:
+          <code style="font-size: 0.82em; background: rgba(12, 4, 6, 0.92); padding: 0.2rem 0.45rem; border-radius: 6px; border: 1px solid var(--border)"
             >python demo/paybot_demo.py</code
           >
         </p>
@@ -1002,7 +2136,7 @@
         <p class="section-lead">Five operating modes—deterministic scoring, YAML policies, and audit exports.</p>
         <div class="grid-5">
           <div class="card">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
               <circle cx="12" cy="12" r="3" />
             </svg>
@@ -1010,28 +2144,28 @@
             <p>Observe without executing. See every tool call before it hits production.</p>
           </div>
           <div class="card">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2">
               <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
             </svg>
             <h3>Simulation</h3>
             <p>Preview impact before acting—side effects and rollback plans.</p>
           </div>
           <div class="card">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <h3>Approval</h3>
             <p>Human-in-the-loop for risky actions via API or dashboard.</p>
           </div>
           <div class="card">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
             <h3>Negotiation</h3>
             <p>Agents learn to self-correct with structured feedback.</p>
           </div>
           <div class="card">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
               <path d="M3 3v5h5" />
             </svg>
@@ -1052,7 +2186,7 @@
             <h3 style="margin: 0 0 0.5rem; font-size: 1.05rem; color: var(--text)">Install</h3>
             <div class="code-box" style="margin: 0">
               pip install agentiva<br />agentiva serve --port 8000<br /><span style="color: var(--muted); font-size: 0.88em"
-                >See <a href="#install" style="color: #93c5fd">full install</a> for dashboard.</span
+                >See <a href="#install" style="color: #fca5a5">full install</a> for dashboard.</span
               >
             </div>
           </div>
@@ -1071,11 +2205,14 @@
             <p style="color: var(--muted); font-size: 0.95rem; margin: 0">
               Use the Agentiva dashboard: live feed, audit log, agents, policies, and co-pilot chat.
             </p>
-            <div
-              style="margin-top: 1rem; height: 120px; border-radius: 12px; border: 1px dashed var(--border); background: rgba(15,23,42,0.6); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.85rem"
+            <a
+              class="dashboard-preview-tile"
+              href="http://127.0.0.1:3001/"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Dashboard preview
-            </div>
+              Open dashboard
+            </a>
           </div>
         </div>
       </div>
@@ -1186,7 +2323,7 @@
             <a class="btn-tier primary" href="#install">Get started free</a>
           </div>
           <div class="price-card featured">
-            <p style="margin: 0 0 0.25rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: #93c5fd; text-transform: uppercase">
+            <p style="margin: 0 0 0.25rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; color: #fca5a5; text-transform: uppercase">
               MOST POPULAR
             </p>
             <h3>Pro</h3>
@@ -1241,6 +2378,12 @@
         <h2>Frequently asked questions</h2>
         <p class="section-lead">Quick answers before you wire up your first intercept.</p>
         <div class="faq">
+          <details>
+            <summary>How do I open the dashboard?</summary>
+            <p>
+              The dashboard runs on your machine. <strong>Agentiva Dashboard</strong> / <strong>Dashboard</strong> in the header or footer opens <strong>http://127.0.0.1:3001</strong> in a new tab. Start it first with <code style="font-size: 0.85em">cd dashboard &amp;&amp; npm install &amp;&amp; npm run dev</code> (and <code style="font-size: 0.85em">agentiva serve --port 8000</code> for the API). Full steps: <a href="#install" style="color: #fca5a5">Install</a> → <a href="#dashboard" style="color: #fca5a5">Open the dashboard</a>.
+            </p>
+          </details>
           <details>
             <summary>What is Agentiva?</summary>
             <p>
@@ -1324,6 +2467,7 @@
       <div class="container">
         <div class="footer-links">
           <a href="#pricing">Pricing</a>
+          <a href="http://127.0.0.1:3001/" target="_blank" rel="noopener noreferrer">Dashboard</a>
           <a href="https://github.com/RishavAr/agentshield" target="_blank" rel="noopener">GitHub</a>
           <a href="#faq">FAQ</a>
           <a href="#roadmap">Roadmap</a>
@@ -1339,6 +2483,80 @@
       </div>
     </footer>
 
+    <script>
+      function agentivaInstallPath(type, el) {
+        document.querySelectorAll(".install-pane").forEach(function (p) {
+          p.classList.remove("active");
+        });
+        document.querySelectorAll(".install-path-card").forEach(function (c) {
+          c.classList.remove("active");
+        });
+        var pane = document.getElementById("install-pane-" + type);
+        if (pane) pane.classList.add("active");
+        if (el) el.classList.add("active");
+      }
+      function agentivaFw(fw, btn) {
+        document.querySelectorAll(".install-fw-pane").forEach(function (p) {
+          p.classList.remove("active");
+        });
+        document.querySelectorAll(".install-fw-tab").forEach(function (t) {
+          t.classList.remove("active");
+        });
+        var p = document.getElementById("install-fw-" + fw);
+        if (p) p.classList.add("active");
+        if (btn) btn.classList.add("active");
+      }
+      function agentivaCopyCode(btn) {
+        var pre = btn.parentElement.querySelector("pre");
+        if (!pre) return;
+        var code = pre.textContent;
+        navigator.clipboard.writeText(code);
+        btn.textContent = "Copied!";
+        setTimeout(function () {
+          btn.textContent = "Copy";
+        }, 2000);
+      }
+      function agentivaRevealDashboardSteps() {
+        if (location.hash !== "#dashboard") return;
+        var codingTab = document.querySelector(".install-path-card[data-path='coding']");
+        if (codingTab) agentivaInstallPath("coding", codingTab);
+      }
+      window.addEventListener("hashchange", agentivaRevealDashboardSteps);
+      document.addEventListener("DOMContentLoaded", agentivaRevealDashboardSteps);
+    </script>
+    <script>
+      (function () {
+        var header = document.getElementById("site-header");
+        var toggle = document.getElementById("nav-toggle");
+        var nav = document.getElementById("site-nav");
+        if (!header || !toggle || !nav) return;
+
+        function setOpen(open) {
+          header.classList.toggle("nav-open", open);
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+          toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+          document.body.style.overflow = open ? "hidden" : "";
+        }
+
+        toggle.addEventListener("click", function () {
+          setOpen(!header.classList.contains("nav-open"));
+        });
+
+        nav.querySelectorAll("a").forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (window.matchMedia("(max-width: 1024px)").matches) setOpen(false);
+          });
+        });
+
+        window.addEventListener("resize", function () {
+          if (!window.matchMedia("(max-width: 1024px)").matches) setOpen(false);
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") setOpen(false);
+        });
+      })();
+    </script>
     <script>
       const lines = [
         ["send_email → attacker@evil.com", "BLOCKED"],
@@ -1433,11 +2651,32 @@
               }
             });
           },
-          { root: null, rootMargin: "0px 0px -8% 0px", threshold: 0.1 }
+          { root: null, rootMargin: "0px 0px -4% 0px", threshold: 0.05 }
         );
+
+        function revealHashTarget() {
+          var hash = location.hash.replace(/^#/, "");
+          if (!hash) return;
+          var target = document.getElementById(hash);
+          if (!target || !target.classList.contains("reveal")) return;
+          target.classList.add("visible");
+          io.unobserve(target);
+          var all = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+          var i = all.indexOf(target);
+          if (i === -1) return;
+          for (var j = 0; j <= i; j++) {
+            all[j].classList.add("visible");
+            io.unobserve(all[j]);
+          }
+        }
+
         reveals.forEach(function (el) {
           io.observe(el);
         });
+
+        revealHashTarget();
+        window.addEventListener("hashchange", revealHashTarget);
+        window.addEventListener("load", revealHashTarget);
       })();
     </script>
   </body>

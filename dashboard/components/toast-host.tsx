@@ -36,7 +36,7 @@ export function ToastHost() {
               ? "border-emerald-500/40 bg-emerald-950/95 text-emerald-100"
               : t.kind === "error"
                 ? "border-red-500/40 bg-red-950/95 text-red-100"
-                : "border-sky-500/40 bg-slate-950/95 text-sky-100"
+                : "border-amber-500/40 bg-[#0c0a06]/95 text-amber-100"
           }`}
         >
           {t.message}
