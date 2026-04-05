@@ -7,12 +7,13 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)]()
 
-**Website:** [website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app) · **Demo video:** [Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing)
+**Live site:** [website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app) · **Demo video:** [Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing)
 
 ---
 
 ## Table of contents
 
+- [Live demo](#live-demo)
 - [Why Agentiva](#why-agentiva)
 - [What you get](#what-you-get)
 - [Prerequisites](#prerequisites)
@@ -30,6 +31,17 @@
 - [Architecture](#architecture)
 - [Troubleshooting](#troubleshooting)
 - [Contributing and license](#contributing-and-license)
+
+---
+
+## Live demo
+
+| | Link |
+|---|------|
+| **Marketing website** | [https://website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app) |
+| **Demo video** | [Watch on Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing) |
+
+The site is built from the [`website/`](website/) directory and deployed on Vercel.
 
 ---
 
@@ -144,7 +156,7 @@ Open **`http://127.0.0.1:3001`** in the browser. The dev server binds to `127.0.
 | `agentiva serve [--port 8000] [--host 0.0.0.0] [--mode shadow\|live\|approval]` | Start the FastAPI server |
 | `agentiva scan [DIR]` | Static scan of a project tree (reports under `.agentiva/`) |
 | `agentiva dashboard [DIR]` | Open the last scan report in HTML |
-| `agentiva init` | Install git pre-push hook (`agentiva scan . --advisory-exit`) |
+| `agentiva init` | Install git pre-push hook that runs `agentiva scan` |
 | `agentiva init-policy [--output policies/default.yaml]` | Copy default policy YAML into your tree |
 | `agentiva mcp-proxy --upstream HOST:PORT --port 3002` | MCP proxy with interception |
 | `agentiva demo` | Run packaged demo scenarios |
@@ -206,11 +218,9 @@ Paths and env names match `docker-compose.yml` in this repo.
 
 ## Marketing site (`website/`)
 
-The public marketing site is deployed at **[website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app)** (preview deployments for AI agents — features, install walkthrough, pricing, FAQ).
+Static landing page (demo embed, pricing, install walkthrough). **Production:** [https://website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app). See also the [demo video on Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing).
 
-**Product demo (hosted video):** [Agentiva product demo on Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing)
-
-The `website/` directory is a static landing page you can rebuild and redeploy. Many teams use [Vercel](https://vercel.com):
+Deploy your own copy with any static host; many teams use [Vercel](https://vercel.com):
 
 ```bash
 cd website
@@ -283,19 +293,13 @@ python benchmarks/run_all_benchmarks.py
 
 ## Git pre-push scan
 
-If you run `agentiva init`, a **pre-push** hook runs `agentiva scan . --advisory-exit`: you still see findings and get a local report, but **the hook does not block `git push`** (monorepos often contain intentional demo/test fixtures that look like secrets).
-
-For **CI or release gates**, run a strict scan (fails on any finding):
-
-```bash
-agentiva scan .
-```
-
-To skip the hook entirely for one push:
+If you run `agentiva init`, a **pre-push** hook runs `agentiva scan .`. If the scan exits non-zero (e.g. BLOCK findings in demos or tests), `git push` is blocked. To push anyway when you accept the risk:
 
 ```bash
 git push --no-verify
 ```
+
+For day-to-day development, keep the hook or adjust scan configuration as your team prefers.
 
 ---
 
@@ -335,7 +339,7 @@ git push --no-verify
 | Blank page or connection error on `localhost` | Use **`http://127.0.0.1:3001`** (dev server hostname) |
 | Port 8000 or 3001 in use | Stop other processes or run `./scripts/serve-fresh.sh` for API |
 | `agentiva: command not found` | Activate `venv` and `pip install -e .` |
-| Push rejected by hook | Hook uses advisory exit; if scan crashed, fix and retry, or `git push --no-verify` |
+| Push rejected by hook | Fix scan findings or `git push --no-verify` |
 
 ---
 
@@ -352,4 +356,4 @@ git push --no-verify
 
 [GitHub](https://github.com/RishavAr) · [Twitter](https://twitter.com/RISHAVA28874444) · [LinkedIn](https://linkedin.com/in/rishav-aryan)
 
-Repository: [github.com/RishavAr/agentshield](https://github.com/RishavAr/agentiva)
+Repository: [github.com/RishavAr/agentshield](https://github.com/RishavAr/agentshield)
