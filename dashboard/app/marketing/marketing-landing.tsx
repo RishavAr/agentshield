@@ -409,17 +409,19 @@ export default function MarketingLanding() {
 
       <section id="pricing" className="mx-auto max-w-6xl px-6 py-16">
         <h2 className="text-3xl font-semibold text-white md:text-4xl">Pricing</h2>
-        <p className="mt-2 text-[#94a3b8]">Self-hosted is free forever. Cloud dashboard on waitlist.</p>
+        <p className="mt-2 max-w-3xl text-[#94a3b8]">
+          Open core: scan + one agent free, self-hosted. Cloud Pro and Team are on the waitlist—same product, managed for you.
+        </p>
         <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <article className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5">
             <p className="text-sm font-semibold text-white">Free</p>
             <p className="mt-2 text-3xl font-semibold text-white">$0</p>
-            <p className="mt-1 text-xs font-medium text-[#fde68a]">/forever</p>
+            <p className="mt-1 text-xs font-medium text-[#fde68a]">/forever · self-hosted</p>
             <ul className="mt-4 flex-1 space-y-2 text-xs text-[#cbd5e1]">
-              <li>1 agent</li>
-              <li>Shadow mode + live mode</li>
-              <li>Policy engine + dashboard</li>
-              <li>Security co-pilot</li>
+              <li>Project scan (agentiva scan)</li>
+              <li>1 agent · policy + local dashboard</li>
+              <li>Shadow + live modes</li>
+              <li>Security co-pilot (baseline)</li>
               <li>Community support</li>
             </ul>
             <Link
@@ -434,12 +436,11 @@ export default function MarketingLanding() {
               MOST POPULAR
             </span>
             <p className="text-sm font-semibold text-[#fef3c7]">Pro</p>
-            <p className="mt-2 text-3xl font-semibold text-white">$18</p>
+            <p className="mt-2 text-3xl font-semibold text-white">$49</p>
             <p className="mt-1 text-xs text-[#94a3b8]">/month · cloud waitlist</p>
             <ul className="mt-4 flex-1 space-y-2 text-xs text-[#fef9c3]">
-              <li>Up to 3 agents</li>
-              <li>Everything in Free</li>
-              <li>Hosted cloud dashboard (waitlist)</li>
+              <li>Up to 5 agents</li>
+              <li>Hosted cloud dashboard</li>
               <li>Email + Slack alerts</li>
               <li>Priority support</li>
             </ul>
@@ -452,15 +453,13 @@ export default function MarketingLanding() {
           </article>
           <article className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5">
             <p className="text-sm font-semibold text-white">Team</p>
-            <p className="mt-2 text-3xl font-semibold text-white">$54</p>
+            <p className="mt-2 text-3xl font-semibold text-white">$149</p>
             <p className="mt-1 text-xs text-[#94a3b8]">/month · cloud waitlist</p>
             <ul className="mt-4 flex-1 space-y-2 text-xs text-[#cbd5e1]">
-              <li>Unlimited agents</li>
-              <li>Everything in Pro</li>
-              <li>SSO + team management</li>
+              <li>Up to 25 agents</li>
               <li>Compliance evidence exports</li>
-              <li>Policy templates</li>
-              <li>Approval workflows</li>
+              <li>SSO + team management</li>
+              <li>Everything in Pro</li>
             </ul>
             <a
               href="#waitlist"
@@ -472,10 +471,10 @@ export default function MarketingLanding() {
           <article className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5">
             <p className="text-sm font-semibold text-white">Enterprise</p>
             <p className="mt-2 text-2xl font-semibold text-white">Custom</p>
-            <p className="mt-1 text-xs text-[#94a3b8]">For regulated industries</p>
+            <p className="mt-1 text-xs text-[#94a3b8]">Unlimited scale · SLA</p>
             <ul className="mt-4 flex-1 space-y-2 text-xs text-[#cbd5e1]">
-              <li>Everything in Team</li>
-              <li>On-premise deployment</li>
+              <li>Unlimited agents</li>
+              <li>On-premise or dedicated deployment</li>
               <li>Custom integrations + SLA</li>
               <li>Dedicated support</li>
               <li>Security architecture review</li>
@@ -490,7 +489,9 @@ export default function MarketingLanding() {
             </a>
           </article>
         </div>
-        <p className="mt-6 text-center text-xs text-[#64748b]">Self-hosted is free forever. Cloud tiers on waitlist.</p>
+        <p className="mt-6 text-center text-xs text-[#64748b]">
+          Free tier is self-hosted forever. Pro and Team cloud pricing shown; join waitlist to get access.
+        </p>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-12">

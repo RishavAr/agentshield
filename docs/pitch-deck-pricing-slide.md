@@ -1,80 +1,73 @@
 # Pitch deck — Pricing slide (copy)
 
-Use this text to align the deck with the website.
+Use this text to align the deck with the website and dashboard marketing.
 
 ## Headline
 
 **Pricing**
 
-*Start free. Upgrade when you need cloud, alerts, and compliance.*
+*Open core: free self-hosted scan + one agent. Upgrade for cloud scale, alerts, and compliance.*
 
 ---
 
-## Free — $0/forever
+## Free — $0/forever (self-hosted)
 
-- Open-source, self-hosted  
-- Shadow mode + live mode  
-- Policy engine (YAML rules)  
-- Dashboard + security co-pilot  
-- 1 agent  
-- Community support  
-- `pip install agentiva`  
+- Project security scan (`agentiva scan`)
+- 1 monitored agent
+- Policy engine (YAML) + local dashboard
+- Shadow + live modes
+- Security co-pilot (baseline)
+- Community support · `pip install agentiva`
 
-**CTA:** Get started free  
+**CTA:** Get started free
 
 *No credit card required*
 
 ---
 
-## Pro — $18/month
+## Pro — $49/month
 
-- Everything in Free  
-- Hosted cloud dashboard  
-- Up to 3 agents  
-- Email + Slack alerts  
-- Chat history + export  
-- Priority email support  
+- Up to **5** agents in cloud
+- Hosted cloud dashboard
+- Email + Slack alerts
+- Priority support
 
-**Annual:** **$14/mo** billed annually — **Save 20%**  
-
-**CTA:** Start 7-day free trial  
+**CTA:** Join waitlist / Start when cloud GA
 
 ---
 
-## Team — $36/month *(Most Popular)*
+## Team — $149/month *(Most Popular)*
 
-- Everything in Pro  
-- Unlimited agents  
-- SSO + team management (up to 10 seats)  
-- Compliance exports (SOC2, HIPAA, PCI-DSS)  
-- Policy templates (healthcare, finance, e-commerce)  
-- Approval workflows  
-- Slack + Teams integration  
+- Up to **25** agents
+- Compliance evidence exports (SOC 2, HIPAA, PCI-DSS–aligned)
+- SSO + team management
+- Everything in Pro
 
-**Annual:** **$29/mo** billed annually — **Save 20%**  
-
-**CTA:** Start 7-day free trial  
+**CTA:** Join waitlist / Start when cloud GA
 
 ---
 
 ## Enterprise — Custom pricing
 
-*For regulated industries*
+*Unlimited scale · regulated industries*
 
-- Everything in Team  
-- Unlimited seats  
-- On-premise / VPC deployment  
-- Custom integrations + SLA  
-- Dedicated security review  
-- Fine-tuned on-premise co-pilot  
-- Phone + Slack support  
+- Unlimited agents
+- On-premise or dedicated / VPC deployment
+- Custom integrations + SLA
+- Dedicated support + security architecture review
 
-**CTA:** Book a demo → https://calendly.com/rishavaryan058/30min  
+**CTA:** Book a demo → https://calendly.com/rishavaryan058/30min
 
 ---
 
 ## Footer (small text)
 
-All paid plans include 7-day free trial. Cancel anytime.
+Cloud Pro and Team: waitlist today; pricing as listed is the public list price at launch.
 
-Save 20% with annual billing (Pro $14/mo, Team $29/mo).
+Annual billing: optional discount (e.g. ~20% off) once billing is live—set exact numbers in finance.
+
+---
+
+## Internal only (do not put on website)
+
+Use spreadsheets or an appendix slide for revenue scenarios, TAM, and enterprise ACV—not on the public pricing page.
