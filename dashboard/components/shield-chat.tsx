@@ -5,6 +5,8 @@ import type { MouseEvent, ReactNode } from "react";
 import { Menu, MessageCircle, Pencil, Send, Shield, X } from "lucide-react";
 
 import { getHttpApiBase } from "@/lib/api-base";
+import { isOfflineDemoActive, readOfflineDemoPayload } from "@/lib/offline-demo";
+import { OFFLINE_CHAT_SESSION_ID, offlineCoPilotReply } from "@/lib/offline-chat";
 
 const API_BASE = getHttpApiBase();
 
@@ -209,6 +211,7 @@ export function ShieldChatPanel() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [renameId, setRenameId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
+  const [offlineCoPilotMode, setOfflineCoPilotMode] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const sessionRef = useRef<string | null>(null);
 
@@ -217,6 +220,17 @@ export function ShieldChatPanel() {
   }, [sessionId]);
 
   const loadSessions = useCallback(async () => {
+    if (typeof window !== "undefined" && isOfflineDemoActive()) {
+      setSessions([
+        {
+          id: OFFLINE_CHAT_SESSION_ID,
+          title: "Sample data chat",
+          updated_at: new Date().toISOString(),
+          last_message_preview: null,
+        },
+      ]);
+      return;
+    }
     try {
       const r = await fetch(`${API_BASE}/api/v1/chat/sessions`);
       if (r.ok) {
@@ -248,6 +262,11 @@ export function ShieldChatPanel() {
       setRenameId(null);
       return;
     }
+    if (sessionId === OFFLINE_CHAT_SESSION_ID) {
+      setSessions((rows) => rows.map((s) => (s.id === sessionId ? { ...s, title: t } : s)));
+      setRenameId(null);
+      return;
+    }
     try {
       const res = await fetch(`${API_BASE}/api/v1/chat/sessions/${encodeURIComponent(sessionId)}`, {
         method: "PATCH",
@@ -270,7 +289,10 @@ export function ShieldChatPanel() {
   }, []);
 
   useEffect(() => {
-    if (open) void loadSessions();
+    if (open) {
+      setOfflineCoPilotMode(typeof window !== "undefined" && isOfflineDemoActive());
+      void loadSessions();
+    }
   }, [open, loadSessions]);
 
   useEffect(() => {
@@ -279,6 +301,12 @@ export function ShieldChatPanel() {
 
   async function ensureSession(): Promise<string> {
     if (sessionRef.current) return sessionRef.current;
+    if (typeof window !== "undefined" && isOfflineDemoActive()) {
+      sessionRef.current = OFFLINE_CHAT_SESSION_ID;
+      setSessionId(OFFLINE_CHAT_SESSION_ID);
+      await loadSessions();
+      return OFFLINE_CHAT_SESSION_ID;
+    }
     const r = await fetch(`${API_BASE}/api/v1/chat/sessions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -303,6 +331,9 @@ export function ShieldChatPanel() {
     sessionRef.current = id;
     setSessionId(id);
     setSidebarOpen(false);
+    if (id === OFFLINE_CHAT_SESSION_ID) {
+      return;
+    }
     try {
       const r = await fetch(`${API_BASE}/api/v1/chat/sessions/${id}`);
       if (!r.ok) return;
@@ -325,6 +356,14 @@ export function ShieldChatPanel() {
   }
 
   async function newChat() {
+    if (typeof window !== "undefined" && isOfflineDemoActive()) {
+      sessionRef.current = OFFLINE_CHAT_SESSION_ID;
+      setSessionId(OFFLINE_CHAT_SESSION_ID);
+      setMessages([]);
+      setSidebarOpen(false);
+      await loadSessions();
+      return;
+    }
     sessionRef.current = null;
     setSessionId(null);
     setMessages([]);
@@ -344,6 +383,11 @@ export function ShieldChatPanel() {
 
   async function deleteSession(id: string, e: MouseEvent) {
     e.stopPropagation();
+    if (id === OFFLINE_CHAT_SESSION_ID) {
+      setMessages([]);
+      await loadSessions();
+      return;
+    }
     await fetch(`${API_BASE}/api/v1/chat/sessions/${id}`, { method: "DELETE" });
     if (sessionId === id) {
       sessionRef.current = null;
@@ -354,6 +398,13 @@ export function ShieldChatPanel() {
   }
 
   async function clearAllSessions() {
+    if (typeof window !== "undefined" && isOfflineDemoActive()) {
+      setMessages([]);
+      sessionRef.current = OFFLINE_CHAT_SESSION_ID;
+      setSessionId(OFFLINE_CHAT_SESSION_ID);
+      await loadSessions();
+      return;
+    }
     await fetch(`${API_BASE}/api/v1/chat/sessions/all`, { method: "DELETE" });
     sessionRef.current = null;
     setSessionId(null);
@@ -370,6 +421,22 @@ export function ShieldChatPanel() {
       setMessages((m) => [...m, { id: uid, role: "user", text: trimmed }]);
       setLoading(true);
       try {
+        if (typeof window !== "undefined" && isOfflineDemoActive()) {
+          await ensureSession();
+          const reply = offlineCoPilotReply(trimmed, readOfflineDemoPayload());
+          const clean = sanitizeAnswer(reply.answer);
+          setMessages((m) => [
+            ...m,
+            {
+              id: crypto.randomUUID(),
+              role: "assistant",
+              answer: clean,
+              suggestions: reply.suggestions,
+            },
+          ]);
+          await loadSessions();
+          return;
+        }
         const sid = await ensureSession();
         const res = await fetch(`${API_BASE}/api/v1/chat/sessions/${sid}/messages`, {
           method: "POST",
@@ -459,7 +526,11 @@ export function ShieldChatPanel() {
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold text-[#f0f6fc]">Security co-pilot</span>
-              {llmEnabled !== null ? (
+              {offlineCoPilotMode ? (
+                <span className="text-[10px] uppercase tracking-wide text-amber-400/90">
+                  Browser demo · no API
+                </span>
+              ) : llmEnabled !== null ? (
                 <span className="text-[10px] uppercase tracking-wide text-[#8a8270]">
                   {llmEnabled ? "AI-powered" : "Deterministic"}
                 </span>
@@ -566,7 +637,7 @@ export function ShieldChatPanel() {
             <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-3">
               {messages.length === 0 && !loading && (
                 <p className="text-sm text-[#8a8270]">
-                  Ask about blocked actions, session summaries, HIPAA/SOC2, or policy tuning. Open the menu for chat
+                  Ask about blocked actions, session summaries, audit exports, or policy tuning. Open the menu for chat
                   history.
                 </p>
               )}
