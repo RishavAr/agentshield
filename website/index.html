@@ -6,7 +6,7 @@
     <title>Agentiva — Preview deployments for AI agents</title>
     <meta
       name="description"
-      content="Open-source runtime security for AI agents. Shadow mode, approval workflows, compliance evidence. 24,599 tests. Tested against OWASP, DeepTeam, Garak, PyRIT."
+      content="Open-source runtime security for AI agents. Shadow mode, approval workflows, audit logging. 24,599 tests. Tested against OWASP, DeepTeam, Garak, PyRIT."
     />
     <meta property="og:title" content="Agentiva — Preview deployments for AI agents" />
     <meta
@@ -14,7 +14,7 @@
       content="See what your AI agent would do before it does it. Open-source. 24,599 tests passing."
     />
     <meta property="og:type" content="website" />
-    <!-- Dashboard links open http://127.0.0.1:3001 (local Next.js). Replace with your deployed URL when hosting the UI. -->
+    <!-- Product dashboard is the Next.js app in repo dashboard/ — runs locally or Docker, not on this static Vercel page. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -42,6 +42,7 @@
         scroll-behavior: smooth;
       }
       #install,
+      #dashboard,
       #waitlist,
       #demo,
       #roadmap {
@@ -534,6 +535,17 @@
         max-width: 560px;
         margin: 0 auto 1.75rem;
         animation: fade-up 0.85s ease-out 0.15s both;
+      }
+      .hero-dashboard-note {
+        max-width: 640px;
+        margin: -0.35rem auto 1.25rem;
+        font-size: clamp(0.88rem, 1.8vw, 0.95rem);
+        color: var(--muted);
+        line-height: 1.55;
+        animation: fade-up 0.85s ease-out 0.18s both;
+      }
+      .hero-dashboard-note strong {
+        font-weight: 600;
       }
       .cta-row {
         display: flex;
@@ -1736,7 +1748,7 @@
           <nav class="nav-links" id="site-nav" aria-label="Primary">
             <a href="#features">Features</a>
             <a href="#how">How it works</a>
-            <a href="#compliance">Compliance</a>
+            <a href="#audit-logging">Audit logging</a>
             <a href="#pricing">Pricing</a>
             <a href="#faq">FAQ</a>
             <a href="#roadmap">Roadmap</a>
@@ -1745,11 +1757,9 @@
             <a href="#install" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.82rem">Get started free</a>
             <a
               class="nav-dashboard-link"
-              href="http://127.0.0.1:3001/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Local dashboard (run npm run dev in dashboard/ first)"
-              >Agentiva Dashboard</a
+              href="#dashboard"
+              title="Full audit UI runs on your machine (clone repo → dashboard/) — not hosted on this marketing site"
+              >Product dashboard</a
             >
           </nav>
         </div>
@@ -1767,11 +1777,9 @@
           <a class="btn btn-primary" href="#install">Get started free</a>
           <a
             class="btn btn-outline"
-            href="http://127.0.0.1:3001/"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Local dashboard (run npm run dev in dashboard/ first)"
-            >Open dashboard</a
+            href="#dashboard"
+            title="How to run the Next.js dashboard on your computer"
+            >Set up dashboard</a
           >
           <a class="btn btn-outline" href="https://calendly.com/rishavaryan058/30min" target="_blank" rel="noopener">Book a demo</a>
           <a class="btn btn-outline" href="#demo">Watch demo →</a>
@@ -1789,6 +1797,9 @@
             </div>
           </div>
         </div>
+        <p class="hero-dashboard-note">
+          This page is the marketing site on Vercel. The <strong style="color: #fecaca">audit / live / co-pilot UI</strong> is the Next.js app in the GitHub repo — run it locally or with Docker (see <a href="#dashboard" style="color: #fca5a5">dashboard setup</a>).
+        </p>
         <div class="code-box">pip install agentiva</div>
         <div class="terminal-demo" aria-live="polite">
           <div class="line"><span>send_email → external</span><span class="badge-block">BLOCKED</span></div>
@@ -1893,10 +1904,9 @@ cd dashboard &amp;&amp; npm install &amp;&amp; npm run dev
 http://127.0.0.1:3001</pre>
             </div>
             <div class="install-note">
-              <h4>Dashboard</h4>
+              <h4>Why not a button to “open dashboard” here?</h4>
               <p>
-                Live feed, audit log with filters (including agent / scanner id), compliance exports (HIPAA, SOC2, PCI), and a co-pilot that answers questions like
-                “what was blocked?” with paths and agent names.
+                This marketing site is static on Vercel. The product UI must run where <strong>your</strong> API and data are — typically <code style="font-size: 0.8em">localhost</code> after the steps above, or a server you deploy (e.g. Docker Compose). Live feed, audit log, audit exports (JSON, CSV, PDF), and co-pilot all use that local Next.js app.
               </p>
             </div>
           </div>
@@ -2110,7 +2120,7 @@ result = r.json()
         </p>
         <div class="demo-video-wrap">
           <iframe
-            src="https://drive.google.com/file/d/1maD2eU4l6k9AXkmpVJBfBfHgBBd11x9B/preview"
+            src="https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/preview"
             title="Agentiva product demo"
             allow="autoplay; fullscreen; picture-in-picture"
             allowfullscreen
@@ -2119,7 +2129,7 @@ result = r.json()
           ></iframe>
         </div>
         <p class="demo-video-foot">
-          <a href="https://drive.google.com/file/d/1maD2eU4l6k9AXkmpVJBfBfHgBBd11x9B/view?usp=sharing" target="_blank" rel="noopener noreferrer"
+          <a href="https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing" target="_blank" rel="noopener noreferrer"
             >Open in Google Drive</a
           >
           · Run locally:
@@ -2205,37 +2215,36 @@ result = r.json()
             <p style="color: var(--muted); font-size: 0.95rem; margin: 0">
               Use the Agentiva dashboard: live feed, audit log, agents, policies, and co-pilot chat.
             </p>
-            <a
-              class="dashboard-preview-tile"
-              href="http://127.0.0.1:3001/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Open dashboard
+            <a class="dashboard-preview-tile" href="#dashboard">
+              How to run the dashboard
             </a>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="compliance" class="reveal">
+    <section id="audit-logging" class="reveal">
       <div class="container">
-        <h2>Compliance-Ready Evidence</h2>
+        <h2>Transparent Audit Logging</h2>
         <p class="section-lead">
-          Agentiva generates audit trails and evidence aligned with major compliance frameworks. We help you prepare for audits — certification requires a third-party assessor.
+          Every agent action logged. Export for your auditor. We don't generate compliance — we generate the data your assessor needs to evaluate.
         </p>
         <div class="grid-3">
           <div class="card">
-            <h3>HIPAA-Aligned</h3>
-            <p>PHI access logs per 45 CFR § 164.312 — enforcement narratives and PHI detection on arguments.</p>
+            <h3>Detailed Audit Logs</h3>
+            <p>
+              Every agent action logged with timestamp, decision, risk score, and full context. Export as JSON or CSV for your compliance team.
+            </p>
           </div>
           <div class="card">
-            <h3>SOC2-Ready</h3>
-            <p>Evidence for CC6–CC8 controls — aggregate stats and exports from your audit trail.</p>
+            <h3>Exportable Reports</h3>
+            <p>
+              Structured data your auditor can review. We log the data. Your assessor makes the compliance determination.
+            </p>
           </div>
           <div class="card">
-            <h3>PCI-DSS Aligned</h3>
-            <p>Cardholder data monitoring per Req 3, 7, 10 — aligned with tool usage logging.</p>
+            <h3>Sensitive Data Detection</h3>
+            <p>Flags PII, credentials, and cardholder patterns in agent actions. Logged for review.</p>
           </div>
         </div>
       </div>
@@ -2308,7 +2317,7 @@ result = r.json()
       <div class="container">
         <h2>Pricing</h2>
         <p class="section-lead">
-          Open core, same playbook as Docker and GitLab: a real free tier that costs you nothing self-hosted. Pay when you want cloud scale, alerts, and compliance.
+          Open core, same playbook as Docker and GitLab: a real free tier that costs you nothing self-hosted. Pay when you want cloud scale, alerts, and audit log exports.
         </p>
         <div class="pricing">
           <div class="price-card">
@@ -2345,7 +2354,7 @@ result = r.json()
             <p class="price-note">Cloud — waitlist</p>
             <ul>
               <li>Up to 25 agents</li>
-              <li>Compliance evidence exports</li>
+              <li>Audit log exports (JSON, CSV)</li>
               <li>SSO + team management</li>
               <li>Everything in Pro</li>
             </ul>
@@ -2380,7 +2389,7 @@ result = r.json()
           <details>
             <summary>How do I open the dashboard?</summary>
             <p>
-              The dashboard runs on your machine. <strong>Agentiva Dashboard</strong> / <strong>Dashboard</strong> in the header or footer opens <strong>http://127.0.0.1:3001</strong> in a new tab. Start it first with <code style="font-size: 0.85em">cd dashboard &amp;&amp; npm install &amp;&amp; npm run dev</code> (and <code style="font-size: 0.85em">agentiva serve --port 8000</code> for the API). Full steps: <a href="#install" style="color: #fca5a5">Install</a> → <a href="#dashboard" style="color: #fca5a5">Open the dashboard</a>.
+              The Vercel site is only this landing page — it does not host the product UI. The full dashboard (live feed, audit, co-pilot) is the Next.js app in the <a href="https://github.com/RishavAr/agentshield" target="_blank" rel="noopener noreferrer" style="color: #fca5a5">GitHub repo</a> under <code style="font-size: 0.85em">dashboard/</code>. After you clone the repo, run <code style="font-size: 0.85em">agentiva serve --port 8000</code> and, in another terminal, <code style="font-size: 0.85em">cd dashboard &amp;&amp; npm install &amp;&amp; npm run dev</code>, then open <strong>http://127.0.0.1:3001</strong> on <em>your</em> computer. Step-by-step: <a href="#install" style="color: #fca5a5">Install</a> → <a href="#dashboard" style="color: #fca5a5">Open the dashboard</a>. Or use Docker Compose from the repo for API + UI together.
             </p>
           </details>
           <details>
@@ -2404,7 +2413,7 @@ result = r.json()
           <details>
             <summary>Is my data secure?</summary>
             <p>
-              Self-hosted data stays on your infrastructure. Audit logs can use your database; compliance exports are generated from persisted action logs you control.
+              Self-hosted data stays on your infrastructure. Audit logs can use your database; exports are generated from persisted action logs you control.
             </p>
           </details>
           <details>
@@ -2429,7 +2438,7 @@ result = r.json()
       <div class="container">
         <h2>Get early access to Agentiva Cloud</h2>
         <p class="section-lead">
-          Self-hosted Free is available now. Join the waitlist for Pro ($49/mo) and Team ($149/mo)—cloud dashboard, alerts, SSO, and compliance exports.
+          Self-hosted Free is available now. Join the waitlist for Pro ($49/mo) and Team ($149/mo)—cloud dashboard, alerts, SSO, and audit log exports.
         </p>
         <form
           id="waitlist-form"
@@ -2466,7 +2475,7 @@ result = r.json()
       <div class="container">
         <div class="footer-links">
           <a href="#pricing">Pricing</a>
-          <a href="http://127.0.0.1:3001/" target="_blank" rel="noopener noreferrer">Dashboard</a>
+          <a href="#dashboard">Dashboard setup</a>
           <a href="https://github.com/RishavAr/agentshield" target="_blank" rel="noopener">GitHub</a>
           <a href="#faq">FAQ</a>
           <a href="#roadmap">Roadmap</a>
