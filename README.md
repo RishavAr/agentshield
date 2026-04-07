@@ -7,15 +7,12 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)]()
 
-**Live site:** [website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app) · **Demo video:** [Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing)
-
 ![Agentiva demo](assets/demo.gif)
 
 ---
 
 ## Table of contents
 
-- [Live demo](#live-demo)
 - [Why Agentiva](#why-agentiva)
 - [What you get](#what-you-get)
 - [Prerequisites](#prerequisites)
@@ -26,7 +23,7 @@
 - [Wire Agentiva into your agent](#wire-agentiva-into-your-agent)
 - [Policies and environment](#policies-and-environment)
 - [Docker Compose](#docker-compose)
-- [Marketing site (`website/`)](#marketing-site-website)
+- [Landing page (website/)](#landing-page-website)
 - [Dashboard](#dashboard)
 - [API](#api)
 - [Tests and benchmarks](#tests-and-benchmarks)
@@ -34,18 +31,6 @@
 - [Architecture](#architecture)
 - [Troubleshooting](#troubleshooting)
 - [Contributing and license](#contributing-and-license)
-
----
-
-## Live demo
-
-| | Link |
-|---|------|
-| **Marketing website** | [https://website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app) |
-| **Hosted dashboard** (welcome / onboarding UI) | [https://dashboard-puce-two.vercel.app](https://dashboard-puce-two.vercel.app) |
-| **Demo video** | [Watch on Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing) |
-
-The marketing site is built from [`website/`](website/). The Next.js app in [`dashboard/`](dashboard/) can be deployed separately (e.g. Vercel); live API calls need `AGENTIVA_API_URL` pointing at a reachable Agentiva backend, or run the dashboard locally against `agentiva serve`.
 
 ---
 
@@ -281,16 +266,11 @@ Paths and env names match `docker-compose.yml` in this repo.
 
 ---
 
-## Marketing site (`website/`)
+## Landing page (website/)
 
-Static landing page (demo embed, pricing, install walkthrough). **Production:** [https://website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app). See also the [demo video on Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing).
+The [`website/`](website/) folder is optional static HTML (copy and screenshots for a public page). **It is not part of using Agentiva** — no install step, no dependency on any host or provider.
 
-Deploy your own copy with any static host; many teams use [Vercel](https://vercel.com):
-
-```bash
-cd website
-npx vercel --prod
-```
+If you edit it, preview by opening `website/index.html` in a browser. Everything that matters for the product is the Python package, CLI, and [`dashboard/`](dashboard/) app above.
 
 ---
 
