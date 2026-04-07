@@ -14,7 +14,6 @@
 ## Table of contents
 
 - [Live demo](#live-demo)
-- [Screen demo (GIF)](#screen-demo-gif)
 - [Why Agentiva](#why-agentiva)
 - [What you get](#what-you-get)
 - [Prerequisites](#prerequisites)
@@ -44,12 +43,6 @@
 | **Demo video** | [Watch on Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing) |
 
 The marketing site is built from [`website/`](website/). The Next.js app in [`dashboard/`](dashboard/) can be deployed separately (e.g. Vercel); live API calls need `AGENTIVA_API_URL` pointing at a reachable Agentiva backend, or run the dashboard locally against `agentiva serve`.
-
-### Screen demo (GIF)
-
-The repo includes **`assets/demo.gif`** (screen capture — PayBot, terminal, dashboard). The [marketing site](https://website-delta-black-67.vercel.app) shows the same file from [`website/assets/demo.gif`](website/assets/demo.gif) and links to the **full video** on [Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing). If the GIF is large, consider compressing before commit for faster loads.
-
-![Agentiva screen demo](assets/demo.gif)
 
 ---
 
@@ -91,18 +84,19 @@ It is **self-hostable**, open source (Apache 2.0), and integrates with common st
 
 ```bash
 pip install agentiva
-agentiva serve --port 8000
+agentiva scan .
+agentiva init
 ```
 
-OpenAPI docs: `http://127.0.0.1:8000/docs`.
+This installs the CLI (scanner + optional git pre-push gate). You do **not** need to run the API to use `agentiva scan`.
 
 **What PyPI includes:** the Python package only — API, CLI, policies, `agentiva scan`, and `agentiva dashboard` (that command opens the **local scan report** HTML under `.agentiva/`, not the full product UI). The **Next.js dashboard** (audit log, live feed, co-pilot, policy screens) lives in the [`dashboard/`](dashboard/) directory in this repo and is **not** shipped inside the wheel. To use it, **clone the repository** and follow [End-to-end local setup](#end-to-end-local-setup), or run **[Docker Compose](#docker-compose)**.
 
 ### From source (recommended for development)
 
 ```bash
-git clone https://github.com/RishavAr/agentshield.git
-cd agentshield
+git clone https://github.com/RishavAr/agentiva.git
+cd agentiva
 
 python3 -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
