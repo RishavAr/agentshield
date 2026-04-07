@@ -9,6 +9,8 @@
 
 **Live site:** [website-delta-black-67.vercel.app](https://website-delta-black-67.vercel.app) · **Demo video:** [Google Drive](https://drive.google.com/file/d/1PJ0MxuFMZo6Iq3HfVlUlWGZEe-B2atRg/view?usp=sharing)
 
+![Agentiva demo](assets/demo.gif)
+
 ---
 
 ## Table of contents
